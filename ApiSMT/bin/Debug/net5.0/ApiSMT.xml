@@ -1,0 +1,1247 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiSMT</name>
+    </assembly>
+    <members>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerCategorias">
+            <summary>
+            Classe de categorias
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.IEPICategoriasBLL)">
+            <summary>
+            Construtos CategoriasController
+            </summary>
+            <param name="categoria"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.insereCategoria(ControleEPI.DTO.EPICategoriasDTO)">
+            <summary>
+            Insere nova categoria de produto
+            </summary>
+            <param name="categoria"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.atualizaCategoria(ControleEPI.DTO.EPICategoriasDTO)">
+            <summary>
+            Atualiza categoria
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.listaCategorias">
+            <summary>
+            Lista todas categorias
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.localizaCategoria(System.Int32)">
+            <summary>
+            Localiza uma categoria
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao">
+            <summary>
+            Classe ControllerCertificadoAprovacao
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+            <summary>
+            Construtor ControllerCertificadoAprovacao
+            </summary>
+            <param name="certificado"></param>
+            <param name="produtos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.insereCertificadoAprovacao(ControleEPI.DTO.EPICertificadoAprovacaoDTO)">
+            <summary>
+            Cadastra novo certificado
+            </summary>
+            <param name="certificado"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.atualizaCertificado(ControleEPI.DTO.EPICertificadoAprovacaoDTO)">
+            <summary>
+            Atualiza certificado EPI
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.ativaDesativaCertificado(System.String,System.Int32)">
+            <summary>
+            Ativa ou desativa produto
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.localizaProdutosCertificado">
+            <summary>
+            Lista certificados e seus respectivos produtos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.localizaProdutoCertificado(System.Int32)">
+            <summary>
+            Localiza o certificado de um produto
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerColaborador">
+            <summary>
+            Classe que manipula os dados de colaborador
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.#ctor(ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL)">
+            <summary>
+            Construtor ColaboradorController
+            </summary>
+            <param name="usuario"></param>
+            <param name="contrato"></param>
+            <param name="departamento"></param>
+            <param name="cargo"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.getListColaboradores(System.Int32)">
+            <summary>
+            Lista todos os colaboradores
+            </summary>
+            <param name="idSuperior"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.GetColaborador(System.Int32)">
+            <summary>
+            Seleciona um colaborador
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerCompras">
+            <summary>
+            Classe que manipula as informações relacionadas a compras de produtos
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPILogComprasBLL)">
+            <summary>
+            Construtor ComprasController
+            </summary>
+            <param name="compras"></param>
+            <param name="pedidos"></param>
+            <param name="produtos"></param>
+            <param name="log"></param>
+            <param name="status"></param>
+            <param name="usuario"></param>
+            <param name="produtoAprovado"></param>
+            <param name="produtoEstoque"></param>
+            <param name="logCompras"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getcompras(System.String)">
+            <summary>
+            Lista todas as compras
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getCompra(System.Int32)">
+            <summary>
+            Seleciona uma compra
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.cadastraCompra(System.Int32,System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
+            <summary>
+            Cadastra uma nova compra
+            </summary>
+            <param name="produtosAprovados"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.aprovarCompra(System.Collections.Generic.List{ControleEPI.DTO.EPIComprasDTO},System.Int32)">
+            <summary>
+            Efetuar compra e atualizar estoque
+            </summary>
+            <param name="compras"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.reprovaCompra(System.Collections.Generic.List{ControleEPI.DTO.EPIComprasDTO},System.Int32)">
+            <summary>
+            Reprovar compra
+            </summary>
+            <param name="reprovarCompra"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.efetuarCompra(System.Int32,System.Int32)">
+            <summary>
+            Realizar compra e atualizar status do pedido
+            </summary>
+            <param name="idCompra"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor">
+            <summary>
+            Classe que manipula os dados de fornecedores
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.IEPIFornecedoresBLL)">
+            <summary>
+            Construtos de FornecedorController
+            </summary>
+            <param name="fornecedor"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.insereFornecedor(ControleEPI.DTO.EPIFornecedoresDTO)">
+            <summary>
+            Insere um novo fornecedor
+            </summary>
+            <param name="fornecedor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.atualizaFornecedor(ControleEPI.DTO.EPIFornecedoresDTO)">
+            <summary>
+            Atualiza dados do fornecedor
+            </summary>
+            <param name="fornecedor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.ativaDesativaFornecedor(System.String,System.Int32)">
+            <summary>
+            Ativa ou desativa fornecedor
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.localizaFornecedor(System.Int32)">
+            <summary>
+            Localiza uma fornecedor
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.getFornecedores">
+            <summary>
+            Lista fornecedores ativos e desativos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.Extensions">
+            <summary>
+            Classe para identificar usuarios administradores
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.Extensions.findIndex``1(``0[],``0)">
+            <summary>
+            Função array
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="array"></param>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerLogin">
+            <summary>
+            Classe de login do sistema
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.#ctor(ControleEPI.BLL.IRHConUserBLL,Microsoft.Extensions.Configuration.IConfiguration,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL,ApiSMT.Utilitários.JWT.ITokenService)">
+            <summary>
+            Construtor LoginController
+            </summary>
+            <param name="conuser"></param>
+            <param name="config"></param>
+            <param name="departamento"></param>
+            <param name="contrato"></param>
+            <param name="tokenService"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.MainWindow(ApiSMT.Utilitários.JWT.TokenObject)">
+            <summary>
+            Renova o token de acesso
+            </summary>
+            <param name="token"></param>
+            <returns></returns>       
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.login(ControleEPI.DTO.FromBody.LoginDTO)">
+            <summary>
+            Verifica credenciais de usuario
+            </summary>
+            <param name="login"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerMotivos">
+            <summary>
+            Classe ControllerMotivos
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.#ctor(ControleEPI.BLL.IEPIMotivosBLL)">
+            <summary>
+            Construtor ControllerMotivos
+            </summary>
+            <param name="motivos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.localizaMotivo(System.Int32)">
+            <summary>
+            Localizar motivo
+            </summary>
+            <param name="idMotivo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.localizaMotivos">
+            <summary>
+            Localiza todos os motivos cadastrados
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerPedidos">
+            <summary>
+            Classe de manipulação de pedidos de epi's
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IEPIMotivosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL)">
+            <summary>
+            Construtor PedidosController
+            </summary>
+            <param name="pedidos"></param>
+            <param name="status"></param>
+            <param name="motivos"></param>
+            <param name="conUser"></param>
+            <param name="produtosEstoque"></param>
+            <param name="pedidosAprovados"></param>
+            <param name="produtos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.inserePedido(ControleEPI.DTO.EPIPedidosDTO)">
+            <summary>
+            insere um pedido a ser feito
+            </summary>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.aprovaPedido(ControleEPI.DTO.EPIPedidosDTO)">
+            <summary>
+            Aprovar pedido
+            </summary>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.aprovaProdutoPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">
+            <summary>
+            Aprova um produto do pedido
+            </summary>
+            <param name="idProduto"></param>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.reprovaProdutoPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">
+            <summary>
+            Reprovar produto do pedido
+            </summary>
+            <param name="idProduto"></param>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.reprovaPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">
+            <summary>
+            Reprova pedido de EPI
+            </summary>
+            <param name="status"></param>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.GetPedido(System.Int32)">
+            <summary>
+            Seleciona um pedido
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.getPedidosUsuario(System.Int32)">
+            <summary>
+            Seleciona os produto ao qual fazem parte de uma categoria especifica
+            </summary>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.getTodosPedidos">
+            <summary>
+            Lista todos os pedidos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.getPedidos(System.Int32)">
+            <summary>
+            Lista todos os pedidos
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados">
+            <summary>
+            Classe ProdutosAprovadosController
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+            <summary>
+            Construtor ProdutosAprovadosController
+            </summary>
+            <param name="pedidosAprovados"></param>
+            <param name="pedidos"></param>
+            <param name="compras"></param>
+            <param name="produtos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.enviaParaCompras(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO},System.Int32)">
+            <summary>
+            Enviar produtos para compras
+            </summary>
+            <param name="enviaCompra"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.aprovaPedido(System.Int32)">
+            <summary>
+            Aprovar pedidos
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.localizaProdutoAprovado(System.Int32,System.String)">
+            <summary>
+            Localiza um produto aprovado
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.produtosAprovados(System.String)">
+            <summary>
+            Lista todos os produtos aprovados
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerProdutos">
+            <summary>
+            Classe ControllerProdutos
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL)">
+            <summary>
+            Contrutor ControllerProdutos
+            </summary>
+            <param name="produtos"></param>
+            <param name="certificado"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.insereProduto(ControleEPI.DTO.EPIProdutosDTO)">
+            <summary>
+            Insere novo produto no estoque
+            </summary>
+            <param name="produto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.atualizaProduto(ControleEPI.DTO.EPIProdutosDTO)">
+            <summary>
+            Atualiza informações do produto com exceção da quantidade em estoque
+            </summary>
+            <param name="produto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.localizaProduto(System.Int32)">
+            <summary>
+            Localiza produto
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.ativaDesativaProduto(System.String,System.Int32)">
+            <summary>
+            Ativa ou desativa produto
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.localizaProdutos">
+            <summary>
+            Localiza todos os produtos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque">
+            <summary>
+            Classe que manipula as informações de produtos e seu estoque
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL)">
+            <summary>
+            Construtor ProdutosEstoqueController
+            </summary>
+            <param name="produtosEstoque"></param>
+            <param name="produtos"></param>
+            <param name="tamanhos"></param>
+            <param name="usuario"></param>
+            <param name="logEstoque"></param>
+            <param name="certificado"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.insereEstoque(ControleEPI.DTO.EPIProdutosEstoqueDTO)">
+            <summary>
+            Insere produtos no estoque
+            </summary>
+            <param name="produto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.atualizaEstoque(System.Collections.Generic.List{ControleEPI.DTO.EPIProdutosEstoqueDTO})">
+            <summary>
+            Aatualiza quantidade disponivel em estoque
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.ativaDesativaProdutoEstoque(System.Int32,System.String)">
+            <summary>
+            Ativa/Desativa Produto do estoque
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.listaTodosProdutosEmEstoque">
+            <summary>
+            Lista todos os produtos cadastrados no estoque
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.selecionaProduto(System.Int32)">
+            <summary>
+            Seleciona um produto
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos">
+            <summary>
+            Classe ControllerTamanhos
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.IEPITamanhosBLL)">
+            <summary>
+            Construtor ControllerTamanhos
+            </summary>
+            <param name="tamanhos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.insereTamanho(ControleEPI.DTO.EPITamanhosDTO)">
+            <summary>
+            Inserir novo tamanho de algum EPI
+            </summary>
+            <param name="tamanho"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.ativaDesativaProduto(System.String,System.Int32)">
+            <summary>
+            Ativa ou desativa produto
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.atualizaTamanho(ControleEPI.DTO.EPITamanhosDTO)">
+            <summary>
+            Atualizat tamanho
+            </summary>
+            <param name="tamanho"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.localizaTamanho(System.Int32)">
+            <summary>
+            Localiza um tamanho
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.localizaTamanhos">
+            <summary>
+            Localiza todos os tamanhos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.deleteStatus(System.Int32)">
+            <summary>
+            Deleta tamanho
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerVinculo">
+            <summary>
+            Classe ControllerVinculo
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.IEPIVinculoBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPIStatusBLL)">
+            <summary>
+            Construtor ControllerVinculo
+            </summary>
+            <param name="vinculo"></param>
+            <param name="usuario"></param>
+            <param name="produtoEstoque"></param>
+            <param name="produtos"></param>
+            <param name="status"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.modificaStatus(System.Int32,System.Int32)">
+            <summary>
+            Modifica os status do item vinculado
+            </summary>
+            <param name="status"></param>
+            <param name="idVinculo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.listaVinculosStatus(System.Int32)">
+            <summary>
+            Lista itens vinculados
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.listaVinculosUsuarios(System.Int32)">
+            <summary>
+            Lista itens vinculados
+            </summary>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerEstoque">
+            <summary>
+            Classe EstoqueController
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerEstoque.#ctor(Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IVestimentaBLL)">
+            <summary>
+            Construtor EstoqueController
+            </summary>
+            <param name="estoque"></param>
+            <param name="log"></param>
+            <param name="vestimenta"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerEstoque.putEstoque(System.Int32,System.Collections.Generic.List{Vestimenta.DTO.VestEstoqueDTO})">
+            <summary>
+            Atualiza estoque
+            </summary>
+            <param name="estoque"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerEstoque.getEstoque(System.Int32)">
+            <summary>
+            Lista todos os tamanhos do idItem enviado
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerEstoque.getItemStoque(System.Int32)">
+            <summary>
+            Seleciona um item do estoque
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo">
+            <summary>
+            Classe de PDF
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IDinkPDFBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL,Vestimenta.BLL.IVestimentaBLL)">
+            <summary>
+            Construtor VestimentaController
+            </summary>
+            <param name="dadosPDF"></param>
+            <param name="usuario"></param>
+            <param name="contrato"></param>
+            <param name="departamento"></param>
+            <param name="cargos"></param>
+            <param name="vestimenta"></param>
+            <param name="converter"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.getTodosStatus(System.Int32)">
+            <summary>
+            Lista historico de itens com colaborador e monta PDF
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus">
+            <summary>
+            Classe de Status
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.#ctor(Vestimenta.BLL.IStatusVestBLL)">
+            <summary>
+            Construtor VestimentaController
+            </summary>
+            <param name="statusVest"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.postStatus(Vestimenta.DTO.VestStatusDTO)">
+            <summary>
+            Insere um novo status
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.putStatus(Vestimenta.DTO.VestStatusDTO)">
+            <summary>
+            Atualiza Vestimenta
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.getTodosStatus">
+            <summary>
+            Lista todos as vestimentas
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.getStatus(System.Int32)">
+            <summary>
+            Seleciona uma vestimenta
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.deleteStatus(System.Int32)">
+            <summary>
+            Deleta um status selecionado
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerStatus.teste(System.String)">
+            <summary>
+            teste
+            </summary>
+            <param name="teste"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras">
+            <summary>
+            Classe de Compras
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.#ctor(Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL,Vestimenta.BLL.IVestRepositorioBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL)">
+            <summary>
+            Construtor de Compras
+            </summary>
+            <param name="comprasVest"></param>
+            <param name="estoque"></param>
+            <param name="vestimenta"></param>
+            <param name="log"></param>
+            <param name="pedidos"></param>
+            <param name="repositorio"></param>
+            <param name="conuser"></param>
+            <param name="status"></param>
+            <param name="mail"></param>
+            <param name="contrato"></param>
+            <param name="departamento"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.postCadastrarCompra(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Cadastra uma nova compra
+            </summary>
+            <param name="compra"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.aguardandoCompra(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Atualizar status da compra para aguardando compra
+            </summary>
+            <param name="aguardandoCompra"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.processoDeCompra(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Compra aprovada
+            </summary>
+            <param name="processoCompra"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.reprovarCompra(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Reprovar compra
+            </summary>
+            <param name="reprovarCompra"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.comprarItem(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Item comprado e enviado para estoque
+            </summary>
+            <param name="comprarItens"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.getCompras">
+            <summary>
+            Lista todas as compras
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.getCompra(System.Int32)">
+            <summary>
+            Seleciona uma compra
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta">
+            <summary>
+            Classe de vestimentas
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.#ctor(Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IEstoqueBLL)">
+            <summary>
+            Construtor VestimentaController
+            </summary>
+            <param name="vestimenta"></param>
+            <param name="estoque"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.postVestimenta(Vestimenta.DTO.VestVestimentaDTO)">
+            <summary>
+            Insere uma nova vestimenta
+            </summary>
+            <param name="vestimenta"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.ativaVestimenta(System.Int32)">
+            <summary>
+            Ativa vestimenta
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.putVestimenta(Vestimenta.DTO.VestVestimentaDTO)">
+            <summary>
+            Atualiza Vestimenta
+            </summary>
+            <param name="vestimenta"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.desativaVestimenta(System.Int32,System.Int32)">
+            <summary>
+            Desativa vestimenta
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.getVestimentas">
+            <summary>
+            Lista todos as vestimentas
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestimenta.getVestimenta(System.Int32)">
+            <summary>
+            Seleciona uma vestimenta
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos">
+            <summary>
+            Classe de pedidos de vestimenta
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestVinculoBLL,Vestimenta.BLL.ILogBLL,ApiSMT.Utilitários.IMailService,Vestimenta.BLL.IVestimentaBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL)">
+            <summary>
+            Construtor de Pedidos
+            </summary>
+            <param name="pedidosVest"></param>
+            <param name="usuario"></param>
+            <param name="status"></param>
+            <param name="estoque"></param>
+            <param name="repositorio"></param>
+            <param name="itemVinculo"></param>
+            <param name="log"></param>
+            <param name="mail"></param>
+            <param name="vestimenta"></param>
+            <param name="departamento"></param>
+            <param name="contrato"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.postPedido(Vestimenta.DTO.VestPedidosDTO)">
+            <summary>
+            Insere um novo pedido
+            </summary>
+            <param name="pedido"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.atualizaStatusPedidoItem(Vestimenta.DTO.VestPedidosDTO)">
+            <summary>
+            Atualiza status do pedido e do item
+            </summary>
+            <param name="pedidoItem"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getPedidosUsuario(System.Int32)">
+            <summary>
+            Lista pedidos por usuarios
+            </summary>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getPedidosStatus(System.Int32)">
+            <summary>
+            Lista pedidos por status
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getLiberadoVinculo(System.Int32)">
+            <summary>
+            Pedidos liberados para vinculo 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.atualizaStatusTodosPedidos(System.Collections.Generic.List{Vestimenta.DTO.VestPedidosDTO})">
+            <summary>
+            Atualiza status dos itens de todos os pedidos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getItensPedidos">
+            <summary>
+            Get todos os itens com seus respectivos pedidos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getPedido(System.Int32)">
+            <summary>
+            Seleciona um pedido
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio">
+            <summary>
+            Controller VestRepositorioController
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHCargosBLL)">
+            <summary>
+            Construtor VestRepositorioController
+            </summary>
+            <param name="repositorio"></param>
+            <param name="vestimenta"></param>
+            <param name="compras"></param>
+            <param name="status"></param>
+            <param name="mail"></param>
+            <param name="usuario"></param>
+            <param name="contrato"></param>
+            <param name="departamento"></param>
+            <param name="pedidos"></param>
+            <param name="converter"></param>
+            <param name="cargo"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.relatorioPDF(System.Int32)">
+            <summary>
+            Relatório de itens a serem entregues
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.getRepositorio(System.Int32)">
+            <summary>
+            Retorna um item selecionado
+            </summary>
+            <param name="idRepositorio"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.getRepositorioStatus(System.String)">
+            <summary>
+            Seleciona todos os itens que serão enviados para compras
+            </summary>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.enviarParaCompra(Vestimenta.DTO.VestComprasDTO)">
+            <summary>
+            Envia itens para compra
+            </summary>
+            <param name="compras"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo">
+            <summary>
+            Classe VestVinculoController
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.IVestVinculoBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL)">
+            <summary>
+            Construtor VestVinculoController
+            </summary>
+            <param name="vinculo"></param>
+            <param name="usuario"></param>
+            <param name="estoque"></param>
+            <param name="vestimenta"></param>
+            <param name="log"></param>
+            <param name="pedidos"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.vinculoHistorico(Vestimenta.DTO.FromBody.VestHistoricoVinculadoDTO)">
+            <summary>
+            Cadastra vestimenta vinculada
+            </summary>
+            <param name="historico"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.postVinculo(System.Int32,Vestimenta.DTO.VestVinculoDTO)">
+            <summary>
+            Insere um novo status
+            </summary>
+            <param name="itemVinculo"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.retiraItemVinculo(System.Boolean,System.Int32)">
+            <summary>
+            Desvincula vestimenta
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.aceitaVinculo(System.Int32,System.String,System.Collections.Generic.List{Vestimenta.DTO.FromBody.VestPedidoItensVinculoDTO})">
+            <summary>
+            Função que vincula itens com colaborador
+            </summary>
+            <param name="pedidosItens"></param>
+            <param name="idUsuario"></param>
+            <param name="senha"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.getStatus(System.Int32,System.Int32)">
+            <summary>
+            Get de vinculos pendentes
+            </summary>
+            <param name="idSatus"></param>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.getSituações(System.Int32)">
+            <summary>
+            get todas as situações do colaborador
+            </summary>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.getItensVinculados(System.Int32)">
+            <summary>
+            Pega todos os itens vinculados com um usuario
+            </summary>
+            <param name="idUsuario"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Program">
+            <summary>
+            Classe Program
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Program.Main(System.String[])">
+            <summary>
+            Função main
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:ApiSMT.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Função CreateHostBuilder
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Startup">
+            <summary>
+            Classe Startup
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Construtor Startup
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="P:ApiSMT.Startup.Configuration">
+            <summary>
+            Interface de configuração
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Função que configura os serviços do sistema
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:ApiSMT.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Funçao de configuraçao de acessos a api e documentação
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+        <member name="T:ApiSMT.Utilitários.IMailService">
+            <summary>
+            Interface IMailService
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.IMailService.SendEmailAsync(ControleEPI.DTO.E_Mail.EmailRequestDTO)">
+            <summary>
+            Chamada do envio de email
+            </summary>
+            <param name="emailRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.MailService">
+            <summary>
+            Classe de envio de e-mail
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.MailService.#ctor(Microsoft.Extensions.Options.IOptions{ControleEPI.DTO.E_Mail.EmailSettingsDTO})">
+            <summary>
+            Construtor MailService
+            </summary>
+            <param name="emailSettings"></param>
+        </member>
+        <member name="M:ApiSMT.Utilitários.MailService.SendEmailAsync(ControleEPI.DTO.E_Mail.EmailRequestDTO)">
+            <summary>
+            Função para enviar e-mail
+            </summary>
+            <param name="mailRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.EncryptDecrypt">
+            <summary>
+            Classe de criptografia
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.EncryptDecrypt.Encrypt(System.String)">
+            <summary>
+            Função Encrypt
+            </summary>
+            <param name="clearText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Utilitários.EncryptDecrypt.Decrypt(System.String)">
+            <summary>
+            Função Decrypt
+            </summary>
+            <param name="cipherText"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.GerarMD5">
+            <summary>
+            Classe que gera criptografia MD5
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.GerarMD5.GeraMD5(System.String)">
+            <summary>
+            Função que converte o valor digitado para criptografia MD5
+            </summary>
+            <param name="valor"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.JWT.ITokenService">
+            <summary>
+            Interface repositorio de token
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.JWT.ITokenService.BuildToken(System.String,System.String,System.String)">
+            <summary>
+            Cria token
+            </summary>
+            <param name="key"></param>
+            <param name="issuer"></param>
+            <param name="usuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Utilitários.JWT.ITokenService.IsTokenValid(System.String,System.String,System.String)">
+            <summary>
+            Verifica validade do token
+            </summary>
+            <param name="key"></param>
+            <param name="issuer"></param>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.JWT.TokenObject">
+            <summary>
+            FromBody token
+            </summary>
+        </member>
+        <member name="P:ApiSMT.Utilitários.JWT.TokenObject.token">
+            <summary>
+            Objeto token
+            </summary>
+        </member>
+        <member name="T:ApiSMT.Utilitários.JWT.TokenService">
+            <summary>
+            Classe TokenService
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.JWT.TokenService.BuildToken(System.String,System.String,System.String)">
+            <summary>
+            Função cria token
+            </summary>
+            <param name="key"></param>
+            <param name="issuer"></param>
+            <param name="usuario"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Utilitários.JWT.TokenService.IsTokenValid(System.String,System.String,System.String)">
+            <summary>
+            Função verifica validade do token
+            </summary>
+            <param name="key"></param>
+            <param name="issuer"></param>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Utilitários.JWT.TokenService.BuildMessage(System.String,System.Int32)">
+            <summary>
+            Constrói a mensagem que mostra o token
+            </summary>
+            <param name="stringToSplit"></param>
+            <param name="chunkSize"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.PDF.RelatórioPDF">
+            <summary>
+            Template html relatorio vestimentas a serem entregues
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.PDF.RelatórioPDF.GetHTMLString(System.Collections.Generic.List{Vestimenta.DTO.DinkPDF.VestRelatorioVestimentasDTO})">
+            <summary>
+            Função para montar o html com as informações enviadas
+            </summary>
+            <param name="dadosPDF"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.PDF.TemplatePDF">
+            <summary>
+            CLasse template html
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.PDF.TemplatePDF.GetHTMLString(Vestimenta.DTO.DinkPDF.VestDadosPDFDTO)">
+            <summary>
+            Função para montar o html com as informações enviadas
+            </summary>
+            <param name="dadosPDF"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiSMT.Utilitários.TimerHostedService">
+            <summary>
+            Classe que monitora quando um processo é executado ou pausado
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Utilitários.TimerHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{ApiSMT.Utilitários.TimerHostedService})">
+            <summary>
+            Construtor TimerHostedService
+            </summary>
+            <param name="logger"></param>
+        </member>
+        <member name="M:ApiSMT.Utilitários.TimerHostedService.StartAsync(System.Threading.CancellationToken)">
+            <summary>
+            Função que inicia o monitoramento processo
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Utilitários.TimerHostedService.ExecuteProcess(System.Object)">
+            <summary>
+            Funçao que mostra o processo em execução
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:ApiSMT.Utilitários.TimerHostedService.StopAsync(System.Threading.CancellationToken)">
+            <summary>
+            Funçao que mostra o processo que foi pausado
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
