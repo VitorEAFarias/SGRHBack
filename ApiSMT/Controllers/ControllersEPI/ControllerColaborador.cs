@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ControleEPI.BLL;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -37,6 +38,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="idSuperior"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("superior/{idSuperior}")]
         public async Task<IActionResult> getListColaboradores(int idSuperior)
         {
@@ -137,6 +139,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetColaborador(int id)
         {

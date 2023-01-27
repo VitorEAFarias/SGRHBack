@@ -4,6 +4,8 @@ using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using Vestimenta.DTO;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -45,6 +47,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="produto"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereEstoque([FromBody] EPIProdutosEstoqueDTO produto)
         {
@@ -78,30 +81,28 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Aatualiza quantidade disponivel em estoque
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("estoque")]
-        public async Task<IActionResult> atualizaEstoque([FromBody] List<EPIProdutosEstoqueDTO> estoque)
+        public async Task<IActionResult> atualizaEstoque([FromBody] EPIProdutosEstoqueDTO estoque)
         {
             try
             {
                 string message = string.Empty;
 
                 if (estoque != null)
-                {
-                    foreach (var item in estoque)
+                {                    
+                    var localizaEstoque = await _produtosEstoque.getProdutoEstoqueTamanho(estoque.idProduto, estoque.idTamanho);
+
+                    if (localizaEstoque != null)
                     {
-                        var localizaEstoque = await _produtosEstoque.getProdutoEstoqueTamanho(item.idProduto, item.idTamanho);
+                        localizaEstoque.quantidade = estoque.quantidade;
 
-                        if (localizaEstoque != null)
-                        {
-                            localizaEstoque.quantidade = item.quantidade;
-
-                            await _produtosEstoque.Update(localizaEstoque);
-                        }
-                        else
-                        {
-                            message += "Produtos não encontrados '" + item.idProduto + "'";
-                        }                        
+                        await _produtosEstoque.Update(localizaEstoque);
                     }
+                    else
+                    {
+                        message += "Produtos não encontrados '" + estoque.idProduto + "'";
+                    } 
 
                     return Ok(new { message = "Estoque atualizado com sucesso", wrongData = message, result = true });
                 }
@@ -121,30 +122,31 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Ativa/Desativa Produto do estoque
         /// </summary>
         /// <returns></returns>
-        [HttpPut("status/{idProduto}/{status}")]
-        public async Task<IActionResult> ativaDesativaProdutoEstoque(int idProduto, string status)
+        [Authorize]
+        [HttpPut("status/{idEstoque}/{status}")]
+        public async Task<IActionResult> ativaDesativaProdutoEstoque(int idEstoque, string status)
         {
             try
             {
-                var localizaProduto = await _produtos.localizaProduto(idProduto);
+                var localizaProduto = await _produtosEstoque.getProdutoEstoque(idEstoque);
 
                 if (localizaProduto != null)
                 {
                     localizaProduto.ativo = status;
 
-                    await _produtos.Update(localizaProduto);
+                    await _produtosEstoque.Update(localizaProduto);
 
                     if (status == "S")
                     {
-                        return Ok(new { message = "Produto ativado com sucesso!!!", result = true });
+                        return Ok(new { message = "Produto do estoque ativado com sucesso!!!", result = true });
                     }
                     else if (status == "N")
                     {
-                        return Ok(new { message = "Produto desativado com sucesso!!!", result = true });
+                        return Ok(new { message = "Produto do estoque desativado com sucesso!!!", result = true });
                     }
                     else
                     {
-                        return BadRequest(new { message = "Erro ao atualizar status do produto", result = false });
+                        return BadRequest(new { message = "Erro ao atualizar status do produto no estoque", result = false });
                     }
                 }
                 else
@@ -162,28 +164,31 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista todos os produtos cadastrados no estoque
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> listaTodosProdutosEmEstoque()
         {
             try
             {
-                var listaDeProdutos = await _produtos.getProdutos();
+                var listaDeProdutosEstoque = await _produtosEstoque.getProdutosEstoque();
 
-                if (listaDeProdutos != null)
+                if (listaDeProdutosEstoque != null)
                 {
                     List<object> gerenciaEstoque = new List<object>();
 
-                    foreach (var item in listaDeProdutos)
+                    foreach (var item in listaDeProdutosEstoque)
                     {
-                        var localizaCertificado = await _certificado.getCertificado(item.idCertificado);
-                        var quantidadeEstoque = await _produtosEstoque.getProdutosExistentes(item.id);
+                        var nomeProduto = await _produtos.localizaProduto(item.idProduto);
+                        var localizaCertificado = await _certificado.getCertificado(nomeProduto.idCertificadoAprovacao);                        
+                        var tamanho = await _tamanhos.localizaTamanho(item.idTamanho);
 
                         gerenciaEstoque.Add(new
                         {
-                            idProduto = item.id,
-                            quantidade = quantidadeEstoque,
-                            produto = item.nomeProduto,
-                            preco = item.preco,
+                            idEstoque = item.id,
+                            quantidade = item.quantidade,
+                            tamanho = tamanho.tamanho,
+                            produto = nomeProduto.nome,
+                            preco = nomeProduto.preco,
                             certificado = localizaCertificado.numero,
                             validadeCertificado = localizaCertificado.validade,
                             ativo = item.ativo
@@ -208,14 +213,16 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> selecionaProduto(int id)
         {
             try
             {
-                var localizaProduto = await _produtos.getProduto(id);
-                var quantidadeEstoque = await _produtosEstoque.getProdutoExistente(localizaProduto.id);
+                var localizaProdutoEstoque = await _produtosEstoque.getProdutoEstoque(id);
+                var localizaProduto = await _produtos.getProduto(localizaProdutoEstoque.idProduto);
                 var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificado);
+                var tamanho = await _tamanhos.localizaTamanho(localizaProdutoEstoque.idTamanho);
 
                 List<object> gerenciaEstoque = new List<object>();
 
@@ -223,8 +230,11 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     gerenciaEstoque.Add(new
                     {
+                        idEstoque = localizaProdutoEstoque.id,
                         idProduto = localizaProduto.id,
-                        quantidade = quantidadeEstoque,
+                        quantidade = localizaProdutoEstoque.quantidade,
+                        idTamanho = tamanho.id,
+                        tamanho = tamanho.tamanho,
                         produto = localizaProduto.nomeProduto,
                         preco = localizaProduto.preco,
                         certificado = localizaCertificado.numero,

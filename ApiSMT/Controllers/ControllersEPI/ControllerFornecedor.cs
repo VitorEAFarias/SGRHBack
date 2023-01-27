@@ -1,5 +1,6 @@
 ﻿using ControleEPI.BLL;
 using ControleEPI.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="fornecedor"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereFornecedor([FromBody] EPIFornecedoresDTO fornecedor)
         {
@@ -65,6 +67,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="fornecedor"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> atualizaFornecedor([FromBody] EPIFornecedoresDTO fornecedor)
         {
@@ -93,6 +96,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Ativa ou desativa fornecedor
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("status/{status}/{id}")]
         public async Task<IActionResult> ativaDesativaFornecedor(string status, int id)
         {
@@ -131,6 +135,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> localizaFornecedor(int id)
         {
@@ -157,6 +162,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista fornecedores ativos e desativos
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> getFornecedores()
         {

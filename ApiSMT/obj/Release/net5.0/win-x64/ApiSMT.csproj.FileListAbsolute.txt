@@ -415,10 +415,13 @@ C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\mscordbi.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\mscorrc.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\ucrtbase.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\aspnetcorev2_inprocess.dll
-C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\Microsoft.AspNetCore.Hosting.WindowsServices.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\Microsoft.Extensions.Hosting.WindowsServices.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\System.ServiceProcess.ServiceController.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\DinkToPdf.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\wkhtmltox.dll
-C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Release\net5.0\win-x64\ref\ApiSMT.dll
-C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\ApiSMT.StaticWebAssets.xml
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\ApiSMT.StaticWebAssets.Pack.cache
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\msbuild.ApiSMT.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\msbuild.build.ApiSMT.props
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\msbuild.buildMultiTargeting.ApiSMT.props
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\staticwebassets\msbuild.buildTransitive.ApiSMT.props
+C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Release\net5.0\win-x64\refint\ApiSMT.dll

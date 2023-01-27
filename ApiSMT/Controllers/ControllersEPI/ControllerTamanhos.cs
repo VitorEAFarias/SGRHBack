@@ -1,5 +1,6 @@
 ﻿using ControleEPI.BLL;
 using ControleEPI.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -28,6 +29,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="tamanho"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereTamanho([FromBody] EPITamanhosDTO tamanho)
         {
@@ -70,6 +72,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Ativa ou desativa produto
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("status/{status}/{id}")]
         public async Task<IActionResult> ativaDesativaProduto(string status, int id)
         {
@@ -108,6 +111,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="tamanho"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> atualizaTamanho([FromBody] EPITamanhosDTO tamanho)
         {
@@ -148,6 +152,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> localizaTamanho(int id)
         {
@@ -174,6 +179,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Localiza todos os tamanhos
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> localizaTamanhos()
         {
@@ -201,16 +207,17 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [Authorize]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> deleteStatus(int id)
         {
             var deletaTamanho = await _tamanhos.localizaTamanho(id);
 
             if (deletaTamanho == null)
-                return BadRequest(new { message = "Tamanho não encontrato", data = false });
+                return BadRequest(new { message = "Tamanho não encontrato", result = false });
 
             await _tamanhos.Delete(deletaTamanho.id);
-            return Ok(new { message = "Tamanho deletado com sucesso!!!", data = true });
+            return Ok(new { message = "Tamanho deletado com sucesso!!!", result = true });
         }
     }
 }

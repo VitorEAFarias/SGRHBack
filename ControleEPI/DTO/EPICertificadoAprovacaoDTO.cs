@@ -8,5 +8,6 @@ namespace ControleEPI.DTO
         public string numero { get; set; }
         public DateTime validade { get; set; }
         public string ativo { get; set; }
+        public string observacao { get; set; }
     }
 }

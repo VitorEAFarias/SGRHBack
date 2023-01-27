@@ -24,6 +24,11 @@ namespace ControleEPI.DAL
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IList<EPIComprasDTO>> getTodasCompras()
+        {
+            return await _context.EPICompras.ToListAsync();
+        }
+
         public async Task<EPIComprasDTO> getCompra(int Id)
         {
             return await _context.EPICompras.FindAsync(Id);
@@ -44,6 +49,7 @@ namespace ControleEPI.DAL
 
         public async Task Update(EPIComprasDTO compra)
         {
+            _context.ChangeTracker.Clear();
             _context.Entry(compra).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

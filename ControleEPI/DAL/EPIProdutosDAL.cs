@@ -61,7 +61,7 @@ namespace ControleEPI.DAL
 
         public async Task<EPIProdutosDTO> getCertificadoProduto(int idCertificado)
         {
-            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE idCertificado = '" + idCertificado + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
+            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE idCertificadoAprovacao = '" + idCertificado + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
         public async Task<EPIProdutosDTO> getNomeProduto(string nome)
@@ -104,6 +104,16 @@ namespace ControleEPI.DAL
             }
 
             return resultado;
+        }
+
+        public async Task<IList<EPIProdutosDTO>> produtosStatus(string status)
+        {
+            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE ativo = '" + status+ " '").OrderBy(p => p.id).ToListAsync();
+        }
+
+        public async Task<EPIProdutosDTO> verificaCategoria(int idCategoria)
+        {
+            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE idCategoria = '"+idCategoria+"'").OrderBy(c => c.id).FirstOrDefaultAsync();
         }
 
         public async Task<IList<EPIProdutosDTO>> getProdutosSolicitacao()

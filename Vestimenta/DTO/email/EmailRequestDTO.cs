@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Vestimenta.DTO.FromBody;
 
-namespace ControleEPI.DTO.E_Mail
+namespace Vestimenta.DTO.email
 {
-    public class EmailRequestDTO 
+    public class EmailRequestDTO
     {
         public string EmailDe { get; set; }
         public string EmailPara { get; set; }

@@ -4,6 +4,13 @@ using ControleEPI.DTO;
 using ControleEPI.BLL;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using ApiSMT.Utilitários;
+using ControleEPI.DTO.E_Mail;
+using ControleEPI.DTO.email;
+using Vestimenta.DTO;
+using Vestimenta.DTO.email;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -22,7 +29,11 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IEPIProdutosEstoqueBLL _produtoEstoque;
         private readonly IEPIStatusBLL _status;
         private readonly IRHConUserBLL _usuario;
-        private readonly IEPIPedidosAprovadosBLL _produtoAprovado;
+        private readonly IEPIPedidosAprovadosBLL _pedidoAprovado;
+        private readonly IRHEmpContratosBLL _contrato;
+        private readonly IMailService _mail;
+        private readonly IEPITamanhosBLL _tamanhos;
+        private readonly IRHDepartamentosBLL _departamento;
 
         /// <summary>
         /// Construtor ComprasController
@@ -33,11 +44,16 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="log"></param>
         /// <param name="status"></param>
         /// <param name="usuario"></param>
-        /// <param name="produtoAprovado"></param>
+        /// <param name="pedidoAprovado"></param>
         /// <param name="produtoEstoque"></param>
         /// <param name="logCompras"></param>
+        /// <param name="contrato"></param>
+        /// <param name="mail"></param>
+        /// <param name="tamanhos"></param>
+        /// <param name="departamento"></param>
         public ControllerCompras(IEPIComprasBLL compras, IEPIPedidosBLL pedidos, IEPIProdutosBLL produtos, IEPILogEstoqueBLL log, IEPIStatusBLL status,
-            IRHConUserBLL usuario, IEPIPedidosAprovadosBLL produtoAprovado, IEPIProdutosEstoqueBLL produtoEstoque, IEPILogComprasBLL logCompras)
+            IRHConUserBLL usuario, IEPIPedidosAprovadosBLL pedidoAprovado, IEPIProdutosEstoqueBLL produtoEstoque, IEPILogComprasBLL logCompras,
+            IRHEmpContratosBLL contrato, IMailService mail, IEPITamanhosBLL tamanhos, IRHDepartamentosBLL departamento)
         {
             _compras = compras;
             _pedidos = pedidos;
@@ -46,8 +62,12 @@ namespace ApiSMT.Controllers.ControllersEPI
             _logCompras = logCompras;
             _status = status;
             _usuario = usuario;
-            _produtoAprovado = produtoAprovado;
+            _pedidoAprovado = pedidoAprovado;
             _produtoEstoque = produtoEstoque;
+            _contrato = contrato;
+            _mail = mail;
+            _tamanhos = tamanhos;
+            _departamento = departamento;
         }
 
         /// <summary>
@@ -55,6 +75,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{status}")]
         public async Task<IActionResult> getcompras(string status)
         {
@@ -70,16 +91,16 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     foreach (var item in compras)
                     {
-                        foreach (var pedidosAprovados in item.pedidosAprovados)
+                        foreach (var pedidosAprovados in item.idPedidosAprovados)
                         {
-                            var localizaProdutoAprovado = await _produtoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
+                            var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
                             var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
 
                             compraProdutos.Add(new
                             {
-                                idPedido = localizaProdutoAprovado.idPedido,
-                                idProduto = localizaProdutoAprovado.idProduto,
-                                nomeProduto = localizaProduto.nomeProduto
+                                localizaProdutoAprovado.idPedido,
+                                localizaProdutoAprovado.idProduto,
+                                localizaProduto.nomeProduto
                             });
                         }
 
@@ -116,6 +137,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<EPIComprasDTO>> getCompra(int id)
         {
@@ -128,22 +150,24 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaCompra != null)
                 {
-                    foreach (var item in localizaCompra.pedidosAprovados)
+                    foreach (var item in localizaCompra.idPedidosAprovados)
                     {
-                        var localizaProdutoAprovado = await _produtoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
+                        var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
                         var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
 
-                        compraProdutos.Add(new {
-                            idPedido = localizaProdutoAprovado.idPedido,
-                            idProduto = localizaProdutoAprovado.idProduto,
-                            nomeProduto = localizaProduto.nomeProduto
+                        compraProdutos.Add(new
+                        {
+                            localizaProdutoAprovado.idPedido,
+                            localizaProdutoAprovado.idProduto,
+                            localizaProduto.nomeProduto
                         });
                     }
 
                     var nomeStatus = await _status.getStatus(localizaCompra.status);
                     var nomeEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
 
-                    compra.Add(new {
+                    compra.Add(new
+                    {
                         idCompra = localizaCompra.id,
                         ProdutosAprovados = compraProdutos,
                         DataCadastraCompra = localizaCompra.dataCadastroCompra,
@@ -167,11 +191,39 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Lista todas as compras
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> localizaCompras()
+        {
+            try
+            {
+                var todasCompras = await _compras.getTodasCompras();
+
+                if (todasCompras != null || !todasCompras.Equals(0))
+                {
+                    return Ok(new { message = "Todas as compras", result = true, data = todasCompras });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhuma compra enconrada", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Cadastra uma nova compra
         /// </summary>
         /// <param name="produtosAprovados"></param>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> cadastraCompra(int idUsuario, [FromBody] List<EPIPedidosAprovadosDTO> produtosAprovados)
         {
@@ -190,14 +242,14 @@ namespace ApiSMT.Controllers.ControllersEPI
                         });
                     }
 
-                    cadastraCompra.pedidosAprovados = pedidosAprovados;
+                    cadastraCompra.idPedidosAprovados = pedidosAprovados;
                     cadastraCompra.dataCadastroCompra = DateTime.Now;
 
                     decimal valorTotalCompra = 0;
 
                     foreach (var item in pedidosAprovados)
                     {
-                        var localizaProdutoAprovado = await _produtoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
+                        var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
                         var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
 
                         var valorTotalProduto = localizaProdutoAprovado.quantidade * localizaProduto.preco;
@@ -237,27 +289,77 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Efetuar compra e atualizar estoque
         /// </summary>
         /// <param name="compras"></param>
-        /// <param name="idUsuario"></param>
         /// <returns></returns>
-        [HttpPut("{idUsuario}")]
-        public async Task<ActionResult> aprovarCompra(List<EPIComprasDTO> compras, int idUsuario)
+        [Authorize]
+        [HttpPut("compras")]
+        public async Task<ActionResult> aprovarCompra([FromBody] EPIComprasDTO compras)
         {
             try
             {
-                if (compras != null)
+                var localizaCompra = await _compras.getCompra(compras.id);
+
+                if (localizaCompra != null)
                 {
-                    foreach (var compra in compras)
+                    EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                    EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                    List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                    var getEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
+                    var getEmail = await _usuario.getEmail(localizaCompra.id);
+
+                    if (getEmail != null || !getEmail.Equals(0))
                     {
-                        var localizaCompra = await _compras.getCompra(compra.id);
+                        var localizaContrato = await _contrato.getContrato(localizaCompra.id);
 
-                        localizaCompra.status = 9;
-                        localizaCompra.idUsuario = idUsuario;
-                        localizaCompra.idFornecedor = compra.idFornecedor;
+                        if (localizaContrato != null || !localizaContrato.Equals(0))
+                        {
+                            var localizaDepartamento = await _departamento.getDepartamento(localizaContrato.id_departamento);
+                            string numeroPedidos = string.Empty;
 
-                        await _compras.Update(localizaCompra);
+                            foreach (var compra in localizaCompra.idPedidosAprovados)
+                            {
+                                var localizaPedidoAprovado = await _pedidoAprovado.getProdutoAprovado(compra.idPedidosAprovados, "S");
+                                var localizaProduto = await _produtos.localizaProduto(localizaPedidoAprovado.id);
+                                var verificaTamanho = await _tamanhos.localizaTamanho(localizaPedidoAprovado.idTamanho);
+                                var nomeStatus = await _status.getStatus(14);
+
+                                conteudoEmails.Add(new EPIConteudoEmailDTO
+                                {
+                                    nome = localizaProduto.nome,
+                                    tamanho = verificaTamanho.tamanho,
+                                    status = nomeStatus.nome,
+                                    quantidade = localizaPedidoAprovado.quantidade
+                                });
+
+                                numeroPedidos += localizaPedidoAprovado.id;
+                            }
+
+                            conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                            {
+                                idPedido = numeroPedidos,
+                                nomeColaborador = getEmp.nome,
+                                departamento = localizaDepartamento.titulo
+                            };
+
+                            email.EmailDe = getEmail.valor;
+                            email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                            email.ConteudoColaborador = conteudoEmailColaborador;
+                            email.Conteudo = conteudoEmails;
+                            email.Assunto = "Atualização de Pedido";
+
+                            await _mail.SendEmailAsync(email);
+
+                            return Ok(new { message = "Compras aprovadas com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Colaborador com mais de um contrato ativo ou nenhum, verifique no Portal do RH", result = false });
+                        }                        
                     }
-
-                    return Ok(new { message = "Compras aprovadas com sucesso!!!", result = true });
+                    else
+                    {
+                        return BadRequest(new { message = "É necessário ter email funcional vinculado ao perfil, verifique no RH", result = false });
+                    }
                 }
                 else
                 {
@@ -277,29 +379,148 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="reprovarCompra"></param>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("reprovar/idUsuario")]
         public async Task<IActionResult> reprovaCompra([FromBody] List<EPIComprasDTO> reprovarCompra, int idUsuario)
         {
             try
             {
-                if (reprovarCompra != null)
+                var localizaUsuarioReprova = await _usuario.GetEmp(idUsuario);
+                EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                if (localizaUsuarioReprova != null || !localizaUsuarioReprova.Equals(0))
                 {
-                    foreach (var item in reprovarCompra)
+                    var getEmail = await _usuario.getEmail(localizaUsuarioReprova.id);
+
+                    if (getEmail != null || !getEmail.Equals(0))
                     {
-                        var localizaCompra = await _compras.getCompra(item.id);
+                        var localizaContrato = await _contrato.getContrato(localizaUsuarioReprova.id);
 
-                        localizaCompra.status = 3;
-                        localizaCompra.idUsuario = idUsuario;
-                        localizaCompra.dataFinalizacaoCompra = DateTime.Now;
+                        if (localizaContrato != null || !localizaContrato.Equals(0))
+                        {
+                            if (reprovarCompra != null)
+                            {
+                                foreach (var item in reprovarCompra)
+                                {
+                                    var localizaCompra = await _compras.getCompra(item.id);
+                                    RHEmpContatoDTO usuarioPedidoEmail = new RHEmpContatoDTO();
 
-                        await _compras.Update(localizaCompra);                            
+                                    foreach (var produto in item.idPedidosAprovados)
+                                    {
+                                        List<Produtos> produtos = new List<Produtos>();
+
+                                        var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(produto.idPedidosAprovados, "S");
+                                        var localizaPedido = await _pedidos.getPedido(localizaProdutoAprovado.idPedido);
+                                        var usuarioPedido = await _usuario.GetEmp(localizaPedido.idUsuario);
+                                        usuarioPedidoEmail = await _usuario.getEmail(localizaPedido.idUsuario);
+                                        var usuarioPedidoContrato = await _contrato.getEmpContrato(localizaPedido.idUsuario);
+                                        var usuarioPedidoDepartamento = await _departamento.getDepartamento(usuarioPedidoContrato.id_departamento);
+
+                                        foreach (var pedidoProduto in localizaPedido.produtos)
+                                        {
+                                            if (pedidoProduto.id == localizaProdutoAprovado.idProduto && pedidoProduto.tamanho == localizaProdutoAprovado.idTamanho && 
+                                                pedidoProduto.quantidade == localizaProdutoAprovado.quantidade)
+                                            {
+                                                var nomeTamanho = await _tamanhos.localizaTamanho(pedidoProduto.tamanho);
+                                                var nomeStatus = await _status.getStatus(pedidoProduto.status);
+
+                                                conteudoEmails.Add(new EPIConteudoEmailDTO
+                                                {
+                                                    nome = pedidoProduto.nome,
+                                                    tamanho = nomeTamanho.tamanho,
+                                                    status = nomeStatus.nome,
+                                                    quantidade = pedidoProduto.quantidade
+                                                });
+
+                                                produtos.Add(new Produtos {
+                                                    id = pedidoProduto.id,
+                                                    nome = pedidoProduto.nome,
+                                                    quantidade = pedidoProduto.quantidade,
+                                                    status = 3,
+                                                    tamanho = pedidoProduto.tamanho
+                                                });
+                                            }
+                                            else
+                                            {
+                                                produtos.Add(new Produtos {
+                                                    id = pedidoProduto.id,
+                                                    nome = pedidoProduto.nome,
+                                                    quantidade = pedidoProduto.quantidade,
+                                                    status = pedidoProduto.status,
+                                                    tamanho = pedidoProduto.tamanho
+                                                });
+                                            }
+                                        }
+
+                                        var verificaPedidoInserido = await _pedidos.getPedido(localizaPedido.id);
+                                        int contador = 0;
+
+                                        foreach (var verifica in verificaPedidoInserido.produtos)
+                                        {
+                                            if (verifica.status == 2 && verifica.status == 3 && verifica.status == 7)
+                                            {
+                                                contador++;
+                                            }
+                                        }
+
+                                        if (contador == verificaPedidoInserido.produtos.Count)
+                                        {
+                                            localizaPedido.status = 10;
+                                        }
+                                        else
+                                        {
+                                            localizaPedido.status = localizaPedido.status;
+                                        }
+
+                                        localizaPedido.produtos = produtos;
+
+                                        await _pedidos.Update(localizaPedido);
+
+                                        conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                        {
+                                            idPedido = localizaPedido.id.ToString(),
+                                            nomeColaborador = usuarioPedido.nome,
+                                            departamento = usuarioPedidoDepartamento.titulo
+                                        };
+                                    }
+
+                                    localizaCompra.status = 3;
+                                    localizaCompra.idUsuario = idUsuario;
+                                    localizaCompra.dataFinalizacaoCompra = DateTime.Now;
+
+                                    await _compras.Update(localizaCompra);
+
+                                    email.EmailDe = getEmail.valor;
+                                    email.EmailPara = $"fabiana.lie@reisoffice.com.br, {usuarioPedidoEmail.valor}";
+                                    email.ConteudoColaborador = conteudoEmailColaborador;
+                                    email.Conteudo = conteudoEmails;
+                                    email.Assunto = "Produto de pedido de EPI reprovado";
+
+                                    await _mail.SendEmailAsync(email);
+                                }
+
+                                return Ok(new { message = "Compras reprovadas com sucesso!!!", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "Nenhuma compra enviada para reprovação", result = false });
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Colaborador sem contrato ativo ou com mais de um, verifique no Portal do RH", result = false });
+                        }
                     }
-
-                    return Ok(new { message = "Compras reprovadas com sucesso!!!", result = true });
+                    else
+                    {
+                        return BadRequest(new { message = "É necessário que o colaborador tenha um email funcional vinculado, verifique no Portal do RH", result = false });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhuma compra enviada para reprovação", result = false});
+                    return BadRequest(new { message = "Colaborador não encontrado, verifique no portal do RH", result = false });
                 }
             }
             catch (Exception ex)
@@ -314,6 +535,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="idCompra"></param>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("comprar/{idCompra}")]
         public async Task<IActionResult> efetuarCompra(int idCompra, int idUsuario)
         {
@@ -330,16 +552,16 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     List<Produtos> pedidoProduto = new List<Produtos>();
 
-                    foreach (var item in localizaCompra.pedidosAprovados)
+                    foreach (var item in localizaCompra.idPedidosAprovados)
                     {
-                        var localizaProdutoAprovado = await _produtoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
+                        var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
                         localizaPedido = await _pedidos.getPedido(localizaProdutoAprovado.idPedido);
 
                         foreach (var produto in localizaPedido.produtos)
                         {
                             var localizaProduto = await _produtos.getProduto(produto.id);
 
-                            if (produto.id == localizaProdutoAprovado.idProduto && produto.idTamanho == 0)
+                            if (produto.id == localizaProdutoAprovado.idProduto && produto.tamanho.ToString().IsNullOrEmpty())
                             {
                                 pedidoProduto.Add(new Produtos
                                 {
@@ -347,10 +569,10 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     nome = localizaProduto.nomeProduto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
-                                    idTamanho = localizaProdutoAprovado.idTamanho
+                                    tamanho = localizaProdutoAprovado.idTamanho
                                 });
 
-                                localizaEstoque = await _produtoEstoque.getProdutoEstoqueTamanho(produto.id, produto.idTamanho);
+                                localizaEstoque = await _produtoEstoque.getProdutoEstoqueTamanho(produto.id, produto.tamanho);
 
                                 quantidadeAtual = localizaEstoque.quantidade;
 
@@ -369,7 +591,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                                 await _log.Insert(logEstoque);
                             }
-                            else if (produto.id == localizaProdutoAprovado.idProduto && produto.idTamanho == localizaProdutoAprovado.idTamanho)
+                            else if (produto.id == localizaProdutoAprovado.idProduto && produto.tamanho == localizaProdutoAprovado.idTamanho)
                             {
                                 pedidoProduto.Add(new Produtos
                                 {
@@ -377,10 +599,10 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     nome = localizaProduto.nomeProduto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
-                                    idTamanho = localizaProdutoAprovado.idTamanho
+                                    tamanho = localizaProdutoAprovado.idTamanho
                                 });
 
-                                localizaEstoque = await _produtoEstoque.getProdutoEstoqueTamanho(produto.id, produto.idTamanho);
+                                localizaEstoque = await _produtoEstoque.getProdutoEstoqueTamanho(produto.id, produto.tamanho);
 
                                 quantidadeAtual = localizaEstoque.quantidade;
 
@@ -407,10 +629,10 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     nome = localizaProduto.nomeProduto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = produto.status,
-                                    idTamanho = localizaProdutoAprovado.idTamanho
+                                    tamanho = localizaProdutoAprovado.idTamanho
                                 });
-                            }                            
-                        }                        
+                            }
+                        }
                     }
 
                     int itensCompra = 0;
@@ -423,7 +645,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         }
                     }
 
-                    if (itensCompra == localizaCompra.pedidosAprovados.Count)
+                    if (itensCompra == localizaCompra.idPedidosAprovados.Count)
                     {
                         logCompras.valor = localizaCompra.valorTotalCompra;
                         logCompras.idCompra = localizaCompra.id;

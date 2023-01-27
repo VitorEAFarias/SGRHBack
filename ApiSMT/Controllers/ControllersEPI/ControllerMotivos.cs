@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ControleEPI.BLL;
 using ControleEPI.DTO;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -30,6 +31,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="idMotivo"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("idMotivo")]
         public async Task<IActionResult> localizaMotivo(int idMotivo)
         {
@@ -56,6 +58,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Localiza todos os motivos cadastrados
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> localizaMotivos()
         {

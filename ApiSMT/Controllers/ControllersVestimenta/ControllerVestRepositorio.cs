@@ -16,6 +16,7 @@ using DinkToPdf;
 using ApiSMT.Utilitários.PDF;
 using DinkToPdf.Contracts;
 using System.IO;
+using Vestimenta.DTO.email;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -27,7 +28,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     public class ControllerVestRepositorio : ControllerBase
     {
         private IConverter _converter;
-        private readonly IVestRepositorioBLL _repositorio;        
+        private readonly IVestRepositorioBLL _repositorio;
         private readonly IVestimentaBLL _vestimenta;
         private readonly IComprasVestBLL _compras;
         private readonly IStatusVestBLL _status;
@@ -52,7 +53,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <param name="pedidos"></param>
         /// <param name="converter"></param>
         /// <param name="cargo"></param>
-        public ControllerVestRepositorio(IConverter converter, IVestRepositorioBLL repositorio, IVestimentaBLL vestimenta, IComprasVestBLL compras, IStatusVestBLL status, 
+        public ControllerVestRepositorio(IConverter converter, IVestRepositorioBLL repositorio, IVestimentaBLL vestimenta, IComprasVestBLL compras, IStatusVestBLL status,
             IMailService mail, IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IPedidosVestBLL pedidos, IRHCargosBLL cargo)
         {
             _converter = converter;
@@ -60,7 +61,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
             _vestimenta = vestimenta;
             _compras = compras;
             _pedidos = pedidos;
-            _status = status;            
+            _status = status;
             _mail = mail;
             _cargo = cargo;
             _usuario = usuario;
@@ -105,45 +106,53 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     {
                         if (repositorio.idRepositorio.Count() > 1)
                         {
-                            localizaRepositorio = await _repositorio.getRepositorio(idRepositorio);
-                            localizaPedido = await _pedidos.getPedido(localizaRepositorio.idPedido);
+                            localizaRepositorio = await _repositorio.getRepositorio(idRepositorio);                           
 
-                            foreach (var item in localizaPedido.item)
+                            if (!localizaRepositorio.idPedido.Equals(0))
                             {
-                                localizaVestimenta = await _vestimenta.getVestimenta(item.id);
+                                localizaPedido = await _pedidos.getPedido(localizaRepositorio.idPedido);
 
-                                if (item.id == localizaRepositorio.idItem && item.tamanho == localizaRepositorio.tamanho)
+                                foreach (var item in localizaPedido.item)
                                 {
-                                    relatorio.Add(new VestRelatorioVestimentasDTO
+                                    localizaVestimenta = await _vestimenta.getVestimenta(item.id);
+
+                                    if (item.id == localizaRepositorio.idItem && item.tamanho == localizaRepositorio.tamanho)
                                     {
-                                        numeroPedido = localizaPedido.id,
-                                        dataPedido = localizaPedido.dataPedido,
-                                        colaborador = localizaColaborador.nome,
-                                        departamento = localizaDepartamento.titulo,
-                                        vestimenta = localizaVestimenta.nome,
-                                        tamanho = localizaRepositorio.tamanho,
-                                        quantidade = item.quantidade - localizaRepositorio.quantidade
-                                    });
+                                        relatorio.Add(new VestRelatorioVestimentasDTO
+                                        {
+                                            numeroPedido = localizaPedido.id,
+                                            dataPedido = localizaPedido.dataPedido,
+                                            colaborador = localizaColaborador.nome,
+                                            departamento = localizaDepartamento.titulo,
+                                            vestimenta = localizaVestimenta.nome,
+                                            tamanho = localizaRepositorio.tamanho,
+                                            quantidade = item.quantidade - localizaRepositorio.quantidade
+                                        });
+                                    }
                                 }
-                            }
+                            }                            
                         }
                         else
                         {
-                            localizaRepositorio = await _repositorio.getRepositorio(idRepositorio);
-                            localizaPedido = await _pedidos.getPedido(localizaRepositorio.idPedido);
-                            localizaVestimenta = await _vestimenta.getVestimenta(repositorio.idItem);
+                            localizaRepositorio = await _repositorio.getRepositorio(idRepositorio);                            
 
-                            relatorio.Add(new VestRelatorioVestimentasDTO
+                            if (!localizaRepositorio.idPedido.Equals(0))
                             {
-                                numeroPedido = localizaPedido.id,
-                                dataPedido = localizaPedido.dataPedido,
-                                colaborador = localizaColaborador.nome,
-                                departamento = localizaDepartamento.titulo,
-                                vestimenta = localizaVestimenta.nome,
-                                tamanho = localizaRepositorio.tamanho,
-                                quantidade = localizaRepositorio.quantidade
-                            });
-                        }                        
+                                localizaPedido = await _pedidos.getPedido(localizaRepositorio.idPedido);
+                                localizaVestimenta = await _vestimenta.getVestimenta(repositorio.idItem);
+
+                                relatorio.Add(new VestRelatorioVestimentasDTO
+                                {
+                                    numeroPedido = localizaPedido.id,
+                                    dataPedido = localizaPedido.dataPedido,
+                                    colaborador = localizaColaborador.nome,
+                                    departamento = localizaDepartamento.titulo,
+                                    vestimenta = localizaVestimenta.nome,
+                                    tamanho = localizaRepositorio.tamanho,
+                                    quantidade = localizaRepositorio.quantidade
+                                });
+                            }
+                        }
                     }
                 }
 
@@ -231,7 +240,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         var precoTotal = checkNome.preco * item.quantidade;
 
                         list.Add(new VestSortListDTO
-                        { 
+                        {
                             id = item.id,
                             idItem = item.idItem,
                             nome = checkNome.nome,
@@ -250,6 +259,37 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                 else
                 {
                     return BadRequest(new { message = "Nenhum item encontrado", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Insere item avulso para compras
+        /// </summary>
+        /// <param name="repositorioAvulso"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("avulso")]
+        public async Task<IActionResult> avulso([FromBody] IList<VestRepositorioDTO> repositorioAvulso)
+        {
+            try
+            {
+                if (repositorioAvulso != null || !repositorioAvulso.Equals(0))
+                {
+                    foreach (var item in repositorioAvulso)
+                    {
+                        await _repositorio.Insert(item);
+                    }                    
+
+                    return Ok(new { message = "Item avulso inserido com sucesso!!!", result = true });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum item avulso enviado", result = false });
                 }
             }
             catch (Exception ex)
@@ -323,7 +363,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         }
 
                         email.EmailDe = empContato.valor;
-                        email.EmailPara = "rinaldo.bordim@reisoffice.com.br";
+                        email.EmailPara = "simone.maciviero@reisoffice.com.br";
                         email.ConteudoColaborador = conteudoEmailColaborador;
                         email.Conteudo = conteudoEmails;
                         email.Assunto = "Enviar itens para compras";

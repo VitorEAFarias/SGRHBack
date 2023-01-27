@@ -19,9 +19,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ApiSMT.Utilitários.JWT;
-using ControleEPI.DTO.E_Mail;
 using DinkToPdf.Contracts;
 using DinkToPdf;
+using ApiSMT.Utilitários.email;
 
 namespace ApiSMT
 {

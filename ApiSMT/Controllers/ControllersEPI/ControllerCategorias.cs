@@ -1,5 +1,6 @@
 ﻿using ControleEPI.BLL;
 using ControleEPI.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -13,14 +14,17 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerCategorias : ControllerBase
     {
         private readonly IEPICategoriasBLL _categoria;
+        private readonly IEPIProdutosBLL _produto;
 
         /// <summary>
         /// Construtos CategoriasController
         /// </summary>
         /// <param name="categoria"></param>
-        public ControllerCategorias(IEPICategoriasBLL categoria)
+        /// <param name="produto"></param>
+        public ControllerCategorias(IEPICategoriasBLL categoria, IEPIProdutosBLL produto)
         {
             _categoria = categoria;
+            _produto = produto;
         }
 
         /// <summary>
@@ -28,6 +32,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="categoria"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereCategoria([FromBody] EPICategoriasDTO categoria)
         {
@@ -63,6 +68,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Atualiza categoria
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> atualizaCategoria([FromBody] EPICategoriasDTO categoria)
         {
@@ -100,6 +106,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista todas categorias
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> listaCategorias()
         {
@@ -127,6 +134,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> localizaCategoria(int id)
         {
@@ -142,6 +150,40 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     return BadRequest(new { message = "Categoria não encontrada", result = false });
                 }
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Deleta categoria
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deletaCategoria(int id)
+        {
+            try
+            {
+                var deletaCategoria = await _categoria.getCategoria(id);
+
+                if (deletaCategoria == null)
+                    return BadRequest(new { message = "Categoria não encontrada", result = false });
+
+                var verificaProduto = await _produto.verificaCategoria(deletaCategoria.id);
+
+                if (verificaProduto == null || verificaProduto.Equals(0))
+                {
+                    await _categoria.Delete(deletaCategoria.id);
+                    return Ok(new { message = "Tamanho deletado com sucesso!!!", result = true });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Não é possivel deletar categorias vinculadas a produtos", result = false });
+                }
+                
             }
             catch (System.Exception ex)
             {

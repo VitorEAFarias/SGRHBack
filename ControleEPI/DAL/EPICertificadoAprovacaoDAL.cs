@@ -113,5 +113,10 @@ namespace ControleEPI.DAL
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IList<EPICertificadoAprovacaoDTO>> listaStatus(string status)
+        {
+            return await _context.EPICertificadoAprovacao.FromSqlRaw("SELECT * FROM EPICertificadoAprovacao WHERE ativo = '" + status + "'").OrderBy(c => c.id).ToListAsync();
+        }
     }
 }

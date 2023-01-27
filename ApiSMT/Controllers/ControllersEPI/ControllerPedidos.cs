@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using ControleEPI.BLL;
 using ControleEPI.DTO;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using ControleEPI.DTO.E_Mail;
+using ControleEPI.DTO.email;
+using ApiSMT.Utilitários;
+using Vestimenta.DTO;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -20,7 +25,11 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IRHConUserBLL _conUser;
         private readonly IEPIProdutosEstoqueBLL _produtosEstoque;
         private readonly IEPIPedidosAprovadosBLL _pedidosAprovados;
-        private readonly IEPIProdutosBLL _produtos;
+        private readonly IRHConUserBLL _usuario;
+        private readonly IRHEmpContratosBLL _contrato;
+        private readonly IRHDepartamentosBLL _departamento;
+        private readonly IMailService _mail;
+        private readonly IEPITamanhosBLL _tamanho;
 
         /// <summary>
         /// Construtor PedidosController
@@ -31,17 +40,26 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="conUser"></param>
         /// <param name="produtosEstoque"></param>
         /// <param name="pedidosAprovados"></param>
-        /// <param name="produtos"></param>
+        /// <param name="usuario"></param>
+        /// <param name="contrato"></param>
+        /// <param name="departamento"></param>
+        /// <param name="mail"></param>
+        /// <param name="tamanho"></param>
         public ControllerPedidos(IEPIPedidosBLL pedidos, IEPIStatusBLL status, IEPIMotivosBLL motivos, IRHConUserBLL conUser, IEPIProdutosEstoqueBLL produtosEstoque,
-            IEPIProdutosBLL produtos, IEPIPedidosAprovadosBLL pedidosAprovados)
+            IEPIPedidosAprovadosBLL pedidosAprovados, IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IMailService mail,
+            IEPITamanhosBLL tamanho)
         {
             _pedidos = pedidos;
             _status = status;
             _motivos = motivos;
-            _conUser = conUser;            
+            _conUser = conUser;
             _produtosEstoque = produtosEstoque;
-            _produtos = produtos;
             _pedidosAprovados = pedidosAprovados;
+            _usuario = usuario;
+            _contrato = contrato;
+            _departamento = departamento;
+            _mail = mail;
+            _tamanho = tamanho;
         }
 
         /// <summary>
@@ -49,24 +67,105 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="pedido"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> inserePedido([FromBody] EPIPedidosDTO pedido)
         {
             try
             {
-                if (pedido.produtos != null)
+                var checkUsuario = await _usuario.GetEmp(pedido.idUsuario);
+
+                if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    pedido.dataPedido = DateTime.Now;
-                    pedido.status = 1;
+                    if (pedido.produtos != null || !pedido.produtos.Equals(0))
+                    {
+                        string tamanho = string.Empty;
 
-                    var novoPedido = await _pedidos.Insert(pedido);
+                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
 
-                    return Ok(new { message = "Pedido realizado com sucesso!!!", result = true });
+                        pedido.dataPedido = DateTime.Now;
+                        pedido.status = 1;
+
+                        var novoPedido = await _pedidos.Insert(pedido);
+
+                        if (novoPedido != null || !novoPedido.Equals(0))
+                        {
+                            var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                            if (getEmail != null || !getEmail.Equals(0))
+                            {
+                                var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                                if (getContrato != null && !getContrato.Equals(0))
+                                {
+                                    var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
+
+                                    foreach (var produto in pedido.produtos)
+                                    {
+                                        var checkStatusItem = await _status.getStatus(produto.status);
+                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                        {
+                                            tamanho = "";
+                                        }
+                                        else
+                                        {
+                                            tamanho = localizaTamanho.tamanho;
+                                        }
+
+                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        {
+                                            nome = produto.nome,
+                                            tamanho = tamanho,
+                                            status = checkStatusItem.nome,
+                                            quantidade = produto.quantidade
+                                        });
+                                    }
+
+                                    conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                    {
+                                        idPedido = novoPedido.id.ToString(),
+                                        nomeColaborador = checkUsuario.nome,
+                                        departamento = getDepartamento.titulo
+                                    };
+
+                                    email.EmailDe = getEmail.valor;
+                                    email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                    email.ConteudoColaborador = conteudoEmailColaborador;
+                                    email.Conteudo = conteudoEmails;
+                                    email.Assunto = "Novo pedido de EPI";
+
+                                    await _mail.SendEmailAsync(email);
+
+                                    return Ok(new { message = "Pedido realizado com sucesso!!!", result = true });
+                                }
+                                else
+                                {
+                                    return BadRequest(new { message = "Colaborador '" + checkUsuario.nome + "' tem mais de um contrato ativo ou nenhum, verifique no RH", result = false });
+                                }
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "É obrigatório colaborador ter e-mail funcional vinculado, verifique no RH", result = false });
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Erro ao efetuar pedido", result = false });
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Nenhum produto selecionado para o pedido", result = false });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum produto selecionado para o pedido", result = false });   
-                }                  
+                    return BadRequest(new { message = "Verifique se o colaborador esta ativo no portal do RH e se nao tem data de demissao e/ou desligamento atribuida", result = false });
+                }                                  
             }
             catch (Exception ex)
             {
@@ -79,42 +178,107 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="pedido"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("aprovaPedido")]
         public async Task<IActionResult> aprovaPedido([FromBody] EPIPedidosDTO pedido)
         {
             try
-            {
-                var localizaPedido = await _pedidos.getPedido(pedido.id);
+            {                
+                var checkUsuario = await _usuario.GetEmp(pedido.idUsuario);
 
-                if (localizaPedido != null)
+                if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    EPIPedidosAprovadosDTO aprovado = new EPIPedidosAprovadosDTO();
+                    var localizaPedido = await _pedidos.getPedido(pedido.id);
 
-                    foreach (var item in localizaPedido.produtos)
+                    if (localizaPedido != null)
                     {
-                        if (item.status == 3)
+                        string tamanho = string.Empty;
+
+                        EPIPedidosAprovadosDTO aprovado = new EPIPedidosAprovadosDTO();
+                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                        var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                        if (getEmail != null || !getEmail.Equals(0))
                         {
-                            return BadRequest(new { message = "Impossivel aprovar produtos do pedido pois, há produtos reprovados", result = false, 
-                                data = item.id + item.idTamanho });
+                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                            if (getContrato != null || !getContrato.Equals(0))
+                            {
+                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
+
+                                foreach (var produto in localizaPedido.produtos)
+                                {
+                                    if (produto.status != 3)
+                                    {
+                                        var checkStatusItem = await _status.getStatus(produto.status);
+                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                        {
+                                            tamanho = "";
+                                        }
+                                        else
+                                        {
+                                            tamanho = localizaTamanho.tamanho;
+                                        }
+
+                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        {
+                                            nome = produto.nome,
+                                            tamanho = tamanho,
+                                            status = checkStatusItem.nome,
+                                            quantidade = produto.quantidade
+                                        });
+
+                                        aprovado.idProduto = produto.id;
+                                        aprovado.idPedido = localizaPedido.id;
+                                        aprovado.idTamanho = produto.tamanho;
+                                        aprovado.quantidade = produto.quantidade;
+                                        aprovado.enviadoCompra = "N";
+
+                                        await _pedidosAprovados.Insert(aprovado);
+                                    }
+                                }
+
+                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                {
+                                    idPedido = localizaPedido.id.ToString(),
+                                    nomeColaborador = checkUsuario.nome,
+                                    departamento = getDepartamento.titulo
+                                };
+
+                                email.EmailDe = getEmail.valor;
+                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                email.ConteudoColaborador = conteudoEmailColaborador;
+                                email.Conteudo = conteudoEmails;
+                                email.Assunto = "Pedido de EPI aprovado";
+
+                                await _mail.SendEmailAsync(email);
+
+                                return Ok(new { message = "Pedido aprovado com sucesso!!!", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "O colaborador '" + checkUsuario.nome + "' tem mais de um contrato ativo ou nenhum, verifique no portal do RH", result = false });
+                            }
                         }
                         else
                         {
-                            aprovado.idProduto = item.id;
-                            aprovado.idPedido = localizaPedido.id;
-                            aprovado.idTamanho = item.idTamanho;
-                            aprovado.quantidade = item.quantidade;
-                            aprovado.enviadoCompra = "N";
-
-                            await _pedidosAprovados.Update(aprovado);
-                        }                        
+                            return BadRequest(new { message = "É necessário ter um email funcional vinculado ao colaborador" });
+                        }
                     }
-
-                    return Ok(new { message = "Pedido aprovado com sucesso!!!", result = true });
+                    else
+                    {
+                        return BadRequest(new { message = "Pedido não encontrado", result = false });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Pedido não encontrado", result = false });
-                }
+                    return BadRequest(new { message = "Verifique se o colaborador esta ativo no portal do RH e se nao tem data de demissao e/ou desligamento atribuida", result = false });
+                }                
             }
             catch (Exception ex)
             {
@@ -128,88 +292,151 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="idProduto"></param>
         /// <param name="pedido"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("aprovaProdutoPedido/{idProduto}")]
         public async Task<IActionResult> aprovaProdutoPedido(int idProduto, [FromBody] EPIPedidosDTO pedido)
         {
             try
             {
-                var localizaPedido = await _pedidos.getPedido(pedido.id);
+                var checkUsuario = await _usuario.GetEmp(pedido.idUsuario);
 
-                if (localizaPedido != null)
+                if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    List<Produtos> produtos = new List<Produtos>();
+                    var localizaPedido = await _pedidos.getPedido(pedido.id);
 
-                    foreach (var item in localizaPedido.produtos)
+                    if (localizaPedido != null)
                     {
-                        if (item.id == idProduto)
+                        string tamanho = string.Empty;
+
+                        EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
+                        List<Produtos> produtos = new List<Produtos>();
+                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                        var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                        if (getEmail != null || !getEmail.Equals(0))
                         {
-                            produtos.Add(new Produtos
+                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                            if (getContrato != null || !getContrato.Equals(0))
                             {
-                                id = item.id,
-                                nome = item.nome,
-                                quantidade = item.quantidade,
-                                status = 2,
-                                idTamanho = item.idTamanho
-                            });
+                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
+
+                                foreach (var produto in localizaPedido.produtos)
+                                {
+                                    if (produto.id == idProduto)
+                                    {
+                                        var checkStatusItem = await _status.getStatus(produto.status);
+                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                        {
+                                            tamanho = "";
+                                        }
+                                        else
+                                        {
+                                            tamanho = localizaTamanho.tamanho;
+                                        }
+
+                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        {
+                                            nome = produto.nome,
+                                            tamanho = tamanho,
+                                            status = checkStatusItem.nome,
+                                            quantidade = produto.quantidade
+                                        });
+
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = produto.id,
+                                            nome = produto.nome,
+                                            quantidade = produto.quantidade,
+                                            status = 2,
+                                            tamanho = produto.tamanho
+                                        });
+
+                                        aprovados.idProduto = produto.id;
+                                        aprovados.idPedido = localizaPedido.id;
+                                        aprovados.idTamanho = produto.tamanho;
+                                        aprovados.quantidade = produto.quantidade;
+                                        aprovados.enviadoCompra = "N";
+
+                                        await _pedidosAprovados.Insert(aprovados);
+                                    }
+                                    else
+                                    {
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = produto.id,
+                                            nome = produto.nome,
+                                            quantidade = produto.quantidade,
+                                            status = produto.status,
+                                            tamanho = produto.tamanho
+                                        });
+                                    }
+                                }
+
+                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                {
+                                    idPedido = localizaPedido.id.ToString(),
+                                    nomeColaborador = checkUsuario.nome,
+                                    departamento = getDepartamento.titulo
+                                };
+
+                                int contador = 0;
+
+                                foreach (var item in produtos)
+                                {
+                                    if (item.status == 3 || item.status == 13)
+                                    {
+                                        contador++;
+                                    }
+                                }
+
+                                localizaPedido.produtos = produtos;
+
+                                if (contador == produtos.Count)
+                                {
+                                    localizaPedido.status = 10;
+                                }
+                                else
+                                {
+                                    localizaPedido.status = pedido.status;
+                                }
+
+                                email.EmailDe = getEmail.valor;
+                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                email.ConteudoColaborador = conteudoEmailColaborador;
+                                email.Conteudo = conteudoEmails;
+                                email.Assunto = "Produto de pedido de EPI aprovado";
+
+                                await _mail.SendEmailAsync(email);
+
+                                await _pedidos.Update(localizaPedido);
+
+                                return Ok(new { message = "Produto aprovado com sucesso", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "O colaborador '" + checkUsuario.nome + "' tem mais de um contrato ativo ou nenhum, verifique no portal do RH", result = false });
+                            }
                         }
                         else
                         {
-                            produtos.Add(new Produtos
-                            {
-                                id = item.id,
-                                nome = item.nome,
-                                quantidade = item.quantidade,
-                                status = item.status,
-                                idTamanho = item.idTamanho
-                            });
+                            return BadRequest(new { message = "É obrigatório colaborador ter e-mail funcional vinculado", result = false });
                         }
-                    }
-
-                    EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
-
-                    foreach (var produtosAprovados in produtos)
-                    {
-                        if (produtosAprovados.status == 2)
-                        {
-                            aprovados.idProduto = produtosAprovados.id;
-                            aprovados.idPedido = localizaPedido.id;
-                            aprovados.idTamanho = produtosAprovados.idTamanho;
-                            aprovados.quantidade = produtosAprovados.quantidade;
-                            aprovados.enviadoCompra = "N";
-
-                            await _pedidosAprovados.Update(aprovados);
-                        }
-                    }
-
-                    int contador = 0;
-
-                    foreach (var item in produtos)
-                    {
-                        if (item.status == 3 || item.status == 13)
-                        {
-                            contador++;
-                        }
-                    }
-
-                    localizaPedido.produtos = produtos;
-
-                    if (contador == produtos.Count)
-                    {
-                        localizaPedido.status = 10;
                     }
                     else
                     {
-                        localizaPedido.status = pedido.status;
+                        return BadRequest(new { message = "Pedido não encontrado", result = false });
                     }
-
-                    await _pedidos.Update(localizaPedido);
-
-                    return Ok(new { message = "Produto aprovado com sucesso", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Pedido não encontrado", result = false });
-                }
+                    return BadRequest(new { message = "Verifique se o colaborador esta ativo no portal do RH e se nao tem data de demissao e/ou desligamento atribuida", result = false });
+                }                
             }
             catch (Exception ex)
             {
@@ -223,71 +450,142 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="idProduto"></param>
         /// <param name="pedido"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("reprovarProdutoPedido/{idProduto}")]
         public async Task<IActionResult> reprovaProdutoPedido(int idProduto, [FromBody] EPIPedidosDTO pedido)
         {
             try
-            {
-                var localizaPedido = await _pedidos.getPedido(pedido.id);
+            {                
+                var checkUsuario = await _usuario.GetEmp(pedido.idUsuario);
 
-                if (localizaPedido != null)
+                if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    List<Produtos> produtos = new List<Produtos>();
+                    var localizaPedido = await _pedidos.getPedido(pedido.id);
 
-                    foreach (var item in localizaPedido.produtos)
+                    if (localizaPedido != null)
                     {
-                        if (item.id == idProduto)
+                        string tamanho = string.Empty;
+
+                        List<Produtos> produtos = new List<Produtos>();
+                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                        var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                        if (getEmail != null || !getEmail.Equals(0))
                         {
-                            produtos.Add(new Produtos { 
-                                id = item.id,
-                                nome = item.nome,
-                                quantidade = item.quantidade,
-                                status = 3,
-                                idTamanho = item.idTamanho
-                            });
+                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                            if (getContrato != null || !getContrato.Equals(0))
+                            {
+                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
+
+                                foreach (var produto in localizaPedido.produtos)
+                                {
+                                    if (produto.id == idProduto)
+                                    {
+                                        var checkStatusItem = await _status.getStatus(produto.status);
+                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                        {
+                                            tamanho = "";
+                                        }
+                                        else
+                                        {
+                                            tamanho = localizaTamanho.tamanho;
+                                        }
+
+                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        {
+                                            nome = produto.nome,
+                                            tamanho = tamanho,
+                                            status = checkStatusItem.nome,
+                                            quantidade = produto.quantidade
+                                        });
+
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = produto.id,
+                                            nome = produto.nome,
+                                            quantidade = produto.quantidade,
+                                            status = 3,
+                                            tamanho = produto.tamanho
+                                        });
+                                    }
+                                    else
+                                    {
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = produto.id,
+                                            nome = produto.nome,
+                                            quantidade = produto.quantidade,
+                                            status = produto.status,
+                                            tamanho = produto.tamanho
+                                        });
+                                    }
+                                }
+
+                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                {
+                                    idPedido = localizaPedido.id.ToString(),
+                                    nomeColaborador = checkUsuario.nome,
+                                    departamento = getDepartamento.titulo
+                                };
+
+                                int contador = 0;
+
+                                foreach (var item in produtos)
+                                {
+                                    if (item.status == 3 || item.status == 13)
+                                    {
+                                        contador++;
+                                    }
+                                }
+
+                                localizaPedido.produtos = produtos;
+
+                                if (contador == produtos.Count)
+                                {
+                                    localizaPedido.status = 10;
+                                }
+                                else
+                                {
+                                    localizaPedido.status = pedido.status;
+                                }
+
+                                await _pedidos.Update(localizaPedido);
+
+                                email.EmailDe = getEmail.valor;
+                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                email.ConteudoColaborador = conteudoEmailColaborador;
+                                email.Conteudo = conteudoEmails;
+                                email.Assunto = "Produto de pedido de EPI reprovado";
+
+                                await _mail.SendEmailAsync(email);
+
+                                return Ok(new { message = "Produto reprovado com sucesso", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "O colaborador '" + checkUsuario.nome + "' tem mais de um contrato ativo ou nenhum, verifique no portal do RH", result = false });
+                            }
                         }
                         else
                         {
-                            produtos.Add(new Produtos
-                            {
-                                id = item.id,
-                                nome = item.nome,
-                                quantidade = item.quantidade,
-                                status = item.status,
-                                idTamanho = item.idTamanho
-                            });
+                            return BadRequest(new { message = "É obrigatório colaborador ter e-mail funcional vinculado", result = false });
                         }
-                    }
-
-                    int contador = 0;
-
-                    foreach (var item in produtos)
-                    {
-                        if (item.status == 3 || item.status == 13)
-                        {
-                            contador++;
-                        }
-                    }
-
-                    localizaPedido.produtos = produtos;
-
-                    if (contador == produtos.Count)
-                    {
-                        localizaPedido.status = 10;
                     }
                     else
                     {
-                        localizaPedido.status = pedido.status;
+                        return BadRequest(new { message = "Pedido não encontrado", result = false });
                     }
-
-                    await _pedidos.Update(localizaPedido);
-
-                    return Ok(new { message = "Produto reprovado com sucesso", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Pedido não encontrado", result = false });
-                }
+                    return BadRequest(new { message = "Verifique se o colaborador esta ativo no portal do RH e se nao tem data de demissao e/ou desligamento atribuida", result = false });
+                }                
             }
             catch (Exception ex)
             {
@@ -301,41 +599,112 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="status"></param>
         /// <param name="pedido"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("reprovarPedido/{status}")]
         public async Task<IActionResult> reprovaPedido(int status, [FromBody] EPIPedidosDTO pedido)
         {
             try
             {
-                var localizaPedido = await _pedidos.getPedido(pedido.id);
+                var checkUsuario = await _conUser.GetEmp(pedido.idUsuario);
 
-                if (localizaPedido != null)
+                if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    var idStatus = await _status.getStatus(status);
+                    var localizaPedido = await _pedidos.getPedido(pedido.id);
 
-                    List<Produtos> produtos = new List<Produtos>();
-
-                    localizaPedido.status = idStatus.id;
-
-                    foreach (var item in localizaPedido.produtos)
+                    if (localizaPedido != null)
                     {
-                        produtos.Add(new Produtos { 
-                            id = item.id,
-                            nome = item.nome,
-                            quantidade = item.quantidade,
-                            status = 3,
-                            idTamanho = item.idTamanho
-                        });
+                        string tamanho = string.Empty;
+
+                        var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                        if (getEmail != null || !getEmail.Equals(0))
+                        {
+                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                            if (getContrato != null || !getContrato.Equals(0))
+                            {
+                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
+
+                                List<Produtos> produtos = new List<Produtos>();
+                                EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                                EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                                List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+
+                                var idStatus = await _status.getStatus(status);
+
+                                localizaPedido.status = idStatus.id;
+
+                                foreach (var produto in localizaPedido.produtos)
+                                {
+                                    var checkStatusItem = await _status.getStatus(produto.status);
+                                    var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                    if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                    {
+                                        tamanho = "";
+                                    }
+                                    else
+                                    {
+                                        tamanho = localizaTamanho.tamanho;
+                                    }
+
+                                    conteudoEmails.Add(new EPIConteudoEmailDTO
+                                    {
+                                        nome = produto.nome,
+                                        tamanho = tamanho,
+                                        status = checkStatusItem.nome,
+                                        quantidade = produto.quantidade
+                                    });
+
+                                    produtos.Add(new Produtos
+                                    {
+                                        id = produto.id,
+                                        nome = produto.nome,
+                                        quantidade = produto.quantidade,
+                                        status = 3,
+                                        tamanho = produto.tamanho
+                                    });
+                                }
+
+                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                {
+                                    idPedido = localizaPedido.id.ToString(),
+                                    nomeColaborador = checkUsuario.nome,
+                                    departamento = getDepartamento.titulo
+                                };
+
+                                localizaPedido.produtos = produtos;
+
+                                email.EmailDe = getEmail.valor;
+                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                email.ConteudoColaborador = conteudoEmailColaborador;
+                                email.Conteudo = conteudoEmails;
+                                email.Assunto = "Pedido de EPI reprovado";
+
+                                await _mail.SendEmailAsync(email);
+
+                                await _pedidos.Update(localizaPedido);
+
+                                return Ok(new { message = "Pedido reprovado com sucesso!!!", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "O colaborador '" + checkUsuario.nome + "' tem mais de um contrato ativo ou nenhum, verifique no portal do RH", result = false });
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "É obrigatório colaborador ter e-mail funcional vinculado", result = false });
+                        }
                     }
-
-                    localizaPedido.produtos = produtos;
-
-                    await _pedidos.Update(localizaPedido);
-
-                    return Ok(new { message = "Pedido reprovado com sucesso!!!", result = true });
+                    else
+                    {
+                        return BadRequest(new { message = "Pedido não encontrado", result = false });
+                    }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Pedido não encontrado", result = false });
+                    return BadRequest(new { message = "Verifique se o colaborador esta ativo no portal do RH e se nao tem data de demissao e/ou desligamento atribuida", result = false });
                 }
             }
             catch (Exception ex)
@@ -349,8 +718,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EPIPedidosDTO>> GetPedido(int id)
+        [Authorize]
+        [HttpGet("localizaPedido/{id}")]
+        public async Task<IActionResult> GetPedido(int id)
         {
             try
             {
@@ -388,7 +758,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         status = status.nome
                     };
 
-                    return Ok(new { message = "Pedido encontrado", pedido = item, result = true });
+                    return Ok(new { message = "Pedido encontrado", data = item, result = true });
                 }
                 else
                 {
@@ -406,8 +776,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("usuario/{idUsuario}")]
-        public async Task<ActionResult<EPIPedidosDTO>> getPedidosUsuario([FromRoute] int idUsuario)
+        public async Task<IActionResult> getPedidosUsuario([FromRoute] int idUsuario)
         {
             try
             {
@@ -444,16 +815,37 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista todos os pedidos
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<EPIPedidosDTO>> getTodosPedidos()
+        public async Task<IActionResult> getTodosPedidos()
         {
             try
             {
                 var localizaPedidos = await _pedidos.getPedidos();
 
+                List<object> pedidosEncontrados = new List<object>();
+
                 if (localizaPedidos != null)
                 {
-                    return Ok(new { message = "Pedidos encontrados!!!", result = true, lista = localizaPedidos });
+                    foreach (var pedido in localizaPedidos)
+                    {
+                        var nomeColaborador = await _conUser.GetEmp(pedido.idUsuario);
+                        var motivo = await _motivos.getMotivo(pedido.motivo);
+                        var status = await _status.getStatus(pedido.status);
+
+                        pedidosEncontrados.Add(new
+                        {
+                            pedido.id,
+                            colaborador = nomeColaborador.nome,
+                            pedido.idUsuario,
+                            pedido.dataPedido,
+                            motivo = motivo.nome,
+                            status = status.nome,
+                            pedido.produtos
+                        });
+                    }
+
+                    return Ok(new { message = "Pedidos encontrados!!!", result = true, data = pedidosEncontrados });
                 }
                 else
                 {
@@ -471,8 +863,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{status}")]
-        public async Task<ActionResult<EPIPedidosDTO>> getPedidos(int status)
+        public async Task<IActionResult> getPedidos(int status)
         {
             try
             {

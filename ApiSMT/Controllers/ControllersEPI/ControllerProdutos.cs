@@ -3,6 +3,8 @@ using ControleEPI.BLL;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -14,16 +16,19 @@ namespace ApiSMT.Controllers.ControllersEPI
     {
         private readonly IEPIProdutosBLL _produtos;
         private readonly IEPICertificadoAprovacaoBLL _certificado;
+        private readonly IEPICategoriasBLL _categoria;
 
         /// <summary>
         /// Contrutor ControllerProdutos
         /// </summary>
         /// <param name="produtos"></param>
         /// <param name="certificado"></param>
-        public ControllerProdutos(IEPIProdutosBLL produtos, IEPICertificadoAprovacaoBLL certificado)
+        /// <param name="categoria"></param>
+        public ControllerProdutos(IEPIProdutosBLL produtos, IEPICertificadoAprovacaoBLL certificado, IEPICategoriasBLL categoria)
         {
             _produtos = produtos;
             _certificado = certificado;
+            _categoria = categoria;
         }
 
         /// <summary>
@@ -31,6 +36,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="produto"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereProduto([FromBody] EPIProdutosDTO produto)
         {
@@ -55,9 +61,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Ja existe um produto chamado '"+produto.nome+"'", result = false });
+                    return BadRequest(new { message = "Ja existe um produto chamado '" + produto.nome + "'", result = false });
                 }
-                               
+
             }
             catch (System.Exception ex)
             {
@@ -70,26 +76,36 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="produto"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> atualizaProduto([FromBody] EPIProdutosDTO produto)
         {
             try
             {
-                var localizaProduto = await _produtos.getProduto(produto.id);
+                var localizaProduto = await _produtos.localizaProduto(produto.id);
 
                 if (localizaProduto != null)
                 {
-                    var verificaNomeProduto = await _produtos.getNomeProduto(produto.nome);
-
-                    if (verificaNomeProduto == null)
+                    if (localizaProduto.nome == produto.nome)
                     {
                         await _produtos.Update(produto);
 
-                        return Ok(new { message = "Produtor atualizado com sucesso!!!", result = true });                        
+                        return Ok(new { message = "Produtor atualizado com sucesso!!!", result = true });
                     }
                     else
                     {
-                        return BadRequest(new { message = "Ja existe um produto chamado '" + produto.nome + "'", result = false });
+                        var verificaNomeProduto = await _produtos.getNomeProduto(produto.nome);
+
+                        if (verificaNomeProduto == null)
+                        {
+                            await _produtos.Update(produto);
+
+                            return Ok(new { message = "Produtor atualizado com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Ja existe um produto chamado '" + produto.nome + "'", result = false });
+                        }
                     }
                 }
                 else
@@ -107,6 +123,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Localiza produto
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> localizaProduto(int id)
         {
@@ -116,7 +133,26 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaProduto != null)
                 {
-                    return Ok(new { message = "Produto encontrado", result = true, data = localizaProduto });
+                    List<object> produtoRetorno = new List<object>();
+
+                    var verificaCategoria = await _categoria.getCategoria(localizaProduto.idCategoria);
+                    var verificaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
+
+                    produtoRetorno.Add(new
+                    {
+                        idProduto = localizaProduto.id,
+                        idCategoria = verificaCategoria.id,
+                        idCertificado = verificaCertificado.id,
+                        produto = localizaProduto.nome,
+                        categoria = verificaCategoria.nome,
+                        certificado = verificaCertificado.numero,
+                        ativo = localizaProduto.ativo,
+                        foto = localizaProduto.foto,
+                        validadeEmUso = localizaProduto.validadeEmUso,
+                        preco = localizaProduto.preco
+                    });
+
+                    return Ok(new { message = "Produto encontrado", result = true, data = produtoRetorno });
                 }
                 else
                 {
@@ -130,9 +166,38 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Lista produtos por status
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("todosStatus/{status}")]
+        public async Task<IActionResult> produtosStatus(string status)
+        {
+            try
+            {
+                var todosProdutos = await _produtos.produtosStatus(status);
+
+                if (todosProdutos != null || !todosProdutos.Equals(0))
+                {
+                    return Ok(new { message = "Produtos encontrados", result = true, data = todosProdutos });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Produtos não encontrados", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Ativa ou desativa produto
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("status/{status}/{id}")]
         public async Task<IActionResult> ativaDesativaProduto(string status, int id)
         {
@@ -141,9 +206,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                 var localizaProduto = await _produtos.ativaDesativaProduto(id);
 
                 if (localizaProduto != null)
-                {                    
+                {
                     localizaProduto.ativo = status;
-                 
+
                     await _produtos.Update(localizaProduto);
 
                     if (status == "S")
@@ -170,6 +235,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Localiza todos os produtos
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> localizaProdutos()
         {
@@ -179,7 +245,29 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaProdutos != null || !localizaProdutos.Equals(0))
                 {
-                    return Ok(new { message = "Produtos encontrados", result = true, lista = localizaProdutos });
+                    List<object> produtoRetorno = new List<object>();
+
+                    foreach (var item in localizaProdutos)
+                    {
+                        var verificaCategoria = await _categoria.getCategoria(item.idCategoria);
+                        var verificaCertificado = await _certificado.getCertificado(item.idCertificadoAprovacao);
+
+                        produtoRetorno.Add(new
+                        {
+                            idProduto = item.id,
+                            idCategoria = verificaCategoria.id,
+                            idCertificado = verificaCertificado.id,
+                            produto = item.nome,
+                            categoria = verificaCategoria.nome,
+                            certificado = verificaCertificado.numero,
+                            ativo = item.ativo,
+                            foto = item.foto,
+                            validadeEmUso = item.validadeEmUso,
+                            preco = item.preco
+                        });
+                    }
+
+                    return Ok(new { message = "Produtos encontrados", result = true, data = produtoRetorno });
                 }
                 else
                 {

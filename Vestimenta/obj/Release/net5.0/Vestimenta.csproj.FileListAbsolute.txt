@@ -34,4 +34,4 @@ C:\Projects\dotnet\ApiSMT\Vestimenta\obj\Release\net5.0\Vestimenta.dll
 C:\Projects\dotnet\ApiSMT\Vestimenta\obj\Release\net5.0\Vestimenta.pdb
 C:\Projects\dotnet\ApiSMT\Vestimenta\obj\Release\net5.0\Vestimenta.genruntimeconfig.cache
 C:\Projects\dotnet\ApiSMT\Vestimenta\obj\Release\net5.0\ref\Vestimenta.dll
-C:\Projects\dotnet\ApiSMT\Vestimenta\bin\Release\net5.0\ref\Vestimenta.dll
+C:\Projects\dotnet\ApiSMT\Vestimenta\obj\Release\net5.0\refint\Vestimenta.dll

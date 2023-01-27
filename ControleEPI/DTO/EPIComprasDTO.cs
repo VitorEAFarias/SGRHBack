@@ -13,7 +13,7 @@ namespace ControleEPI.DTO
     {
         public void Configure(EntityTypeBuilder<EPIComprasDTO> builder)
         {
-            builder.Property(e => e.pedidosAprovados).HasConversion(
+            builder.Property(e => e.idPedidosAprovados).HasConversion(
             v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
             v => JsonConvert.DeserializeObject<IList<PedidosAprovados>>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
@@ -21,7 +21,7 @@ namespace ControleEPI.DTO
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         [JsonField]
-        public IList<PedidosAprovados> pedidosAprovados { get; set; }        
+        public IList<PedidosAprovados> idPedidosAprovados { get; set; }        
         public DateTime? dataCadastroCompra { get; set; }
         public decimal valorTotalCompra { get; set; }
         public int status { get; set; }

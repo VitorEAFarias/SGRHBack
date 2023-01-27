@@ -5,6 +5,7 @@ using ControleEPI.DTO.FromBody;
 using ControleEPI.BLL;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -44,6 +45,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="status"></param>
         /// <param name="idVinculo"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("{idVinculo}/{status}")]
         public async Task<IActionResult> modificaStatus(int status, int idVinculo)
         {
@@ -90,6 +92,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{status}")]
         public async Task<IActionResult> listaVinculosStatus(int status)
         {
@@ -136,6 +139,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{idUsuario}")]
         public async Task<IActionResult> listaVinculosUsuarios(int idUsuario)
         {

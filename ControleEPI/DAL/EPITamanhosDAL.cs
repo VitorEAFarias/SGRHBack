@@ -35,6 +35,7 @@ namespace ControleEPI.DAL
 
         public async Task Update(EPITamanhosDTO tamanho)
         {
+            _context.ChangeTracker.Clear();
             _context.Entry(tamanho).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

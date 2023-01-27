@@ -17,13 +17,13 @@ namespace ControleEPI.DAL
         }
         public async Task<EPIPedidosAprovadosDTO> getProdutoAprovado(int Id, string status)
         {
-            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIProdutosAprovados WHERE enviadoCompra = '" + status + "'" +
+            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE enviadoCompra = '" + status + "'" +
                 "").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
         public async Task<IList<EPIPedidosAprovadosDTO>> getProdutosAprovados(string status)
         {
-            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIProdutosAprovados WHERE enviadoCompra = '" + status + "'").ToListAsync();
+            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE enviadoCompra = '" + status + "'").ToListAsync();
         }
 
         public async Task<EPIPedidosAprovadosDTO> Insert(EPIPedidosAprovadosDTO produtoAprovado)
@@ -44,7 +44,7 @@ namespace ControleEPI.DAL
 
         public async Task<EPIPedidosAprovadosDTO> verificaProdutoAprovado(int idProduto, int idPedido, int idTamanho)
         {
-            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT idProduto, idPedido FROM EPIProdutosAprovados WHERE idProduto = '" + idProduto + "' AND" +
+            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT idProduto, idPedido FROM EPIPedidosAprovados WHERE idProduto = '" + idProduto + "' AND" +
                 "idPedido = '" + idPedido + "' AND idTamanho = '" + idTamanho + "' AND enviadoCompra = 'S'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
     }

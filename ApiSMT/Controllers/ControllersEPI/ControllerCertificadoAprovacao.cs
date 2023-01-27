@@ -1,5 +1,6 @@
 ﻿using ControleEPI.BLL;
 using ControleEPI.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -31,6 +32,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="certificado"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insereCertificadoAprovacao([FromBody] EPICertificadoAprovacaoDTO certificado)
         {
@@ -40,6 +42,9 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (verificaValorCertificado == null)
                 {
+                    certificado.ativo = "S";
+                    certificado.observacao = "";
+
                     await _certificado.Insert(certificado);
 
                     return Ok(new { message = "Certificado cadastrado com sucesso", result = true });
@@ -56,46 +61,24 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
-        /// Atualiza certificado EPI
+        /// Lista certificados ativados
         /// </summary>
         /// <returns></returns>
-        [HttpPut]
-        public async Task<IActionResult> atualizaCertificado([FromBody] EPICertificadoAprovacaoDTO certificado)
+        [Authorize]
+        [HttpGet("ativados/{status}")]
+        public async Task<IActionResult> listaAtivados(string status)
         {
             try
             {
-                EPICertificadoAprovacaoDTO localizaCertificado = await _certificado.getCertificado(certificado.id);
+                var localizaAtivados = await _certificado.listaStatus(status);
 
-                if (localizaCertificado != null)
+                if (localizaAtivados != null || !localizaAtivados.Equals(0))
                 {
-                    EPIProdutosDTO localizaProduto = await _produtos.getCertificadoProduto(localizaCertificado.id);
-
-                    if (localizaProduto != null)
-                    {
-                        EPICertificadoAprovacaoDTO verificaCertificado = await _certificado.getValorCertificado(certificado.numero);
-
-                        if (verificaCertificado == null)
-                        {
-                            localizaCertificado.numero = certificado.numero;
-                            localizaCertificado.validade = certificado.validade;
-
-                            await _certificado.Update(localizaCertificado);
-
-                            return Ok(new { message = "Certificado atualizado para o produto '" + localizaProduto.nome + "'", result = true, data = certificado.numero });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Ja existe um certificado cadastrado com esse valor", result = false });
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Nenhum produto atribuido com esse certificado", result = false });
-                    }
+                    return Ok(new { message = "Lista encontrada", result = true, data = localizaAtivados });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Certificado de autorização não encontrado", result = false });
+                    return BadRequest(new { message = "Nenhum certificado enconrtado com os status enviado", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -108,8 +91,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Ativa ou desativa produto
         /// </summary>
         /// <returns></returns>
-        [HttpPut("status/{status}/{id}")]
-        public async Task<IActionResult> ativaDesativaCertificado(string status, int id)
+        [Authorize]
+        [HttpPut("status/{status}/{id}/{observacao}")]
+        public async Task<IActionResult> ativaDesativaCertificado(string status, int id, string observacao)
         {
             try
             {
@@ -118,16 +102,28 @@ namespace ApiSMT.Controllers.ControllersEPI
                 if (localizaCertificado != null)
                 {
                     localizaCertificado.ativo = status;
-
-                    await _certificado.Update(localizaCertificado);
+                    localizaCertificado.observacao = observacao;
 
                     if (status == "S")
                     {
+                        await _certificado.Update(localizaCertificado);
+
                         return Ok(new { message = "Certificado ativado com sucesso!!!", result = true });
                     }
                     else
                     {
-                        return Ok(new { message = "Certificado desativado com sucesso!!!", result = true });
+                        var verificaCertificado = await _produtos.getCertificadoProduto(localizaCertificado.id);
+
+                        if (verificaCertificado == null || verificaCertificado.Equals(0))
+                        {
+                            await _certificado.Update(localizaCertificado);
+
+                            return Ok(new { message = "Certificado desativado com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Não é possivel desativar um certificado vinculado a um produto", result = false });
+                        }                        
                     }
                 }
                 else
@@ -145,6 +141,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista certificados e seus respectivos produtos
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> localizaProdutosCertificado()
         {
@@ -172,6 +169,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> localizaProdutoCertificado(int id)
         {

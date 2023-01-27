@@ -4,6 +4,7 @@ using Vestimenta.BLL;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Vestimenta.DAL
 {
@@ -32,6 +33,11 @@ namespace Vestimenta.DAL
         public async Task<IList<VestComprasDTO>> getCompras()
         {
             return await _context.VestCompra.ToListAsync();
+        }
+
+        public async Task<IList<VestComprasDTO>> localizaProcessoCompra()
+        {
+            return await _context.VestCompra.FromSqlRaw("SELECT * FROM VestCompra WHERE status = 8").OrderBy(c => c.id).ToListAsync();
         }
 
         public async Task<VestComprasDTO> Insert(VestComprasDTO compra)

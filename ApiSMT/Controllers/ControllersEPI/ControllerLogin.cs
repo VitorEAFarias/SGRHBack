@@ -138,7 +138,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                                     int index = array.findIndex(departamento.id);
 
-                                    if (index != -1)
+                                    if (index != -1 || item.id_empregado == 122)
                                     {
                                         adm = true;
                                     }

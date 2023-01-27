@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using ControleEPI.BLL;
 using Microsoft.AspNetCore.Authorization;
 using ControleEPI.DTO.E_Mail;
-using Vestimenta.DTO.FromBody;
 using ApiSMT.Utilitários;
 using ControleEPI.DTO;
+using Vestimenta.DTO.email;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -99,7 +99,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         }                        
 
                         email.EmailDe = getEmail.valor;
-                        email.EmailPara = "rinaldo.bordim@reisoffice.com.br";
+                        email.EmailPara = "simone.maciviero@reisoffice.com.br";
                         email.Conteudo = conteudoEmails;
                         email.Assunto = "Novo pedido de compra avulsa";
 
@@ -399,49 +399,52 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             if (idRepositorio != 0)
                             {
                                 getRepositorio = await _repositorio.getRepositorio(idRepositorio);
-                                getPedido = await _pedidos.getPedido(getRepositorio.idPedido);
-
                                 List<ItemDTO> getItemPedido = new List<ItemDTO>();
 
-                                foreach (var itens in getPedido.item)
-                                {                                     
-                                    if (itens.id == repositorio.idItem && itens.tamanho == repositorio.tamanho)
+                                if (!getRepositorio.idPedido.Equals(0))
+                                {
+                                    getPedido = await _pedidos.getPedido(getRepositorio.idPedido);
+
+                                    foreach (var itens in getPedido.item)
                                     {
-                                        getItemPedido.Add(new ItemDTO
+                                        if (itens.id == repositorio.idItem && itens.tamanho == repositorio.tamanho)
                                         {
-                                            id = itens.id,
-                                            nome = itens.nome,
-                                            tamanho = itens.tamanho,
-                                            quantidade = itens.quantidade,
-                                            status = 7,
-                                            dataAlteracao = DateTime.Now
-                                        });                                        
+                                            getItemPedido.Add(new ItemDTO
+                                            {
+                                                id = itens.id,
+                                                nome = itens.nome,
+                                                tamanho = itens.tamanho,
+                                                quantidade = itens.quantidade,
+                                                status = 7,
+                                                dataAlteracao = DateTime.Now
+                                            });
 
-                                        getStatusItem = await _status.getStatus(7);
+                                            getStatusItem = await _status.getStatus(7);
 
-                                        conteudoEmails.Add(new VestConteudoEmailDTO
+                                            conteudoEmails.Add(new VestConteudoEmailDTO
+                                            {
+                                                nome = itens.nome,
+                                                tamanho = itens.tamanho,
+                                                status = getStatusItem.nome,
+                                                quantidade = itens.quantidade
+                                            });
+                                        }
+                                        else
                                         {
-                                            nome = itens.nome,
-                                            tamanho = itens.tamanho,
-                                            status = getStatusItem.nome,
-                                            quantidade = itens.quantidade
-                                        });
-                                    } 
-                                    else
-                                    {
-                                        getItemPedido.Add(new ItemDTO
-                                        {
-                                            id = itens.id,
-                                            nome = itens.nome,
-                                            tamanho = itens.tamanho,
-                                            quantidade = itens.quantidade,
-                                            status = itens.status,
-                                            dataAlteracao = itens.dataAlteracao
-                                        });
+                                            getItemPedido.Add(new ItemDTO
+                                            {
+                                                id = itens.id,
+                                                nome = itens.nome,
+                                                tamanho = itens.tamanho,
+                                                quantidade = itens.quantidade,
+                                                status = itens.status,
+                                                dataAlteracao = itens.dataAlteracao
+                                            });
 
-                                        getStatusItem = await _status.getStatus(itens.status);
+                                            getStatusItem = await _status.getStatus(itens.status);
+                                        }
                                     }
-                                }
+                                }                                
 
                                 int contador = 0;
 
@@ -619,6 +622,6 @@ namespace ApiSMT.Controllers.ControllersVestimenta
             {
                 return BadRequest(ex.Message);
             }
-        }
+        }        
     }
 }

@@ -35,6 +35,6 @@ namespace ControleEPI.DTO
         public string nome { get; set; }
         public int quantidade { get; set; }
         public int status { get; set; }
-        public int idTamanho { get; set; }
+        public int tamanho { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace ControleEPI.BLL
         Task<EPICategoriasDTO> verificaCategoria(string nome);
         Task<IList<EPICategoriasDTO>> getCategorias();
         Task Update(EPICategoriasDTO categoria);
+        Task Delete(int id);
     }
 }

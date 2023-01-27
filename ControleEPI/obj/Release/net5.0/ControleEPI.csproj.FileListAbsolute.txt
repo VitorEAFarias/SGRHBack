@@ -40,4 +40,4 @@ C:\Projects\dotnet\ApiSMT\ControleEPI\obj\Release\net5.0\ControleEPI.dll
 C:\Projects\dotnet\ApiSMT\ControleEPI\obj\Release\net5.0\ControleEPI.pdb
 C:\Projects\dotnet\ApiSMT\ControleEPI\obj\Release\net5.0\ControleEPI.genruntimeconfig.cache
 C:\Projects\dotnet\ApiSMT\ControleEPI\obj\Release\net5.0\ref\ControleEPI.dll
-C:\Projects\dotnet\ApiSMT\ControleEPI\bin\Release\net5.0\ref\ControleEPI.dll
+C:\Projects\dotnet\ApiSMT\ControleEPI\obj\Release\net5.0\refint\ControleEPI.dll

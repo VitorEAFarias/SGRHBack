@@ -26,6 +26,7 @@ namespace Vestimenta.DTO
         public int idUsuario { get; set; }
         public int status { get; set; }
         public string descricao { get; set; }
+
     }
 
     public class Repositorio : IEntityTypeConfiguration<Repositorio>

@@ -24,6 +24,7 @@ namespace ControleEPI.DAL
             return categoria;
         }
 
+
         public async Task<IList<EPICategoriasDTO>> getCategorias()
         {
             return await _context.EPICategoria.ToListAsync();
@@ -44,6 +45,14 @@ namespace ControleEPI.DAL
             _context.ChangeTracker.Clear();
 
             _context.Entry(categoria).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(int Id)
+        {
+            var categoriaDeleta = await _context.EPICategoria.FindAsync(Id);
+            _context.EPICategoria.Remove(categoriaDeleta);
+
             await _context.SaveChangesAsync();
         }
     }

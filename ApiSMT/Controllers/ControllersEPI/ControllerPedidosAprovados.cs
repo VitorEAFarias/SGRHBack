@@ -4,6 +4,10 @@ using ControleEPI.BLL;
 using ControleEPI.DTO;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using ControleEPI.DTO.email;
+using ControleEPI.DTO.E_Mail;
+using ApiSMT.Utilitários;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -18,6 +22,11 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IEPIPedidosBLL _pedidos;
         private readonly IEPIComprasBLL _compras;
         private readonly IEPIProdutosBLL _produtos;
+        private readonly IRHConUserBLL _usuario;
+        private readonly IEPIStatusBLL _status;
+        private readonly IEPITamanhosBLL _tamanho;
+        private readonly IEPIProdutosEstoqueBLL _estoque;
+        private readonly IMailService _mail;
 
         /// <summary>
         /// Construtor ProdutosAprovadosController
@@ -26,12 +35,23 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="pedidos"></param>
         /// <param name="compras"></param>
         /// <param name="produtos"></param>
-        public ControllerPedidosAprovados(IEPIPedidosAprovadosBLL pedidosAprovados, IEPIPedidosBLL pedidos, IEPIComprasBLL compras, IEPIProdutosBLL produtos)
+        /// <param name="usuario"></param>
+        /// <param name="status"></param>
+        /// <param name="tamanho"></param>
+        /// <param name="estoque"></param>
+        /// <param name="mail"></param>
+        public ControllerPedidosAprovados(IEPIPedidosAprovadosBLL pedidosAprovados, IEPIPedidosBLL pedidos, IEPIComprasBLL compras, IEPIProdutosBLL produtos,
+             IRHConUserBLL usuario, IEPIStatusBLL status, IEPITamanhosBLL tamanho, IEPIProdutosEstoqueBLL estoque ,IMailService mail)
         {
             _pedidosAprovados = pedidosAprovados;
             _pedidos = pedidos;
             _compras = compras;
             _produtos = produtos;
+            _usuario = usuario;
+            _status = status;
+            _tamanho = tamanho;
+            _estoque = estoque;
+            _mail = mail;
         }
 
         /// <summary>
@@ -40,116 +60,116 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="enviaCompra"></param>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("enviarCompra/{idUsuario}")]
         public async Task<ActionResult> enviaParaCompras([FromBody] List<EPIPedidosAprovadosDTO> enviaCompra, int idUsuario)
         {
             try
             {
-                if (enviaCompra != null)
+                var localizaUsuario = await _usuario.GetEmp(idUsuario);
+
+                if (localizaUsuario != null || !localizaUsuario.Equals(0))
                 {
-                    List<PedidosAprovados> pedidosAprovados = new List<PedidosAprovados>();
-                    EPIComprasDTO compras = new EPIComprasDTO();
-                    decimal valorTotalCompra = 0;
-
-                    foreach (var item in enviaCompra)
+                    if (enviaCompra != null)
                     {
-                        pedidosAprovados.Add(new PedidosAprovados
+                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
+                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
+                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        List<PedidosAprovados> pedidosAprovados = new List<PedidosAprovados>();
+                        EPIComprasDTO compras = new EPIComprasDTO();
+
+                        decimal valorTotalCompra = 0;
+                        string tamanho = string.Empty;
+
+                        foreach (var produto in enviaCompra)
                         {
-                            idPedidosAprovados = item.id
-                        });
+                            pedidosAprovados.Add(new PedidosAprovados
+                            {
+                                idPedidosAprovados = produto.id
+                            });
 
-                        item.enviadoCompra = "S";
+                            var localizaPedido = await _pedidos.getPedido(produto.idPedido);
+                            var localizaProduto = await _produtos.getProduto(produto.idProduto);
+                            var checkStatusItem = await _status.getStatus(4);
+                            var getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
 
-                        await _pedidosAprovados.Update(item);
-                    }
+                            EPITamanhosDTO localizaTamanho = new EPITamanhosDTO();
 
-                    compras.pedidosAprovados = pedidosAprovados;
-                    compras.dataCadastroCompra = DateTime.Now;
+                            foreach (var item in localizaPedido.produtos)
+                            {
+                                var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(item.id, item.tamanho);
 
-                    foreach (var item in pedidosAprovados)
-                    {
-                        var localizaPedidoAprovado = await _pedidosAprovados.getProdutoAprovado(item.idPedidosAprovados, "S");
-                        var localizaProduto = await _produtos.getProduto(localizaPedidoAprovado.idProduto);
-                        decimal valorTotal = localizaPedidoAprovado.quantidade * localizaProduto.preco;
-                        valorTotalCompra = valorTotalCompra + valorTotal;
-                    }
+                                if (localizaProdutoEstoque != null || !localizaProdutoEstoque.Equals(0))
+                                {
+                                    localizaTamanho = await _tamanho.localizaTamanho(item.tamanho);
+                                }
+                            }                             
 
-                    compras.valorTotalCompra = valorTotalCompra;
-                    compras.status = 1;
-                    compras.idUsuario = idUsuario;
-                    compras.dataFinalizacaoCompra = DateTime.MinValue;
+                            if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                            {
+                                tamanho = "";
+                            }
+                            else
+                            {
+                                tamanho = localizaTamanho.tamanho;
+                            }
 
-                    var insereCompra = await _compras.Insert(compras);
+                            conteudoEmails.Add(new EPIConteudoEmailDTO
+                            {
+                                nome = localizaProduto.nomeProduto,
+                                tamanho = tamanho,
+                                status = checkStatusItem.nome,
+                                quantidade = produto.quantidade
+                            });
 
-                    if (insereCompra != null)
-                    {
-                        return Ok(new { message = "Produtos enviados para compra com sucesso!!!", result = true });
+                            produto.enviadoCompra = "S";
+
+                            email.EmailDe = getEmail.valor;
+                            email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                            email.ConteudoColaborador = conteudoEmailColaborador;
+                            email.Conteudo = conteudoEmails;
+                            email.Assunto = "EPI enviado para compras";
+
+                            await _mail.SendEmailAsync(email);
+
+                            await _pedidosAprovados.Update(produto);
+                        }
+
+                        compras.idPedidosAprovados = pedidosAprovados;
+                        compras.dataCadastroCompra = DateTime.Now;
+
+                        foreach (var item in pedidosAprovados)
+                        {
+                            var localizaPedidoAprovado = await _pedidosAprovados.getProdutoAprovado(item.idPedidosAprovados, "S");
+                            var localizaProduto = await _produtos.getProduto(localizaPedidoAprovado.idProduto);
+                            decimal valorTotal = localizaPedidoAprovado.quantidade * localizaProduto.preco;
+                            valorTotalCompra = valorTotalCompra + valorTotal;
+                        }
+
+                        compras.valorTotalCompra = valorTotalCompra;
+                        compras.status = 1;
+                        compras.idUsuario = idUsuario;
+                        compras.dataFinalizacaoCompra = DateTime.MinValue;
+
+                        var insereCompra = await _compras.Insert(compras);
+
+                        if (insereCompra != null)
+                        {
+                            return Ok(new { message = "Produtos enviados para compra com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Erro ao enviar produtos para compra", result = false });
+                        }
                     }
                     else
                     {
-                        return BadRequest(new { message = "Erro ao enviar produtos para compra", result = false });
+                        return BadRequest(new { message = "Nenhum item selecionado para envio", result = false });
                     }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum item selecionado para envio", result = false });
-                }                
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Aprovar pedidos
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> aprovaPedido(int id)
-        {
-            try
-            {
-                var localizaPedido = await _pedidos.getPedido(id);
-                List<Produtos> produtosStatus = new List<Produtos>();
-
-                if (localizaPedido != null)
-                {
-                    EPIPedidosAprovadosDTO pedidosAprovados = new EPIPedidosAprovadosDTO();
-
-                    foreach (var produtos in localizaPedido.produtos)
-                    {
-                        pedidosAprovados.idProduto = produtos.id;
-                        pedidosAprovados.idPedido = localizaPedido.id;
-                        pedidosAprovados.quantidade = produtos.quantidade;
-                        pedidosAprovados.enviadoCompra = "N";
-
-                        var aprovaPedido = await _pedidosAprovados.Insert(pedidosAprovados);
-
-                        if (aprovaPedido != null)
-                        {
-                            produtosStatus.Add(new Produtos
-                            {
-                                id = produtos.id,
-                                nome = produtos.nome,
-                                quantidade = produtos.quantidade,
-                                status = 2,
-                                idTamanho = produtos.idTamanho
-                            });
-                        }
-                    }
-
-                    localizaPedido.produtos = produtosStatus;
-                    localizaPedido.status = 2;
-
-                    await _pedidos.Update(localizaPedido);
-
-                    return Ok(new { message = "Pedidos aprovados com sucesso!!!", result = true });
-                }
-                else
-                {
-                    return BadRequest(new { message = "Pedido não encontrado", result = false });
+                    return BadRequest(new { message = "Colaborador com varios contratos ativos ou nenhum, verifique no portal do RH", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -164,6 +184,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult> localizaProdutoAprovado(int id, string status)
         {
@@ -198,7 +219,8 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        [HttpGet("produtosAprovados")]
+        [Authorize]
+        [HttpGet("produtosAprovados/{status}")]
         public async Task<ActionResult> produtosAprovados(string status)
         {
             try

@@ -36,7 +36,7 @@ namespace ControleEPI.DAL
 
         public async Task<EPIProdutosEstoqueDTO> getProdutoExistente(int idProduto)
         {
-            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProduto + "' AND ativos = 'S'").OrderBy(x => x.id).FirstOrDefaultAsync();
+            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProduto + "' AND ativo = 'S'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
         public async Task<EPIProdutosEstoqueDTO> getProdutoEstoqueTamanho(int id, int idTamanho)
@@ -52,6 +52,7 @@ namespace ControleEPI.DAL
 
         public async Task Update(EPIProdutosEstoqueDTO produto)
         {
+            _context.ChangeTracker.Clear();
             _context.Entry(produto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

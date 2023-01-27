@@ -5,10 +5,9 @@ using Vestimenta.DTO;
 using ControleEPI.BLL;
 using System;
 using System.Collections.Generic;
-using ControleEPI.DTO.E_Mail;
 using Microsoft.AspNetCore.Authorization;
-using Vestimenta.DTO.FromBody;
 using ApiSMT.Utilitários;
+using Vestimenta.DTO.email;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

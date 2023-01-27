@@ -1,4 +1,4 @@
-﻿namespace Vestimenta.DTO.FromBody
+﻿namespace Vestimenta.DTO.email
 {
     public class VestConteudoEmailColaboradorDTO
     {
