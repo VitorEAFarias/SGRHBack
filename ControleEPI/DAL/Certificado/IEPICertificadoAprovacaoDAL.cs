@@ -1,11 +1,11 @@
-﻿using ControleEPI.DTO;
-using ControleEPI.DTO.FromBody;
+﻿using ControleEPI.DTO.FromBody;
+using ControleEPI.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ControleEPI.BLL
+namespace ControleEPI.DAL.Certificado
 {
-    public interface IEPICertificadoAprovacaoBLL
+    public interface IEPICertificadoAprovacaoDAL
     {
         Task<EPICertificadoAprovacaoDTO> Insert(EPICertificadoAprovacaoDTO certificado);
         Task<EPICertificadoAprovacaoDTO> getCertificado(int id);
@@ -15,5 +15,7 @@ namespace ControleEPI.BLL
         Task<IList<EPICertificadoAprovacaoDTO>> getCertificadosNumero();
         Task<IList<CertificadoProdutoDTO>> getCertificados();
         Task Update(EPICertificadoAprovacaoDTO certificado);
+        Task<IList<CertificadoProdutoDTO>> getProdutos();
+        Task<CertificadoProdutoDTO> getProduto(int id);
     }
 }

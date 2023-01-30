@@ -3,12 +3,11 @@ using ControleEPI.DTO;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ControleEPI.BLL;
 using System.Linq;
 
-namespace ControleEPI.DAL
+namespace ControleEPI.DAL.Categorias
 {
-    public class EPICategoriasDAL : IEPICategoriasBLL
+    public class EPICategoriasDAL : IEPICategoriasDAL
     {
         public readonly AppDbContext _context;
         public EPICategoriasDAL(AppDbContext context)
@@ -23,7 +22,6 @@ namespace ControleEPI.DAL
 
             return categoria;
         }
-
 
         public async Task<IList<EPICategoriasDTO>> getCategorias()
         {
@@ -40,20 +38,23 @@ namespace ControleEPI.DAL
             return await _context.EPICategoria.FromSqlRaw("SELECT * FROM EPICategoria WHERE nome = '" + nome + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
-        public async Task Update(EPICategoriasDTO categoria)
+        public async Task<EPICategoriasDTO> Update(EPICategoriasDTO categoria)
         {
             _context.ChangeTracker.Clear();
 
             _context.Entry(categoria).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            return categoria;
         }
 
-        public async Task Delete(int Id)
+        public async Task<EPICategoriasDTO> Delete(int Id)
         {
             var categoriaDeleta = await _context.EPICategoria.FindAsync(Id);
             _context.EPICategoria.Remove(categoriaDeleta);
 
             await _context.SaveChangesAsync();
+
+            return categoriaDeleta;
         }
     }
 }

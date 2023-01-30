@@ -9,7 +9,7 @@
             Classe de categorias
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.IEPICategoriasBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.Categorias.IEPICategoriasBLL,ControleEPI.BLL.IEPIProdutosBLL)">
             <summary>
             Construtos CategoriasController
             </summary>
@@ -438,7 +438,7 @@
             Classe ControllerProdutos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.IEPICategoriasBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.Categorias.IEPICategoriasBLL)">
             <summary>
             Contrutor ControllerProdutos
             </summary>

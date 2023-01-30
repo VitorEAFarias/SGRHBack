@@ -11,6 +11,7 @@ using ControleEPI.DTO.E_Mail;
 using ControleEPI.DTO.email;
 using Vestimenta.DTO;
 using Vestimenta.DTO.email;
+using ControleEPI.BLL.Produtos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

@@ -1,10 +1,12 @@
 ﻿using System;
-using ControleEPI.BLL;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using ControleEPI.BLL.Categorias;
+using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.Certificado;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

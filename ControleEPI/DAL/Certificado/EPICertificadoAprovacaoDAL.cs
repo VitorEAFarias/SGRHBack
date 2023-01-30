@@ -1,15 +1,15 @@
 ﻿using ControleEPI.DTO._DbContext;
 using ControleEPI.DTO;
-using ControleEPI.BLL;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using ControleEPI.DTO.FromBody;
+using ControleEPI.BLL.Certificado;
 
-namespace ControleEPI.DAL
+namespace ControleEPI.DAL.Certificado
 {
-    public class EPICertificadoAprovacaoDAL : IEPICertificadoAprovacaoBLL
+    public class EPICertificadoAprovacaoDAL : IEPICertificadoAprovacaoDAL
     {
         private readonly AppDbContext _context;
 
@@ -31,13 +31,13 @@ namespace ControleEPI.DAL
                                where EPICertificadoAprovacao.id == idCertificadoAprovacao
                                select new
                                {
-                                   id = EPIProdutos.id,
-                                   nome = EPIProdutos.nome,
+                                   EPIProdutos.id,
+                                   EPIProdutos.nome,
                                    categoria = EPICategoria.nome,
                                    ca = EPICertificadoAprovacao.numero,
-                                   preco = EPIProdutos.preco,
-                                   ativo = EPIProdutos.ativo,
-                                   validadeEmUso = EPIProdutos.validadeEmUso
+                                   EPIProdutos.preco,
+                                   EPIProdutos.ativo,
+                                   EPIProdutos.validadeEmUso
                                }).OrderBy(x => x.id).FirstOrDefaultAsync();
 
             CertificadoProdutoDTO resultado = new CertificadoProdutoDTO();
@@ -51,7 +51,7 @@ namespace ControleEPI.DAL
                 preco = query.preco,
                 ativo = query.ativo,
                 validadeEmUso = query.validadeEmUso
-            };            
+            };
 
             return resultado;
         }
@@ -68,11 +68,11 @@ namespace ControleEPI.DAL
                                join EPICategoria in _context.EPICategoria on EPIProdutos.idCategoria equals EPICategoria.id
                                select new
                                {
-                                   id = EPIProdutos.id,
-                                   nome = EPIProdutos.nome,
+                                   EPIProdutos.id,
+                                   EPIProdutos.nome,
                                    categoria = EPICategoria.nome,
                                    ca = EPICertificadoAprovacao.numero,
-                                   preco = EPIProdutos.preco
+                                   EPIProdutos.preco
                                }).ToListAsync();
 
             List<CertificadoProdutoDTO> resultado = new List<CertificadoProdutoDTO>();
@@ -80,7 +80,7 @@ namespace ControleEPI.DAL
             foreach (var item in query)
             {
                 resultado.Add(new CertificadoProdutoDTO
-                { 
+                {
                     id = item.id,
                     nomeProduto = item.nome,
                     categoria = item.categoria,
@@ -117,6 +117,78 @@ namespace ControleEPI.DAL
         public async Task<IList<EPICertificadoAprovacaoDTO>> listaStatus(string status)
         {
             return await _context.EPICertificadoAprovacao.FromSqlRaw("SELECT * FROM EPICertificadoAprovacao WHERE ativo = '" + status + "'").OrderBy(c => c.id).ToListAsync();
+        }
+
+        public async Task<CertificadoProdutoDTO> getProduto(int id)
+        {
+            var query = await (from EPIProdutos in _context.EPIProdutos
+                               join EPICertificadoAprovacao in _context.EPICertificadoAprovacao on EPIProdutos.idCertificadoAprovacao equals EPICertificadoAprovacao.id
+                               join EPICategoria in _context.EPICategoria on EPIProdutos.idCategoria equals EPICategoria.id
+                               where EPIProdutos.id == id
+                               select new
+                               {
+                                   EPIProdutos.id,
+                                   EPIProdutos.nome,
+                                   categoria = EPICategoria.nome,
+                                   idCertificado = EPICertificadoAprovacao.id,
+                                   ca = EPICertificadoAprovacao.numero,
+                                   EPIProdutos.preco,
+                                   EPIProdutos.ativo,
+                                   EPIProdutos.validadeEmUso
+                               }).OrderBy(x => x.id).FirstOrDefaultAsync();
+
+            CertificadoProdutoDTO resultado = new CertificadoProdutoDTO();
+
+            resultado = new CertificadoProdutoDTO
+            {
+                id = query.id,
+                nomeProduto = query.nome,
+                categoria = query.categoria,
+                idCertificado = query.idCertificado,
+                ca = query.ca,
+                preco = query.preco,
+                ativo = query.ativo,
+                validadeEmUso = query.validadeEmUso
+            };
+
+            return resultado;
+        }
+
+        public async Task<IList<CertificadoProdutoDTO>> getProdutos()
+        {
+            var query = await (from EPIProdutos in _context.EPIProdutos
+                               join EPICertificadoAprovacao in _context.EPICertificadoAprovacao on EPIProdutos.idCertificadoAprovacao equals EPICertificadoAprovacao.id
+                               join EPICategoria in _context.EPICategoria on EPIProdutos.idCategoria equals EPICategoria.id
+                               select new
+                               {
+                                   EPIProdutos.id,
+                                   EPIProdutos.nome,
+                                   categoria = EPICategoria.nome,
+                                   idCertificado = EPICertificadoAprovacao.id,
+                                   ca = EPICertificadoAprovacao.numero,
+                                   EPIProdutos.preco,
+                                   EPIProdutos.ativo,
+                                   EPIProdutos.validadeEmUso
+                               }).ToListAsync();
+
+            List<CertificadoProdutoDTO> resultado = new List<CertificadoProdutoDTO>();
+
+            foreach (var item in query)
+            {
+                resultado.Add(new CertificadoProdutoDTO
+                {
+                    id = item.id,
+                    nomeProduto = item.nome,
+                    categoria = item.categoria,
+                    idCertificado = item.idCertificado,
+                    ca = item.ca,
+                    preco = item.preco,
+                    ativo = item.ativo,
+                    validadeEmUso = item.validadeEmUso
+                });
+            }
+
+            return resultado;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ControleEPI.BLL;
+﻿using ControleEPI.BLL.Categorias;
+using ControleEPI.BLL.Produtos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -106,7 +107,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// Lista todas categorias
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> listaCategorias()
         {

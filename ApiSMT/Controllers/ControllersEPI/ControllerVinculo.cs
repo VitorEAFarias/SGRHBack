@@ -6,6 +6,7 @@ using ControleEPI.BLL;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using ControleEPI.BLL.Produtos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

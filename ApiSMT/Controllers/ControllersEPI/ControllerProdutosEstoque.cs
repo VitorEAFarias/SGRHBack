@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO;
+using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.Certificado;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

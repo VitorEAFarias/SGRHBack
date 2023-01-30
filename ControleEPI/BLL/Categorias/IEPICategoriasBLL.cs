@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ControleEPI.BLL
+namespace ControleEPI.BLL.Categorias
 {
     public interface IEPICategoriasBLL
     {
@@ -10,7 +10,7 @@ namespace ControleEPI.BLL
         Task<EPICategoriasDTO> getCategoria(int Id);
         Task<EPICategoriasDTO> verificaCategoria(string nome);
         Task<IList<EPICategoriasDTO>> getCategorias();
-        Task Update(EPICategoriasDTO categoria);
-        Task Delete(int id);
+        Task<EPICategoriasDTO> Update(EPICategoriasDTO categoria);
+        Task<EPICategoriasDTO> Delete(int id);
     }
 }

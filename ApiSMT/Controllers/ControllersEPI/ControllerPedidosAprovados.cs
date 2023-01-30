@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using ControleEPI.DTO.email;
 using ControleEPI.DTO.E_Mail;
 using ApiSMT.Utilitários;
+using ControleEPI.BLL.Produtos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

@@ -22,6 +22,12 @@ using ApiSMT.Utilitários.JWT;
 using DinkToPdf.Contracts;
 using DinkToPdf;
 using ApiSMT.Utilitários.email;
+using ControleEPI.BLL.Categorias;
+using ControleEPI.DAL.Categorias;
+using ControleEPI.DAL.Produtos;
+using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.Certificado;
+using ControleEPI.DAL.Certificado;
 
 namespace ApiSMT
 {
@@ -79,15 +85,21 @@ namespace ApiSMT
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
             //EPI
-            services.AddScoped<IEPICategoriasBLL, EPICategoriasDAL>();
-            services.AddScoped<IEPICertificadoAprovacaoBLL, EPICertificadoAprovacaoDAL>();
+            services.AddScoped<IEPICategoriasDAL, EPICategoriasDAL>();
+            services.AddScoped<IEPICategoriasBLL, EPICategoriasBLL>();
+
+            services.AddScoped<IEPICertificadoAprovacaoDAL, EPICertificadoAprovacaoDAL>();
+            services.AddScoped<IEPICertificadoAprovacaoBLL, EPICertificadoAprovacaoBLL>();
             services.AddScoped<IEPIComprasBLL, EPIComprasDAL>();
             services.AddScoped<IEPIFornecedoresBLL, EPIFornecedoresDAL>();
             services.AddScoped<IEPILogComprasBLL, EPILogComprasDAL>();
             services.AddScoped<IEPILogEstoqueBLL, EPILogEstoqueDAL>();
             services.AddScoped<IEPIMotivosBLL, EPIMotivosDAL>();
             services.AddScoped<IEPIPedidosAprovadosBLL, EPIPedidosAprovadosDAL>();
-            services.AddScoped<IEPIProdutosBLL, EPIProdutosDAL>();
+
+            services.AddScoped<IEPIProdutosDAL, EPIProdutosDAL>();
+            services.AddScoped<IEPIProdutosBLL, EPIProdutosBLL>();
+
             services.AddScoped<IEPIPedidosBLL, EPIPedidosDAL>();
             services.AddScoped<IEPIProdutosEstoqueBLL, EPIProdutosEstoqueDAL>();
             services.AddScoped<IEPIStatusBLL, EPIStatusDAL>();
