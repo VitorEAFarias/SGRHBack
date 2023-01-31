@@ -1,5 +1,4 @@
 ﻿using System;
-using ControleEPI.BLL;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,6 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO;
 using ControleEPI.BLL.Produtos;
 using ControleEPI.BLL.Certificado;
+using ControleEPI.BLL.LogEstoque;
+using ControleEPI.BLL.ProdutosEstoque;
+using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

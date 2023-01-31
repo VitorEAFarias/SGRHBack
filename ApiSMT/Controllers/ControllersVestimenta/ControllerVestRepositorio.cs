@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Vestimenta.DTO.FromBody;
-using ControleEPI.BLL;
 using ControleEPI.DTO.E_Mail;
 using ControleEPI.DTO;
 using ApiSMT.Utilitários;
@@ -17,6 +16,10 @@ using ApiSMT.Utilitários.PDF;
 using DinkToPdf.Contracts;
 using System.IO;
 using Vestimenta.DTO.email;
+using ControleEPI.BLL.RHCargos;
+using ControleEPI.BLL.RHUsuarios;
+using ControleEPI.BLL.RHDepartamentos;
+using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

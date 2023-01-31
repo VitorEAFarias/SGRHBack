@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.BLL;
 using ControleEPI.DTO;
 using System.Collections.Generic;
 using System;
@@ -9,6 +8,13 @@ using ControleEPI.DTO.email;
 using ControleEPI.DTO.E_Mail;
 using ApiSMT.Utilitários;
 using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.Compras;
+using ControleEPI.BLL.PedidosAprovados;
+using ControleEPI.BLL.Pedidos;
+using ControleEPI.BLL.ProdutosEstoque;
+using ControleEPI.BLL.Status;
+using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

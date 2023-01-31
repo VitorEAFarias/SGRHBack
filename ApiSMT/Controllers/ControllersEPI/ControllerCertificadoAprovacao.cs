@@ -1,5 +1,5 @@
-﻿using ControleEPI.BLL.Certificado;
-using ControleEPI.BLL.Produtos;
+﻿using ControleEPI.BLL.EPICertificados;
+using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

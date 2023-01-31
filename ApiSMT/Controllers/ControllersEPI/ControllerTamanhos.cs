@@ -1,4 +1,4 @@
-﻿using ControleEPI.BLL;
+﻿using ControleEPI.BLL.Tamanhos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

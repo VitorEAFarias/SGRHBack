@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ControleEPI.DTO;
-using ControleEPI.BLL;
 using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +11,17 @@ using ControleEPI.DTO.email;
 using Vestimenta.DTO;
 using Vestimenta.DTO.email;
 using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.Compras;
+using ControleEPI.BLL.LogCompras;
+using ControleEPI.BLL.LogEstoque;
+using ControleEPI.BLL.PedidosAprovados;
+using ControleEPI.BLL.Pedidos;
+using ControleEPI.BLL.ProdutosEstoque;
+using ControleEPI.BLL.Status;
+using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.RHUsuarios;
+using ControleEPI.BLL.RHDepartamentos;
+using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.BLL;
 using ControleEPI.DTO.FromBody;
 using ApiSMT.Utilitários;
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using ApiSMT.Utilitários.JWT;
+using ControleEPI.BLL.RHUsuarios;
+using ControleEPI.BLL.RHDepartamentos;
+using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

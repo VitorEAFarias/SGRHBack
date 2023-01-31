@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Vestimenta.BLL;
 using Vestimenta.DTO;
-using ControleEPI.BLL;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using ApiSMT.Utilitários;
 using Vestimenta.DTO.email;
+using ControleEPI.BLL.RHUsuarios;
+using ControleEPI.BLL.RHDepartamentos;
+using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

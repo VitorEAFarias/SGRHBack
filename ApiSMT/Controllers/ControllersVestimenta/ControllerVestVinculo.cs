@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
-using ControleEPI.BLL;
 using System.Collections.Generic;
 using ApiSMT.Utilitários;
 using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO.FromBody;
+using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

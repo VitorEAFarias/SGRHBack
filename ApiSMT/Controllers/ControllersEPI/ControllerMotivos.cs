@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.BLL;
 using ControleEPI.DTO;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using ControleEPI.BLL.Motivos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

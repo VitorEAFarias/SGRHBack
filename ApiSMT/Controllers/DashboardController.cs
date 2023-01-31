@@ -1,4 +1,5 @@
-﻿using ControleEPI.BLL;
+﻿using ControleEPI.BLL.Pedidos;
+using ControleEPI.BLL.PedidosAprovados;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;

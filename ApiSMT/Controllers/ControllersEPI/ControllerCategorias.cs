@@ -1,5 +1,5 @@
-﻿using ControleEPI.BLL.Categorias;
-using ControleEPI.BLL.Produtos;
+﻿using ControleEPI.BLL.EPICategorias;
+using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using ControleEPI.DTO;
 using ControleEPI.DTO.FromBody;
-using ControleEPI.BLL;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using ControleEPI.BLL.Produtos;
+using ControleEPI.BLL.ProdutosEstoque;
+using ControleEPI.BLL.Status;
+using ControleEPI.BLL.Vinculo;
+using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
