@@ -1,5 +1,4 @@
-﻿using ControleEPI.DAL.Produtos;
-using ControleEPI.DTO.FromBody;
+﻿using ControleEPI.DAL.EPIProdutos;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;

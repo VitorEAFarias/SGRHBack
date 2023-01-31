@@ -39,9 +39,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var verificaCategoria = await _categoria.verificaCategoria(categoria.nome);
+                var verificaNomeCategoria = _categoria.verificaCategoria(categoria.nome);
 
-                if (verificaCategoria == null)
+                if (verificaNomeCategoria == null)
                 {
                     var insereCategoria = await _categoria.Insert(categoria);
 
@@ -83,9 +83,16 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     if (verificaCategoria == null)
                     {
-                        await _categoria.Update(categoria);
+                        var atualizaCategoria = await _categoria.Update(categoria);
 
-                        return Ok(new { message = "Categoria atualizada com sucesso!!!", result = true });
+                        if (atualizaCategoria != null)
+                        {
+                            return Ok(new { message = "Categoria atualizada com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Erro ao atualizar categoria", result = false });
+                        }
                     }
                     else
                     {
@@ -168,23 +175,31 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var deletaCategoria = await _categoria.getCategoria(id);
+                var localizaCategoria = await _categoria.getCategoria(id);
 
-                if (deletaCategoria == null)
+                if (localizaCategoria == null)
                     return BadRequest(new { message = "Categoria não encontrada", result = false });
 
-                var verificaProduto = await _produto.verificaCategoria(deletaCategoria.id);
+                var verificaProduto = await _produto.verificaCategoria(localizaCategoria.id);
 
                 if (verificaProduto == null || verificaProduto.Equals(0))
                 {
-                    await _categoria.Delete(deletaCategoria.id);
-                    return Ok(new { message = "Tamanho deletado com sucesso!!!", result = true });
+                    var deletaVinculoProduto = await _categoria.Delete(localizaCategoria.id);
+
+                    if (deletaVinculoProduto != null)
+                    {
+                        return Ok(new { message = "Categoria deletada com sucesso!!!", result = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Erro ao deletar categoria", result = false });
+                    }
                 }
                 else
                 {
                     return BadRequest(new { message = "Não é possivel deletar categorias vinculadas a produtos", result = false });
                 }
-                
+
             }
             catch (System.Exception ex)
             {

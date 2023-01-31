@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using ControleEPI.DTO.FromBody;
-using ControleEPI.BLL.Certificado;
 
 namespace ControleEPI.DAL.EPICertificados
 {

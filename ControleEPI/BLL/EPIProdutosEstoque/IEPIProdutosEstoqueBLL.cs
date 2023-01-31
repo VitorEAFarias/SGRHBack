@@ -12,6 +12,6 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
         Task<EPIProdutosEstoqueDTO> getProdutoExistente(int idProduto);
         Task<IList<EPIProdutosEstoqueDTO>> getProdutosExistentes(int idProdutos);
         Task<IList<EPIProdutosEstoqueDTO>> getProdutosEstoque();
-        Task Update(EPIProdutosEstoqueDTO produto);
+        Task<EPIProdutosEstoqueDTO> Update(EPIProdutosEstoqueDTO produto);
     }
 }

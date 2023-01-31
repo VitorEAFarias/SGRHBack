@@ -1,7 +1,6 @@
-﻿using ControleEPI.BLL.Pedidos;
-using ControleEPI.BLL.PedidosAprovados;
+﻿using ControleEPI.BLL.EPIPedidos;
+using ControleEPI.BLL.EPIPedidosAprovados;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;

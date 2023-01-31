@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using ControleEPI.DTO.email;
 using ControleEPI.DTO.E_Mail;
 using ApiSMT.Utilitários;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.Compras;
-using ControleEPI.BLL.PedidosAprovados;
-using ControleEPI.BLL.Pedidos;
-using ControleEPI.BLL.ProdutosEstoque;
-using ControleEPI.BLL.Status;
-using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPICompras;
+using ControleEPI.BLL.EPIPedidosAprovados;
+using ControleEPI.BLL.EPIPedidos;
+using ControleEPI.BLL.EPIProdutosEstoque;
+using ControleEPI.BLL.EPIStatus;
+using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -96,7 +96,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                             });
 
                             var localizaPedido = await _pedidos.getPedido(produto.idPedido);
-                            var localizaProduto = await _produtos.getProduto(produto.idProduto);
+                            var localizaProduto = await _produtos.localizaProduto(produto.idProduto);
                             var checkStatusItem = await _status.getStatus(4);
                             var getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
 
@@ -123,7 +123,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                             conteudoEmails.Add(new EPIConteudoEmailDTO
                             {
-                                nome = localizaProduto.nomeProduto,
+                                nome = localizaProduto.nome,
                                 tamanho = tamanho,
                                 status = checkStatusItem.nome,
                                 quantidade = produto.quantidade
@@ -148,7 +148,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         foreach (var item in pedidosAprovados)
                         {
                             var localizaPedidoAprovado = await _pedidosAprovados.getProdutoAprovado(item.idPedidosAprovados, "S");
-                            var localizaProduto = await _produtos.getProduto(localizaPedidoAprovado.idProduto);
+                            var localizaProduto = await _produtos.localizaProduto(localizaPedidoAprovado.idProduto);
                             decimal valorTotal = localizaPedidoAprovado.quantidade * localizaProduto.preco;
                             valorTotalCompra = valorTotalCompra + valorTotal;
                         }
@@ -204,7 +204,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     List<object> produto = new List<object>();
 
                     produto.Add(new { 
-                        nome = _produtos.getProduto(localizaProduto.idProduto).Result.nomeProduto,
+                        nome = _produtos.localizaProduto(localizaProduto.idProduto).Result.nome,
                         quantidade = localizaProduto.quantidade
                     });
 
@@ -237,9 +237,23 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 foreach (var item in produtosAprovados)
                 {
-                    produtos.Add(new {
-                        nome = _produtos.getProduto(item.id).Result.nomeProduto,
-                        quantidade = item.quantidade
+                    var localizaProduto = _produtos.localizaProduto(item.idProduto).Result;
+                    var localizaTamanho = _tamanho.localizaTamanho(item.idTamanho).Result;
+                    var localizaPedido = _pedidos.getPedido(item.idPedido).Result;
+                    var localizaUsuario = _usuario.GetEmp(localizaPedido.idUsuario).Result;
+                    var localizaEstoque = _estoque.getProdutoExistente(item.idProduto).Result;
+
+                    produtos.Add(new
+                    {
+                        idProduto = localizaProduto.id,
+                        nome = localizaProduto.nome,
+                        idTamanho = localizaTamanho.id,
+                        tamanho = localizaTamanho.tamanho,
+                        quantidade = item.quantidade,
+                        idUsuario = localizaUsuario.id,
+                        usuario = localizaUsuario.nome,
+                        dataPedido = localizaPedido.dataPedido,
+                        estoque = localizaEstoque.quantidade
                     });
                 }
 

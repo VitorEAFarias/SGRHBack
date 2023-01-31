@@ -9,7 +9,7 @@
             Classe de categorias
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.Categorias.IEPICategoriasBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.EPICategorias.IEPICategoriasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtos CategoriasController
             </summary>
@@ -53,7 +53,7 @@
             Classe ControllerCertificadoAprovacao
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtor ControllerCertificadoAprovacao
             </summary>
@@ -97,7 +97,7 @@
             Classe que manipula os dados de colaborador
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.#ctor(ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.#ctor(ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHCargos.IRHCargosBLL)">
             <summary>
             Construtor ColaboradorController
             </summary>
@@ -125,7 +125,7 @@
             Classe que manipula as informações relacionadas a compras de produtos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPILogComprasBLL,ControleEPI.BLL.IRHEmpContratosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IRHDepartamentosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPILogCompras.IEPILogComprasBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL)">
             <summary>
             Construtor ComprasController
             </summary>
@@ -199,7 +199,7 @@
             Classe que manipula os dados de fornecedores
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.IEPIFornecedoresBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.EPIFornecedores.IEPIFornecedoresBLL)">
             <summary>
             Construtos de FornecedorController
             </summary>
@@ -257,7 +257,7 @@
             Classe de login do sistema
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.#ctor(ControleEPI.BLL.IRHConUserBLL,Microsoft.Extensions.Configuration.IConfiguration,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL,ApiSMT.Utilitários.JWT.ITokenService)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.#ctor(ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Microsoft.Extensions.Configuration.IConfiguration,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ApiSMT.Utilitários.JWT.ITokenService)">
             <summary>
             Construtor LoginController
             </summary>
@@ -286,7 +286,7 @@
             Classe ControllerMotivos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.#ctor(ControleEPI.BLL.IEPIMotivosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.#ctor(ControleEPI.BLL.EPIMotivos.IEPIMotivosBLL)">
             <summary>
             Construtor ControllerMotivos
             </summary>
@@ -310,7 +310,7 @@
             Classe de manipulação de pedidos de epi's
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IEPIMotivosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IEPITamanhosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPIMotivos.IEPIMotivosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtor PedidosController
             </summary>
@@ -325,6 +325,7 @@
             <param name="departamento"></param>
             <param name="mail"></param>
             <param name="tamanho"></param>
+            <param name="produtos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.inserePedido(ControleEPI.DTO.EPIPedidosDTO)">
             <summary>
@@ -396,7 +397,7 @@
             Classe ProdutosAprovadosController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ApiSMT.Utilitários.IMailService)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ApiSMT.Utilitários.IMailService)">
             <summary>
             Construtor ProdutosAprovadosController
             </summary>
@@ -438,7 +439,7 @@
             Classe ControllerProdutos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.Categorias.IEPICategoriasBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
             <summary>
             Contrutor ControllerProdutos
             </summary>
@@ -490,7 +491,7 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL)">
             <summary>
             Construtor ProdutosEstoqueController
             </summary>
@@ -538,11 +539,12 @@
             Classe ControllerTamanhos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.IEPITamanhosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
             <summary>
             Construtor ControllerTamanhos
             </summary>
             <param name="tamanhos"></param>
+            <param name="categoria"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.insereTamanho(ControleEPI.DTO.EPITamanhosDTO)">
             <summary>
@@ -589,7 +591,7 @@
             Classe ControllerVinculo
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.IEPIVinculoBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPIStatusBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL)">
             <summary>
             Construtor ControllerVinculo
             </summary>
@@ -660,7 +662,7 @@
             Classe de PDF
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IDinkPDFBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL,Vestimenta.BLL.IVestimentaBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IDinkPDFBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHCargos.IRHCargosBLL,Vestimenta.BLL.IVestimentaBLL)">
             <summary>
             Construtor VestimentaController
             </summary>
@@ -735,7 +737,7 @@
             Classe de Compras
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.#ctor(Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL,Vestimenta.BLL.IVestRepositorioBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.#ctor(Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL,Vestimenta.BLL.IVestRepositorioBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL)">
             <summary>
             Construtor de Compras
             </summary>
@@ -858,7 +860,7 @@
             Classe de pedidos de vestimenta
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestVinculoBLL,Vestimenta.BLL.ILogBLL,ApiSMT.Utilitários.IMailService,Vestimenta.BLL.IVestimentaBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestVinculoBLL,Vestimenta.BLL.ILogBLL,ApiSMT.Utilitários.IMailService,Vestimenta.BLL.IVestimentaBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL)">
             <summary>
             Construtor de Pedidos
             </summary>
@@ -931,7 +933,7 @@
             Controller VestRepositorioController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHCargosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.RHCargos.IRHCargosBLL)">
             <summary>
             Construtor VestRepositorioController
             </summary>
@@ -986,7 +988,7 @@
             Classe VestVinculoController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.IVestVinculoBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.IVestVinculoBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL)">
             <summary>
             Construtor VestVinculoController
             </summary>
@@ -1054,7 +1056,7 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.DashboardController.#ctor(ControleEPI.BLL.IEPIPedidosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,Vestimenta.BLL.IVestRepositorioBLL)">
+        <member name="M:ApiSMT.Controllers.DashboardController.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.IVestRepositorioBLL)">
             <summary>
             Construtor DashboardController
             </summary>

@@ -8,17 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using ApiSMT.Utilitários;
 using ControleEPI.DTO.E_Mail;
 using ControleEPI.DTO.email;
-using Vestimenta.DTO;
-using Vestimenta.DTO.email;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.Compras;
-using ControleEPI.BLL.LogCompras;
-using ControleEPI.BLL.LogEstoque;
-using ControleEPI.BLL.PedidosAprovados;
-using ControleEPI.BLL.Pedidos;
-using ControleEPI.BLL.ProdutosEstoque;
-using ControleEPI.BLL.Status;
-using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPICompras;
+using ControleEPI.BLL.EPILogCompras;
+using ControleEPI.BLL.EPILogEstoque;
+using ControleEPI.BLL.EPIPedidosAprovados;
+using ControleEPI.BLL.EPIPedidos;
+using ControleEPI.BLL.EPIProdutosEstoque;
+using ControleEPI.BLL.EPIStatus;
+using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
@@ -105,13 +103,13 @@ namespace ApiSMT.Controllers.ControllersEPI
                         foreach (var pedidosAprovados in item.idPedidosAprovados)
                         {
                             var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
-                            var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
+                            var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
 
                             compraProdutos.Add(new
                             {
                                 localizaProdutoAprovado.idPedido,
                                 localizaProdutoAprovado.idProduto,
-                                localizaProduto.nomeProduto
+                                localizaProduto.nome
                             });
                         }
 
@@ -164,13 +162,13 @@ namespace ApiSMT.Controllers.ControllersEPI
                     foreach (var item in localizaCompra.idPedidosAprovados)
                     {
                         var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
-                        var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
+                        var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
 
                         compraProdutos.Add(new
                         {
                             localizaProdutoAprovado.idPedido,
                             localizaProdutoAprovado.idProduto,
-                            localizaProduto.nomeProduto
+                            localizaProduto.nome
                         });
                     }
 
@@ -261,7 +259,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     foreach (var item in pedidosAprovados)
                     {
                         var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
-                        var localizaProduto = await _produtos.getProduto(localizaProdutoAprovado.idProduto);
+                        var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
 
                         var valorTotalProduto = localizaProdutoAprovado.quantidade * localizaProduto.preco;
 
@@ -570,14 +568,14 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                         foreach (var produto in localizaPedido.produtos)
                         {
-                            var localizaProduto = await _produtos.getProduto(produto.id);
+                            var localizaProduto = await _produtos.localizaProduto(produto.id);
 
                             if (produto.id == localizaProdutoAprovado.idProduto && produto.tamanho.ToString().IsNullOrEmpty())
                             {
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nomeProduto,
+                                    nome = localizaProduto.nome,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
                                     tamanho = localizaProdutoAprovado.idTamanho
@@ -607,7 +605,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nomeProduto,
+                                    nome = localizaProduto.nome,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
                                     tamanho = localizaProdutoAprovado.idTamanho
@@ -637,7 +635,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nomeProduto,
+                                    nome = localizaProduto.nome,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = produto.status,
                                     tamanho = localizaProdutoAprovado.idTamanho

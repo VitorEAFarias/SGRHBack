@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using Vestimenta.DTO;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.Certificado;
-using ControleEPI.BLL.LogEstoque;
-using ControleEPI.BLL.ProdutosEstoque;
-using ControleEPI.BLL.Tamanhos;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPICertificados;
+using ControleEPI.BLL.EPILogEstoque;
+using ControleEPI.BLL.EPIProdutosEstoque;
+using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -225,8 +224,8 @@ namespace ApiSMT.Controllers.ControllersEPI
             try
             {
                 var localizaProdutoEstoque = await _produtosEstoque.getProdutoEstoque(id);
-                var localizaProduto = await _produtos.getProduto(localizaProdutoEstoque.idProduto);
-                var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificado);
+                var localizaProduto = await _produtos.localizaProduto(localizaProdutoEstoque.idProduto);
+                var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
                 var tamanho = await _tamanhos.localizaTamanho(localizaProdutoEstoque.idTamanho);
 
                 List<object> gerenciaEstoque = new List<object>();
@@ -240,7 +239,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         quantidade = localizaProdutoEstoque.quantidade,
                         idTamanho = tamanho.id,
                         tamanho = tamanho.tamanho,
-                        produto = localizaProduto.nomeProduto,
+                        produto = localizaProduto.nome,
                         preco = localizaProduto.preco,
                         certificado = localizaCertificado.numero,
                         validadeCertificado = localizaCertificado.validade,

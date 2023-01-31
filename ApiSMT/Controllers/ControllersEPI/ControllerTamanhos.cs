@@ -1,7 +1,9 @@
-﻿using ControleEPI.BLL.Tamanhos;
+﻿using ControleEPI.BLL.EPICategorias;
+using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -14,14 +16,17 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerTamanhos : ControllerBase
     {
         private readonly IEPITamanhosBLL _tamanhos;
+        private readonly IEPICategoriasBLL _categoria;
 
         /// <summary>
         /// Construtor ControllerTamanhos
         /// </summary>
         /// <param name="tamanhos"></param>
-        public ControllerTamanhos(IEPITamanhosBLL tamanhos)
+        /// <param name="categoria"></param>
+        public ControllerTamanhos(IEPITamanhosBLL tamanhos, IEPICategoriasBLL categoria)
         {
             _tamanhos = tamanhos;
+            _categoria = categoria;
         }
 
         /// <summary>
@@ -162,7 +167,20 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaTamanho != null)
                 {
-                    return Ok(new { message = "Tamanho encontrado", result = true, data = localizaTamanho });
+                    List<object> tamanhos = new List<object>();
+
+                    var localizaCategoria = await _categoria.getCategoria(localizaTamanho.idCategoriaProduto);
+
+                    tamanhos.Add(new
+                    {
+                        localizaTamanho.id,
+                        localizaTamanho.tamanho,
+                        localizaTamanho.idCategoriaProduto,
+                        localizaCategoria.nome,
+                        localizaTamanho.ativo
+                    });
+
+                    return Ok(new { message = "Tamanho encontrado", result = true, data = tamanhos });
                 }
                 else
                 {
@@ -189,7 +207,23 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaTamanhos != null)
                 {
-                    return Ok(new { message = "Tamanhos encontrados", result = true, data = localizaTamanhos });
+                    List<object> tamanhos = new List<object>();
+
+                    foreach (var item in localizaTamanhos)
+                    {
+                        var localizaCategoria = await _categoria.getCategoria(item.idCategoriaProduto);
+
+                        tamanhos.Add(new
+                        {
+                            item.id,
+                            item.tamanho,
+                            item.idCategoriaProduto,
+                            localizaCategoria.nome,
+                            item.ativo
+                        });
+                    }
+
+                    return Ok(new { message = "Tamanhos encontrados", result = true, data = tamanhos });
                 }
                 else
                 {

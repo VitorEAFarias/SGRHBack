@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Vestimenta.DTO.FromBody;
-using ControleEPI.DTO.E_Mail;
 using ControleEPI.DTO;
 using ApiSMT.Utilitários;
 using Vestimenta.DTO.DinkPDF;

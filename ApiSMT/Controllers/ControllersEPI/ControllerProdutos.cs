@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
-using ControleEPI.BLL.Categorias;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.Certificado;
+using ControleEPI.BLL.EPICategorias;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPICertificados;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

@@ -20,23 +20,23 @@ using ApiSMT.Utilitários.JWT;
 using DinkToPdf.Contracts;
 using DinkToPdf;
 using ApiSMT.Utilitários.email;
-using ControleEPI.BLL.Categorias;
-using ControleEPI.DAL.Categorias;
-using ControleEPI.DAL.Produtos;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.Certificado;
-using ControleEPI.DAL.Certificado;
-using ControleEPI.BLL.Compras;
-using ControleEPI.BLL.Fornecedores;
-using ControleEPI.BLL.LogCompras;
-using ControleEPI.BLL.LogEstoque;
-using ControleEPI.BLL.Motivos;
-using ControleEPI.BLL.PedidosAprovados;
-using ControleEPI.BLL.Pedidos;
-using ControleEPI.BLL.ProdutosEstoque;
-using ControleEPI.BLL.Status;
-using ControleEPI.BLL.Tamanhos;
-using ControleEPI.BLL.Vinculo;
+using ControleEPI.BLL.EPICategorias;
+using ControleEPI.DAL.EPICategorias;
+using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPICertificados;
+using ControleEPI.DAL.EPICertificados;
+using ControleEPI.BLL.EPICompras;
+using ControleEPI.BLL.EPIFornecedores;
+using ControleEPI.BLL.EPILogCompras;
+using ControleEPI.BLL.EPILogEstoque;
+using ControleEPI.BLL.EPIMotivos;
+using ControleEPI.BLL.EPIPedidosAprovados;
+using ControleEPI.BLL.EPIPedidos;
+using ControleEPI.BLL.EPIProdutosEstoque;
+using ControleEPI.BLL.EPIStatus;
+using ControleEPI.BLL.EPITamanhos;
+using ControleEPI.BLL.EPIVinculos;
 using ControleEPI.BLL.RHCargos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
@@ -118,25 +118,54 @@ namespace ApiSMT
 
             services.AddScoped<IEPICertificadoAprovacaoDAL, EPICertificadoAprovacaoDAL>();
             services.AddScoped<IEPICertificadoAprovacaoBLL, EPICertificadoAprovacaoBLL>();
-            services.AddScoped<IEPIComprasBLL, EPIComprasDAL>();
-            services.AddScoped<IEPIFornecedoresBLL, EPIFornecedoresDAL>();
-            services.AddScoped<IEPILogComprasBLL, EPILogComprasDAL>();
-            services.AddScoped<IEPILogEstoqueBLL, EPILogEstoqueDAL>();
-            services.AddScoped<IEPIMotivosBLL, EPIMotivosDAL>();
-            services.AddScoped<IEPIPedidosAprovadosBLL, EPIPedidosAprovadosDAL>();
+
+            services.AddScoped<IEPIComprasDAL, EPIComprasDAL>();
+            services.AddScoped<IEPIComprasBLL, EPIComprasBLL>();
+
+            services.AddScoped<IEPIFornecedoresDAL, EPIFornecedoresDAL>();
+            services.AddScoped<IEPIFornecedoresBLL, EPIFornecedoresBLL>();
+
+            services.AddScoped<IEPILogComprasDAL, EPILogComprasDAL>();
+            services.AddScoped<IEPILogComprasBLL, EPILogComprasBLL>();
+
+            services.AddScoped<IEPILogEstoqueDAL, EPILogEstoqueDAL>();
+            services.AddScoped<IEPILogEstoqueBLL, EPILogEstoqueBLL>();
+
+            services.AddScoped<IEPIMotivosDAL, EPIMotivosDAL>();
+            services.AddScoped<IEPIMotivosBLL, EPIMotivosBLL>();
+
+            services.AddScoped<IEPIPedidosAprovadosDAL, EPIPedidosAprovadosDAL>();
+            services.AddScoped<IEPIPedidosAprovadosBLL, EPIPedidosAprovadosBLL>();
 
             services.AddScoped<IEPIProdutosDAL, EPIProdutosDAL>();
             services.AddScoped<IEPIProdutosBLL, EPIProdutosBLL>();
 
-            services.AddScoped<IEPIPedidosBLL, EPIPedidosDAL>();
-            services.AddScoped<IEPIProdutosEstoqueBLL, EPIProdutosEstoqueDAL>();
-            services.AddScoped<IEPIStatusBLL, EPIStatusDAL>();
-            services.AddScoped<IEPITamanhosBLL, EPITamanhosDAL>();
-            services.AddScoped<IEPIVinculoBLL, EPIVinculoDAL>();
-            services.AddScoped<IRHCargosBLL, RHCargosDAL>();  
-            services.AddScoped<IRHConUserBLL, RHConUserDAL>();
-            services.AddScoped<IRHDepartamentosBLL, RHDepartamentosDAL>();
-            services.AddScoped<IRHEmpContratosBLL, RHEmpContratosDAL>();
+            services.AddScoped<IEPIPedidosDAL, EPIPedidosDAL>();
+            services.AddScoped<IEPIPedidosBLL, EPIPedidosBLL>();
+
+            services.AddScoped<IEPIProdutosEstoqueDAL, EPIProdutosEstoqueDAL>();
+            services.AddScoped<IEPIProdutosEstoqueBLL, EPIProdutosEstoqueBLL>();
+
+            services.AddScoped<IEPIStatusDAL, EPIStatusDAL>();
+            services.AddScoped<IEPIStatusBLL, EPIStatusBLL>();
+
+            services.AddScoped<IEPITamanhosDAL, EPITamanhosDAL>();
+            services.AddScoped<IEPITamanhosBLL, EPITamanhosBLL>();
+
+            services.AddScoped<IEPIVinculoDAL, EPIVinculoDAL>();
+            services.AddScoped<IEPIVinculoBLL, EPIVinculoBLL>();
+
+            services.AddScoped<IRHCargosDAL, RHCargosDAL>();
+            services.AddScoped<IRHCargosBLL, RHCargosBLL>();
+
+            services.AddScoped<IRHConUserDAL, RHConUserDAL>();
+            services.AddScoped<IRHConUserBLL, RHConUserBLL>();
+
+            services.AddScoped<IRHDepartamentosDAL, RHDepartamentosDAL>();
+            services.AddScoped<IRHDepartamentosBLL, RHDepartamentosBLL>();
+
+            services.AddScoped<IRHEmpContratosDAL, RHEmpContratosDAL>();
+            services.AddScoped<IRHEmpContratosBLL, RHEmpContratosBLL>();
 
             //E-Mail
             services.AddScoped<IMailService, MailService>();

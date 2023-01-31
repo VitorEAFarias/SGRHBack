@@ -1,14 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.DTO;
 using ControleEPI.DTO.FromBody;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.BLL.Produtos;
-using ControleEPI.BLL.ProdutosEstoque;
-using ControleEPI.BLL.Status;
-using ControleEPI.BLL.Vinculo;
+using ControleEPI.BLL.EPIProdutos;
+using ControleEPI.BLL.EPIProdutosEstoque;
+using ControleEPI.BLL.EPIStatus;
+using ControleEPI.BLL.EPIVinculos;
 using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -111,13 +110,13 @@ namespace ApiSMT.Controllers.ControllersEPI
                     foreach (var item in localizaVinculos)
                     {
                         var localizaEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaProduto = await _produtos.getProduto(item.idItem);
+                        var localizaProduto = await _produtos.localizaProduto(item.idItem);
                         var localizaStatus = await _status.getStatus(item.status);
 
                         listaVinculos.Add(new VinculoDTO
                         {
                             nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.nomeProduto,
+                            nomeItem = localizaProduto.nome,
                             dataVinculo = item.dataVinculo,
                             dataDevolucao = item.dataDevolucao,
                             status = localizaStatus.nome,
@@ -158,13 +157,13 @@ namespace ApiSMT.Controllers.ControllersEPI
                     foreach (var item in localizaVinculos)
                     {
                         var localizaEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaProduto = await _produtos.getProduto(item.idItem);
+                        var localizaProduto = await _produtos.localizaProduto(item.idItem);
                         var localizaStatus = await _status.getStatus(item.status);
 
                         listaVinculos.Add(new VinculoDTO
                         {
                             nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.nomeProduto,
+                            nomeItem = localizaProduto.nome,
                             dataVinculo = item.dataVinculo,
                             dataDevolucao = item.dataDevolucao,
                             status = localizaStatus.nome,

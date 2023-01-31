@@ -39,6 +39,8 @@ namespace ControleEPI.DAL.EPIPedidosAprovados
 
             _context.Entry(produtoAprovado).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return produtoAprovado;
         }
 
         public async Task<EPIPedidosAprovadosDTO> verificaProdutoAprovado(int idProduto, int idPedido, int idTamanho)

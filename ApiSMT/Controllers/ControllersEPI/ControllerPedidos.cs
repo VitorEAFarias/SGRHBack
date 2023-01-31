@@ -16,6 +16,7 @@ using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
+using ControleEPI.BLL.EPIProdutos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -37,6 +38,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IRHDepartamentosBLL _departamento;
         private readonly IMailService _mail;
         private readonly IEPITamanhosBLL _tamanho;
+        private readonly IEPIProdutosBLL _produtos;
 
         /// <summary>
         /// Construtor PedidosController
@@ -52,9 +54,10 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="departamento"></param>
         /// <param name="mail"></param>
         /// <param name="tamanho"></param>
+        /// <param name="produtos"></param>
         public ControllerPedidos(IEPIPedidosBLL pedidos, IEPIStatusBLL status, IEPIMotivosBLL motivos, IRHConUserBLL conUser, IEPIProdutosEstoqueBLL produtosEstoque,
             IEPIPedidosAprovadosBLL pedidosAprovados, IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IMailService mail,
-            IEPITamanhosBLL tamanho)
+            IEPITamanhosBLL tamanho, IEPIProdutosBLL produtos)
         {
             _pedidos = pedidos;
             _status = status;
@@ -67,6 +70,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             _departamento = departamento;
             _mail = mail;
             _tamanho = tamanho;
+            _produtos = produtos;
         }
 
         /// <summary>
@@ -743,15 +747,27 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     foreach (var value in pedido.produtos)
                     {
-                        var query = await _produtosEstoque.getProdutoEstoque(value.id);
+                        var query = await _produtosEstoque.getProdutoExistente(value.id);
 
-                        lista.Add(new
+                        if (query != null)
                         {
-                            value.id,
-                            value.quantidade,
-                            value.nome,
-                            estoque = query.quantidade
-                        });
+                            var localizaProduto = await _produtos.localizaProduto(query.idProduto);
+                            var localizaTamanho = await _tamanho.localizaTamanho(value.tamanho);
+                            var nomeStatus = await _status.getStatus(value.status);
+
+                            lista.Add(new
+                            {
+                                value.id,
+                                value.quantidade,
+                                value.nome,
+                                idProduto = localizaProduto.id,
+                                idTamanho = localizaTamanho.id,
+                                tamanho = localizaTamanho.tamanho,
+                                status = value.status,
+                                nomeStatus = nomeStatus.nome,
+                                estoque = query.quantidade
+                            });
+                        }
                     }
 
                     var item = new
@@ -759,9 +775,12 @@ namespace ApiSMT.Controllers.ControllersEPI
                         pedido.id,
                         pedido.dataPedido,
                         pedido.descricao,
+                        idMotivo = motivo.id,
                         produtos = lista,
                         motivo = motivo.nome,
                         usuario = usuario.nome,
+                        idUsuario = usuario.id,
+                        idStatus = status.id,
                         status = status.nome
                     };
 

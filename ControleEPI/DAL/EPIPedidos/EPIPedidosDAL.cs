@@ -49,7 +49,7 @@ namespace ControleEPI.DAL.EPIPedidos
             _context.Entry(pedido).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return pedido
+            return pedido;
         }
     }
 }
