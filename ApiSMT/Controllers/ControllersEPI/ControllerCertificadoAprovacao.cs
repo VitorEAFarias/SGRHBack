@@ -39,16 +39,20 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                EPICertificadoAprovacaoDTO verificaValorCertificado = await _certificado.getValorCertificado(certificado.numero);
+                var verificaValorCertificado = await _certificado.getValorCertificado(certificado.numero);
 
                 if (verificaValorCertificado == null)
                 {
-                    certificado.ativo = "S";
-                    certificado.observacao = "";
+                    var insereCertificado = await _certificado.Insert(certificado);
 
-                    await _certificado.Insert(certificado);
-
-                    return Ok(new { message = "Certificado cadastrado com sucesso", result = true });
+                    if (insereCertificado != null)
+                    {
+                        return Ok(new { message = "Certificado cadastrado com sucesso", result = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Erro ao inserir certifocado", result = false });
+                    }
                 }
                 else
                 {
@@ -73,7 +77,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var localizaAtivados = await _certificado.listaStatus(status);
 
-                if (localizaAtivados != null || !localizaAtivados.Equals(0))
+                if (localizaAtivados != null)
                 {
                     return Ok(new { message = "Lista encontrada", result = true, data = localizaAtivados });
                 }
@@ -107,19 +111,33 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     if (status == "S")
                     {
-                        await _certificado.Update(localizaCertificado);
+                        var ativaCertificado = await _certificado.Update(localizaCertificado);
 
-                        return Ok(new { message = "Certificado ativado com sucesso!!!", result = true });
+                        if (ativaCertificado != null)
+                        {
+                            return Ok(new { message = "Certificado ativado com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Erro ao ativar certificado", result = false });
+                        }                        
                     }
                     else
                     {
                         var verificaCertificado = await _produtos.getCertificadoProduto(localizaCertificado.id);
 
-                        if (verificaCertificado == null || verificaCertificado.Equals(0))
+                        if (verificaCertificado == null)
                         {
-                            await _certificado.Update(localizaCertificado);
+                            var desativaCertificado = await _certificado.Update(localizaCertificado);
 
-                            return Ok(new { message = "Certificado desativado com sucesso!!!", result = true });
+                            if (desativaCertificado != null)
+                            {
+                                return Ok(new { message = "Certificado desativado com sucesso!!!", result = true });
+                            }
+                            else
+                            {
+                                return BadRequest(new { message = "Erro ao desativar certificado", result = false });
+                            }                            
                         }
                         else
                         {

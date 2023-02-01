@@ -4,9 +4,6 @@ using ControleEPI.DTO;
 using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.DTO.email;
-using ControleEPI.DTO.E_Mail;
-using ApiSMT.Utilitários;
 using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.BLL.EPICompras;
 using ControleEPI.BLL.EPIPedidosAprovados;
@@ -15,6 +12,8 @@ using ControleEPI.BLL.EPIProdutosEstoque;
 using ControleEPI.BLL.EPIStatus;
 using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
+using Utilitarios.Utilitários.email;
+using ControleEPI.BLL.EPIVinculos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -34,6 +33,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IEPITamanhosBLL _tamanho;
         private readonly IEPIProdutosEstoqueBLL _estoque;
         private readonly IMailService _mail;
+        private readonly IEPIVinculoBLL _vinculo;
 
         /// <summary>
         /// Construtor ProdutosAprovadosController
@@ -47,8 +47,9 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="tamanho"></param>
         /// <param name="estoque"></param>
         /// <param name="mail"></param>
+        /// <param name="vinculo"></param>
         public ControllerPedidosAprovados(IEPIPedidosAprovadosBLL pedidosAprovados, IEPIPedidosBLL pedidos, IEPIComprasBLL compras, IEPIProdutosBLL produtos,
-             IRHConUserBLL usuario, IEPIStatusBLL status, IEPITamanhosBLL tamanho, IEPIProdutosEstoqueBLL estoque ,IMailService mail)
+             IRHConUserBLL usuario, IEPIStatusBLL status, IEPITamanhosBLL tamanho, IEPIProdutosEstoqueBLL estoque ,IMailService mail, IEPIVinculoBLL vinculo)
         {
             _pedidosAprovados = pedidosAprovados;
             _pedidos = pedidos;
@@ -59,6 +60,32 @@ namespace ApiSMT.Controllers.ControllersEPI
             _tamanho = tamanho;
             _estoque = estoque;
             _mail = mail;
+            _vinculo = vinculo;
+        }
+
+        /// <summary>
+        /// Envia produtos avulsos para compras
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> produtosAvulsos([FromBody] List<EPIPedidosAprovadosDTO> itensAvulsos)
+        {
+            try
+            {
+                foreach (var item in itensAvulsos)
+                {
+                    item.idPedido = 0;
+
+                    await _pedidosAprovados.Insert(item);
+                }
+
+                return Ok(new { message = "Itens avulsos inseridos com sucesso!!!", result = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -69,7 +96,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpPut("enviarCompra/{idUsuario}")]
-        public async Task<ActionResult> enviaParaCompras([FromBody] List<EPIPedidosAprovadosDTO> enviaCompra, int idUsuario)
+        public async Task<IActionResult> enviaParaCompras([FromBody] List<EPIPedidosAprovadosDTO> enviaCompra, int idUsuario)
         {
             try
             {
@@ -79,9 +106,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     if (enviaCompra != null)
                     {
-                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        EmailRequestDTO email = new EmailRequestDTO();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
                         List<PedidosAprovados> pedidosAprovados = new List<PedidosAprovados>();
                         EPIComprasDTO compras = new EPIComprasDTO();
 
@@ -121,7 +148,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 tamanho = localizaTamanho.tamanho;
                             }
 
-                            conteudoEmails.Add(new EPIConteudoEmailDTO
+                            conteudoEmails.Add(new ConteudoEmailDTO
                             {
                                 nome = localizaProduto.nome,
                                 tamanho = tamanho,
@@ -179,7 +206,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Colaborador com varios contratos ativos ou nenhum, verifique no portal do RH", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -222,17 +249,57 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
-        /// Lista todos os produtos aprovados
+        /// Aprovar para vinculo
         /// </summary>
-        /// <param name="status"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("produtosAprovados/{status}")]
-        public async Task<ActionResult> produtosAprovados(string status)
+        [HttpPut("aprovarVinculo")]
+        public async Task<IActionResult> aprovarVinculo([FromBody] List<EPIPedidosAprovadosDTO> enviaCompra)
         {
             try
             {
-                var produtosAprovados = await _pedidosAprovados.getProdutosAprovados(status);
+                foreach (var item in enviaCompra)
+                {
+                    var localizaPedido = await _pedidos.getPedido(item.idPedido);
+                    var localizaProduto = await _produtos.localizaProduto(item.idProduto);
+
+                    EPIVinculoDTO novoVinculo = new EPIVinculoDTO();
+
+                    novoVinculo.idUsuario = localizaPedido.idUsuario;
+                    novoVinculo.idItem = item.idProduto;
+                    novoVinculo.dataVinculo = DateTime.Now;
+                    novoVinculo.status = 13;
+                    novoVinculo.dataDevolucao = DateTime.MinValue;
+                    novoVinculo.validade = DateTime.Now.AddYears(localizaProduto.validadeEmUso);
+
+                    await _vinculo.insereVinculo(novoVinculo);
+
+                    item.liberadoVinculo = "S";
+
+                    await _pedidosAprovados.Update(item);                    
+                }
+
+                return Ok(new { message = "Itens aprovados para vinculo com sucesso!!!", result = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lista todos os produtos aprovados
+        /// </summary>
+        /// <param name="statusCompra"></param>
+        /// <param name="statusVinculo"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("produtosAprovados/{statusCompra}/{statusVinculo}")]
+        public async Task<IActionResult> produtosAprovados(string statusCompra, string statusVinculo)
+        {
+            try
+            {
+                var produtosAprovados = await _pedidosAprovados.getProdutosAprovados(statusCompra, statusVinculo);
                 List<object> produtos = new List<object>();
 
                 foreach (var item in produtosAprovados)
@@ -245,6 +312,9 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     produtos.Add(new
                     {
+                        idProdutoAprovado = item.id,
+                        enviadoCompra = item.enviadoCompra,
+                        idPedido = item.idPedido,
                         idProduto = localizaProduto.id,
                         nome = localizaProduto.nome,
                         idTamanho = localizaTamanho.id,
@@ -253,7 +323,8 @@ namespace ApiSMT.Controllers.ControllersEPI
                         idUsuario = localizaUsuario.id,
                         usuario = localizaUsuario.nome,
                         dataPedido = localizaPedido.dataPedido,
-                        estoque = localizaEstoque.quantidade
+                        estoque = localizaEstoque.quantidade,
+                        liberadoVinculo = item.liberadoVinculo
                     });
                 }
 

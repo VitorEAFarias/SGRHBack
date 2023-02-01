@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ApiSMT.Utilitários
+namespace Utilitarios.Utilitários
 {
     /// <summary>
     /// Classe que gera criptografia MD5

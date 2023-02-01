@@ -125,6 +125,9 @@ namespace ControleEPI.BLL.EPICertificados
         {
             try
             {
+                certificado.ativo = "S";
+                certificado.observacao = "";
+
                 var insereCertificado = await _certificado.Insert(certificado);
 
                 if (insereCertificado != null)

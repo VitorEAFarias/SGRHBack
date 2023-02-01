@@ -6,10 +6,10 @@ namespace ControleEPI.DAL.RHUsuarios
 {
     public interface IRHConUserDAL
     {
-        Task<IEnumerable<RHDocumentoDTO>> GetDoc();
+        Task<RHDocumentoDTO> GetDoc(string numero);
         Task<RHEmpContatoDTO> getEmail(int idEmpregado);
-        Task<IEnumerable<RHEmpregadoDTO>> GetColaboradores();
-        Task<List<RHEmpregadoDTO>> getColaboradores(int idSuperior);
+        Task<IList<RHEmpregadoDTO>> GetColaboradores();
+        Task<IList<RHEmpregadoDTO>> getColaboradores(int idSuperior);
         Task<RHEmpregadoDTO> GetEmp(int Id);
         Task<RHSenhaDTO> Get(int id);
         Task<RHSenhaDTO> GetSenha(int id);

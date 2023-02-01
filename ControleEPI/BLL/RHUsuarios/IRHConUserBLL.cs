@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ControleEPI.DTO;
+using ControleEPI.DTO.FromBody;
 
 namespace ControleEPI.BLL.RHUsuarios
 {
     public interface IRHConUserBLL
     {
-        Task<IEnumerable<RHDocumentoDTO>> GetDoc();
+        Task<RHDocumentoDTO> GetDoc(string numero);
+        Task<LoginDTO> login(LoginDTO login);
         Task<RHEmpContatoDTO> getEmail(int idEmpregado);
-        Task<IEnumerable<RHEmpregadoDTO>> GetColaboradores();
-        Task<List<RHEmpregadoDTO>> getColaboradores(int idSuperior);
-        Task<RHEmpregadoDTO> GetEmp(int Id);
+        Task<IList<EmpregadoDTO>> GetColaboradores();
+        Task<IList<EmpregadoDTO>> getColaboradores(int idSuperior);        
+        Task<EmpregadoDTO> GetEmp(int Id);
         Task<RHSenhaDTO> Get(int id);
         Task<RHSenhaDTO> GetSenha(int id);
         Task<RHEmpContatoDTO> GetEmpCont(int id);

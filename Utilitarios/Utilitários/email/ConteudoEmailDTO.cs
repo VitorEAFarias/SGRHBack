@@ -1,6 +1,6 @@
-﻿namespace Vestimenta.DTO.email
+﻿namespace Utilitarios.Utilitários.email
 {
-    public class VestConteudoEmailDTO
+    public class ConteudoEmailDTO
     {
         public string nome { get; set; }
         public string tamanho { get; set; }

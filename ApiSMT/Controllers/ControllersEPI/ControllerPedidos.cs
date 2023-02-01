@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ControleEPI.DTO;
 using System;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.DTO.E_Mail;
-using ControleEPI.DTO.email;
-using ApiSMT.Utilitários;
 using ControleEPI.BLL.EPIMotivos;
 using ControleEPI.BLL.EPIPedidosAprovados;
 using ControleEPI.BLL.EPIPedidos;
@@ -17,6 +14,7 @@ using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
 using ControleEPI.BLL.EPIProdutos;
+using Utilitarios.Utilitários.email;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -92,9 +90,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                     {
                         string tamanho = string.Empty;
 
-                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        EmailRequestDTO email = new EmailRequestDTO();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         pedido.dataPedido = DateTime.Now;
                         pedido.status = 1;
@@ -127,7 +125,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                             tamanho = localizaTamanho.tamanho;
                                         }
 
-                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
                                             tamanho = tamanho,
@@ -136,7 +134,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                         });
                                     }
 
-                                    conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                    conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                     {
                                         idPedido = novoPedido.id.ToString(),
                                         nomeColaborador = checkUsuario.nome,
@@ -206,9 +204,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                         string tamanho = string.Empty;
 
                         EPIPedidosAprovadosDTO aprovado = new EPIPedidosAprovadosDTO();
-                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        EmailRequestDTO email = new EmailRequestDTO();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         var getEmail = await _usuario.getEmail(checkUsuario.id);
 
@@ -236,7 +234,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                             tamanho = localizaTamanho.tamanho;
                                         }
 
-                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
                                             tamanho = tamanho,
@@ -248,13 +246,14 @@ namespace ApiSMT.Controllers.ControllersEPI
                                         aprovado.idPedido = localizaPedido.id;
                                         aprovado.idTamanho = produto.tamanho;
                                         aprovado.quantidade = produto.quantidade;
-                                        aprovado.enviadoCompra = "N";
+                                        aprovado.enviadoCompra = "A";
+                                        aprovado.liberadoVinculo = "N";
 
                                         await _pedidosAprovados.Insert(aprovado);
                                     }
                                 }
 
-                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
                                     idPedido = localizaPedido.id.ToString(),
                                     nomeColaborador = checkUsuario.nome,
@@ -321,9 +320,9 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                         EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
                         List<Produtos> produtos = new List<Produtos>();
-                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        EmailRequestDTO email = new EmailRequestDTO();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         var getEmail = await _usuario.getEmail(checkUsuario.id);
 
@@ -351,7 +350,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                             tamanho = localizaTamanho.tamanho;
                                         }
 
-                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
                                             tamanho = tamanho,
@@ -372,7 +371,8 @@ namespace ApiSMT.Controllers.ControllersEPI
                                         aprovados.idPedido = localizaPedido.id;
                                         aprovados.idTamanho = produto.tamanho;
                                         aprovados.quantidade = produto.quantidade;
-                                        aprovados.enviadoCompra = "N";
+                                        aprovados.enviadoCompra = "A";
+                                        aprovados.liberadoVinculo = "N";
 
                                         await _pedidosAprovados.Insert(aprovados);
                                     }
@@ -389,7 +389,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     }
                                 }
 
-                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
                                     idPedido = localizaPedido.id.ToString(),
                                     nomeColaborador = checkUsuario.nome,
@@ -478,9 +478,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                         string tamanho = string.Empty;
 
                         List<Produtos> produtos = new List<Produtos>();
-                        EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                        EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                        List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                        EmailRequestDTO email = new EmailRequestDTO();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         var getEmail = await _usuario.getEmail(checkUsuario.id);
 
@@ -508,7 +508,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                             tamanho = localizaTamanho.tamanho;
                                         }
 
-                                        conteudoEmails.Add(new EPIConteudoEmailDTO
+                                        conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
                                             tamanho = tamanho,
@@ -538,7 +538,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     }
                                 }
 
-                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
                                     idPedido = localizaPedido.id.ToString(),
                                     nomeColaborador = checkUsuario.nome,
@@ -637,9 +637,9 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
 
                                 List<Produtos> produtos = new List<Produtos>();
-                                EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                                EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                                List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                                EmailRequestDTO email = new EmailRequestDTO();
+                                ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                                List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                                 var idStatus = await _status.getStatus(status);
 
@@ -659,7 +659,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                         tamanho = localizaTamanho.tamanho;
                                     }
 
-                                    conteudoEmails.Add(new EPIConteudoEmailDTO
+                                    conteudoEmails.Add(new ConteudoEmailDTO
                                     {
                                         nome = produto.nome,
                                         tamanho = tamanho,
@@ -677,7 +677,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                     });
                                 }
 
-                                conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
                                     idPedido = localizaPedido.id.ToString(),
                                     nomeColaborador = checkUsuario.nome,

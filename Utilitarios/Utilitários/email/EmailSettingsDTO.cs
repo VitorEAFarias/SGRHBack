@@ -1,4 +1,4 @@
-﻿namespace ApiSMT.Utilitários.email
+﻿namespace Utilitarios.Utilitários.email
 {
     /// <summary>
     /// Objeto conexão com o objeto de conexao com servidor de email

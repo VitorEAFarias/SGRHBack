@@ -5,10 +5,8 @@ using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.DTO.E_Mail;
-using ApiSMT.Utilitários;
+using Utilitarios.Utilitários.email;
 using ControleEPI.DTO;
-using Vestimenta.DTO.email;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
@@ -82,7 +80,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     if (novaCompra != null)
                     {
                         EmailRequestDTO email = new EmailRequestDTO();
-                        List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         var getEmail = await _conuser.getEmail(novaCompra.idUsuario);
                         var getEmp = await _conuser.GetEmp(novaCompra.idUsuario);
@@ -92,7 +90,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             var nomeItem = await _vestimenta.getVestimenta(item.idItem);
                             var statusItem = await _status.getStatus(novaCompra.status);
 
-                            conteudoEmails.Add(new VestConteudoEmailDTO {
+                            conteudoEmails.Add(new ConteudoEmailDTO {
                                 nome = nomeItem.nome,
                                 tamanho = item.tamanho,
                                 status = statusItem.nome,
@@ -145,8 +143,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     await _comprasVest.Update(checkCompra);
 
                     EmailRequestDTO email = new EmailRequestDTO();
-                    VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
-                    List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                     var checkUsuario = await _conuser.GetEmp(aguardandoCompra.idUsuario);
                     var contrato = await _contrato.getEmpContrato(aguardandoCompra.idUsuario);
@@ -158,7 +156,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     {
                         var nomeItem = await _vestimenta.getVestimenta(item.idItem);
 
-                        conteudoEmails.Add(new VestConteudoEmailDTO
+                        conteudoEmails.Add(new ConteudoEmailDTO
                         {
                             nome = nomeItem.nome,
                             tamanho = item.tamanho,
@@ -167,9 +165,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         });
                     }
 
-                    conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                    conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                     {
-                        idPedido = aguardandoCompra.id,
+                        idPedido = aguardandoCompra.id.ToString(),
                         nomeColaborador = checkUsuario.nome,
                         departamento = departamento.titulo
                     };
@@ -208,9 +206,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
             {
                 RHEmpContatoDTO getEmail = new RHEmpContatoDTO();                
                 EmailRequestDTO email = new EmailRequestDTO();
-                RHEmpregadoDTO checkUsuario = new RHEmpregadoDTO();                
-                List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
-                VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
+                EmpregadoDTO checkUsuario = new EmpregadoDTO();                
+                List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
                 
                 VestComprasDTO checkCompra = await _comprasVest.getCompra(processoCompra.id);
                 RHEmpContratosDTO contrato = await _contrato.getEmpContrato(processoCompra.idUsuario);
@@ -232,7 +230,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         var getNome = await _vestimenta.getVestimenta(itensComprar.idItem);
                         var getStatus = await _status.getStatus(processoCompra.status);
 
-                        conteudoEmails.Add(new VestConteudoEmailDTO
+                        conteudoEmails.Add(new ConteudoEmailDTO
                         {
                             nome = getNome.nome,
                             tamanho = itensComprar.tamanho,
@@ -246,9 +244,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     return BadRequest(new { message = "Compra não encontrada", result = false });
                 }
 
-                conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                 {
-                    idPedido = checkCompra.id,
+                    idPedido = checkCompra.id.ToString(),
                     nomeColaborador = checkUsuario.nome,
                     departamento = departamento.titulo
                 };
@@ -285,8 +283,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                 if (checkCompra != null)
                 {
                     EmailRequestDTO email = new EmailRequestDTO();
-                    List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
-                    VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
 
                     RHEmpContratosDTO contrato = await _contrato.getEmpContrato(reprovarCompra.idUsuario);
                     RHDepartamentosDTO departamento = await _departamento.getDepartamento(contrato.id_departamento);
@@ -323,7 +321,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             quantidade = repositorio.quantidade;                            
                         }
 
-                        conteudoEmails.Add(new VestConteudoEmailDTO
+                        conteudoEmails.Add(new ConteudoEmailDTO
                         {
                             nome = nomeItem,
                             tamanho = tamanho,
@@ -331,9 +329,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             quantidade = quantidade
                         });
 
-                        conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                         {
-                            idPedido = checkCompra.id,
+                            idPedido = checkCompra.id.ToString(),
                             nomeColaborador = checkUsuario.nome,
                             departamento = departamento.titulo
                         };
@@ -387,9 +385,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     VestEstoqueDTO getEstoque = new VestEstoqueDTO();
                     VestStatusDTO getStatusItem = new VestStatusDTO();
                     VestRepositorioDTO getRepositorio = new VestRepositorioDTO();
-                    VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
 
-                    List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                     var getEmail = await _conuser.getEmail(checkCompra.idUsuario);
                     var checkUsuario = await _conuser.GetEmp(comprarItens.idUsuario);                   
@@ -423,7 +421,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                                             getStatusItem = await _status.getStatus(7);
 
-                                            conteudoEmails.Add(new VestConteudoEmailDTO
+                                            conteudoEmails.Add(new ConteudoEmailDTO
                                             {
                                                 nome = itens.nome,
                                                 tamanho = itens.tamanho,
@@ -502,9 +500,9 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         }  
                     }
 
-                    conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                    conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                     {
-                        idPedido = checkCompra.id,
+                        idPedido = checkCompra.id.ToString(),
                         nomeColaborador = checkUsuario.nome,
                         departamento = departamento.titulo
                     };

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace Vestimenta.DTO.email
+namespace Utilitarios.Utilitários.email
 {
     public class EmailRequestDTO
     {
         public string EmailDe { get; set; }
         public string EmailPara { get; set; }
         public string Assunto { get; set; }
-        public VestConteudoEmailColaboradorDTO ConteudoColaborador { get; set; }
-        public List<VestConteudoEmailDTO> Conteudo { get; set; }
+        public ConteudoEmailColaboradorDTO ConteudoColaborador { get; set; }
+        public List<ConteudoEmailDTO> Conteudo { get; set; }
     }
 }

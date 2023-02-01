@@ -16,16 +16,15 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <PackageReference Include="DinkToPdf.Standard" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="3.1.29" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ControleEPI\ControleEPI.csproj" />
+    <ProjectReference Include="..\Utilitarios\Utilitarios.csproj" />
     <ProjectReference Include="..\Vestimenta\Vestimenta.csproj" />
   </ItemGroup>
 

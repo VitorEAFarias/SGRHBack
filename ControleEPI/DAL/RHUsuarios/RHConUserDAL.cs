@@ -15,7 +15,7 @@ namespace ControleEPI.DAL.RHUsuarios
             _context = context;
         }
 
-        public async Task<List<RHEmpregadoDTO>> getColaboradores(int idSuperior)
+        public async Task<IList<RHEmpregadoDTO>> getColaboradores(int idSuperior)
         {
             var contratos = await _context.rh_empregados_contratos.FromSqlRaw("SELECT * FROM rh_empregados_contratos WHERE contrato_atual = 1 AND contrato_principal = 1 " +
                 "AND id_empregado_superior = '" + idSuperior + "'").ToListAsync();
@@ -44,12 +44,13 @@ namespace ControleEPI.DAL.RHUsuarios
             return await _context.rh_empregados_contatos.FromSqlRaw("SELECT id, id_empregado, valor FROM rh_empregados_contatos WHERE id_empregado = '" + idEmpregado + "' AND tipo_contato = 13").OrderBy(c => c.id).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<RHDocumentoDTO>> GetDoc()
+        public async Task<RHDocumentoDTO> GetDoc(string numero)
         {
-            return await _context.rh_empregados_documentos.FromSqlRaw("SELECT id, id_empregado, tipo_documento, numero FROM rh_empregados_documentos WHERE tipo_documento = 2").ToListAsync();
+            return await _context.rh_empregados_documentos.FromSqlRaw("SELECT id, id_empregado, tipo_documento, numero FROM rh_empregados_documentos WHERE tipo_documento = 2 AND " +
+                "numero = '" + numero + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<RHEmpregadoDTO>> GetColaboradores()
+        public async Task<IList<RHEmpregadoDTO>> GetColaboradores()
         {
             return await _context.rh_empregados.FromSqlRaw("SELECT id, nome, ativo FROM rh_empregados WHERE ativo = 1").ToListAsync();
         }

@@ -1250,6 +1250,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0"
         },
         "compile": {
@@ -1259,13 +1260,33 @@
           "bin/placeholder/ControleEPI.dll": {}
         }
       },
+      "Utilitarios/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "DinkToPdf.Standard": "1.1.0",
+          "Innofactor.EfCoreJsonValueConverter": "2.0.2",
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Microsoft.Extensions.Hosting.Abstractions": "3.1.29",
+          "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "System.IdentityModel.Tokens.Jwt": "6.21.0"
+        },
+        "compile": {
+          "bin/placeholder/Utilitarios.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Utilitarios.dll": {}
+        }
+      },
       "Vestimenta/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
-          "Pomelo.EntityFrameworkCore.MySql": "5.0.0"
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Vestimenta.dll": {}
@@ -2944,6 +2965,11 @@
       "path": "../ControleEPI/ControleEPI.csproj",
       "msbuildProject": "../ControleEPI/ControleEPI.csproj"
     },
+    "Utilitarios/1.0.0": {
+      "type": "project",
+      "path": "../Utilitarios/Utilitarios.csproj",
+      "msbuildProject": "../Utilitarios/Utilitarios.csproj"
+    },
     "Vestimenta/1.0.0": {
       "type": "project",
       "path": "../Vestimenta/Vestimenta.csproj",
@@ -2953,12 +2979,11 @@
   "projectFileDependencyGroups": {
     "net5.0": [
       "ControleEPI >= 1.0.0",
-      "DinkToPdf.Standard >= 1.1.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 5.0.17",
       "Microsoft.Extensions.Hosting.WindowsServices >= 3.1.29",
       "Serilog.AspNetCore >= 5.0.0",
       "Swashbuckle.AspNetCore >= 5.6.3",
-      "System.IdentityModel.Tokens.Jwt >= 6.21.0",
+      "Utilitarios >= 1.0.0",
       "Vestimenta >= 1.0.0"
     ]
   },
@@ -3000,6 +3025,9 @@
             "C:\\Projects\\dotnet\\Teste\\ApiSMT\\ControleEPI\\ControleEPI.csproj": {
               "projectPath": "C:\\Projects\\dotnet\\Teste\\ApiSMT\\ControleEPI\\ControleEPI.csproj"
             },
+            "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Utilitarios\\Utilitarios.csproj": {
+              "projectPath": "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Utilitarios\\Utilitarios.csproj"
+            },
             "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Vestimenta\\Vestimenta.csproj": {
               "projectPath": "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Vestimenta\\Vestimenta.csproj"
             }
@@ -3016,10 +3044,6 @@
       "net5.0": {
         "targetAlias": "net5.0",
         "dependencies": {
-          "DinkToPdf.Standard": {
-            "target": "Package",
-            "version": "[1.1.0, )"
-          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[5.0.17, )"
@@ -3035,10 +3059,6 @@
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[5.6.3, )"
-          },
-          "System.IdentityModel.Tokens.Jwt": {
-            "target": "Package",
-            "version": "[6.21.0, )"
           }
         },
         "imports": [

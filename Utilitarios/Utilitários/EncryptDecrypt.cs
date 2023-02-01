@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ApiSMT.Utilitários
+namespace Utilitarios.Utilitários
 {
     /// <summary>
     /// Classe de criptografia

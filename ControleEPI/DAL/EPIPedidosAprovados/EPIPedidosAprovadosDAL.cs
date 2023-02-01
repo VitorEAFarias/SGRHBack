@@ -20,9 +20,9 @@ namespace ControleEPI.DAL.EPIPedidosAprovados
                 "").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
-        public async Task<IList<EPIPedidosAprovadosDTO>> getProdutosAprovados(string status)
+        public async Task<IList<EPIPedidosAprovadosDTO>> getProdutosAprovados(string statusCompra, string statusVinculo)
         {
-            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE enviadoCompra = '" + status + "'").ToListAsync();
+            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE liberadoVinculo = '" +statusVinculo + "' AND enviadoCompra = '" + statusCompra + "'").ToListAsync();
         }
 
         public async Task<EPIPedidosAprovadosDTO> Insert(EPIPedidosAprovadosDTO produtoAprovado)

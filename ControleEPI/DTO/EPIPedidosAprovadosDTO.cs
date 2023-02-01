@@ -8,5 +8,6 @@
         public int idTamanho { get; set; }
         public int quantidade { get; set; }
         public string enviadoCompra { get; set; }
+        public string liberadoVinculo { get; set; }
     }
 }

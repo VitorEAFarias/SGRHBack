@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace Vestimenta.DTO.DinkPDF
-{    
+namespace Utilitarios.Utilitários.PDF
+{
     public class VestRelatorioVestimentasDTO
     {
         public int numeroPedido { get; set; }

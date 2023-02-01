@@ -124,7 +124,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaCategorias != null)
                 {
-                    return Ok(new { message = "Categorias encontradas", lista = localizaCategorias, result = true });
+                    return Ok(new { message = "Categorias encontradas", data = localizaCategorias, result = true });
                 }
                 else
                 {
@@ -152,7 +152,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaCategoria != null)
                 {
-                    return Ok(new { message = "Categoria encontrada!!!", result = true, categoria = localizaCategoria });
+                    return Ok(new { message = "Categoria encontrada!!!", result = true, data = localizaCategoria });
                 }               
                 else
                 {
@@ -177,29 +177,32 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var localizaCategoria = await _categoria.getCategoria(id);
 
-                if (localizaCategoria == null)
-                    return BadRequest(new { message = "Categoria não encontrada", result = false });
-
-                var verificaProduto = await _produto.verificaCategoria(localizaCategoria.id);
-
-                if (verificaProduto == null || verificaProduto.Equals(0))
+                if (localizaCategoria != null)
                 {
-                    var deletaVinculoProduto = await _categoria.Delete(localizaCategoria.id);
+                    var verificaProduto = await _produto.verificaCategoria(localizaCategoria.id);
 
-                    if (deletaVinculoProduto != null)
+                    if (verificaProduto == null)
                     {
-                        return Ok(new { message = "Categoria deletada com sucesso!!!", result = true });
+                        var deletaVinculoProduto = await _categoria.Delete(localizaCategoria.id);
+
+                        if (deletaVinculoProduto != null)
+                        {
+                            return Ok(new { message = "Categoria deletada com sucesso!!!", result = true });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Erro ao deletar categoria", result = false });
+                        }
                     }
                     else
                     {
-                        return BadRequest(new { message = "Erro ao deletar categoria", result = false });
+                        return BadRequest(new { message = "Não é possivel deletar categorias vinculadas a produtos", result = false });
                     }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Não é possivel deletar categorias vinculadas a produtos", result = false });
+                    return BadRequest(new { message = "Categoria não encontrada", result = false });
                 }
-
             }
             catch (System.Exception ex)
             {

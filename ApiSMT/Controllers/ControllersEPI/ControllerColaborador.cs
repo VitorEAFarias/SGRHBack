@@ -1,11 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.BLL.RHCargos;
 using ControleEPI.BLL.RHUsuarios;
-using ControleEPI.BLL.RHDepartamentos;
-using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -16,24 +12,15 @@ namespace ApiSMT.Controllers.ControllersEPI
     [ApiController]
     public class ControllerColaborador : ControllerBase
     {
-        private readonly IRHEmpContratosBLL _contrato;
         private readonly IRHConUserBLL _usuario;
-        private readonly IRHDepartamentosBLL _departamento;
-        private readonly IRHCargosBLL _cargo;
 
         /// <summary>
         /// Construtor ColaboradorController
         /// </summary>
         /// <param name="usuario"></param>
-        /// <param name="contrato"></param>
-        /// <param name="departamento"></param>
-        /// <param name="cargo"></param>
-        public ControllerColaborador(IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IRHCargosBLL cargo)
+        public ControllerColaborador(IRHConUserBLL usuario)
         {
             _usuario = usuario;
-            _contrato = contrato;
-            _departamento = departamento;
-            _cargo = cargo;
         }
 
         /// <summary>
@@ -49,32 +36,11 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 if (idSuperior == 0)
                 {
-                    var colaboradores = await _usuario.GetColaboradores();
-
-                    List<object> listaColaboradores = new List<object>();
+                    var colaboradores = await _usuario.GetColaboradores();                    
 
                     if (colaboradores != null)
                     {
-                        foreach (var item in colaboradores)
-                        {
-                            var contratoColaborador = await _contrato.getEmpContrato(item.id);
-
-                            if (contratoColaborador != null)
-                            {
-                                var departamentoColaborador = await _departamento.getDepartamento(contratoColaborador.id_departamento);
-                                var cargoColaborador = await _cargo.getCargo(contratoColaborador.id_cargo);
-
-                                listaColaboradores.Add(new
-                                {
-                                    idColaborador = item.id,
-                                    nome = item.nome,
-                                    departamento = departamentoColaborador.titulo,
-                                    cargo = cargoColaborador.titulo
-                                });
-                            }
-                        }
-
-                        return Ok(new { message = "Lista encontrada", lista = listaColaboradores, result = true });
+                        return Ok(new { message = "Lista encontrada", data = colaboradores, result = true });
                     }
                     else
                     {
@@ -87,47 +53,20 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     if (checkEquipe.Count != 0)
                     {
-                        List<object> lista = new List<object>();
-
-                        foreach (var item in checkEquipe)
-                        {
-                            var contratoColaborador = await _contrato.getEmpContrato(item.id);
-
-                            if (contratoColaborador != null)
-                            {
-                                var departamentoColaborador = await _departamento.getDepartamento(contratoColaborador.id_departamento);
-                                var cargoColaborador = await _cargo.getCargo(contratoColaborador.id_cargo);
-
-                                lista.Add(new
-                                {
-                                    idColaborador = item.id,
-                                    nome = item.nome,
-                                    departamento = departamentoColaborador.titulo,
-                                    cargo = cargoColaborador.titulo
-                                });
-                            }
-                        }
-
-                        return Ok(new { message = "Lista encontrada", lista = lista, result = true });
+                        return Ok(new { message = "Lista encontrada", data = checkEquipe, result = true });
                     }
                     else
                     {
-                        List<object> colaborador = new List<object>();
+                        var infoEmp = await _usuario.GetEmp(idSuperior);
 
-                        var nomeEmp = await _usuario.GetEmp(idSuperior);
-                        var contratoColaborador = await _contrato.getEmpContrato(nomeEmp.id);
-                        var departamentoColaborador = await _departamento.getDepartamento(contratoColaborador.id_departamento);
-                        var cargoColaborador = await _cargo.getCargo(contratoColaborador.id_cargo);
-
-                        colaborador.Add(new 
-                        { 
-                            idColaborador = nomeEmp.id,
-                            nome = nomeEmp.nome,
-                            departamento = departamentoColaborador.titulo,
-                            cargo = cargoColaborador.titulo
-                        });
-
-                        return Ok(new { message = "Colaborador encontrado", result = true, lista = colaborador });
+                        if (infoEmp != null)
+                        {
+                            return Ok(new { message = "Colaborador encontrado", result = true, data = infoEmp });
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Colaborador não encontrado", result = false });
+                        }                        
                     }
                 }
             }
@@ -152,26 +91,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (colaborador != null)
                 {
-                    var contratoColaborador = await _contrato.getEmpContrato(colaborador.id);
-
-                    if(contratoColaborador != null)
-                    {
-                        var departamentoColaborador = await _departamento.getDepartamento(contratoColaborador.id_departamento);
-                        var cargoColaborador = await _cargo.getCargo(contratoColaborador.id_cargo);
-
-                        var colaboradorInfo = new {
-                            idColaborador = colaborador.id,
-                            nome = colaborador.nome,
-                            departamento = departamentoColaborador.titulo,
-                            cargo = cargoColaborador.titulo
-                        };
-
-                        return Ok(new { message = "Colaborador encontrado", colaborador = colaboradorInfo, result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Contrato do colaborador não encontrado", result = false });
-                    }
+                    return Ok(new { message = "Colaborador encontrado", data = colaborador, result = true });                    
                 }
                 else
                 {

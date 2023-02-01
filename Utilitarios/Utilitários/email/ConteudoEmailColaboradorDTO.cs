@@ -1,6 +1,6 @@
-﻿namespace ControleEPI.DTO.email
+﻿namespace Utilitarios.Utilitários.email
 {
-    public class EPIConteudoEmailColaboradorDTO
+    public class ConteudoEmailColaboradorDTO
     {
         public string idPedido { get; set; }
         public string nomeColaborador { get; set; }

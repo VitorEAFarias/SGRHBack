@@ -36,11 +36,11 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             }
         }
 
-        public async Task<IList<EPIPedidosAprovadosDTO>> getProdutosAprovados(string status)
+        public async Task<IList<EPIPedidosAprovadosDTO>> getProdutosAprovados(string statusCompra, string statusVinculo)
         {
             try
             {
-                var localizaProdutosAprovados = await _pedidosAprovados.getProdutosAprovados(status);
+                var localizaProdutosAprovados = await _pedidosAprovados.getProdutosAprovados(statusCompra, statusVinculo);
 
                 if (localizaProdutosAprovados != null)
                 {

@@ -8,17 +8,15 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Vestimenta.DTO.FromBody;
 using ControleEPI.DTO;
-using ApiSMT.Utilitários;
-using Vestimenta.DTO.DinkPDF;
 using DinkToPdf;
-using ApiSMT.Utilitários.PDF;
 using DinkToPdf.Contracts;
 using System.IO;
-using Vestimenta.DTO.email;
 using ControleEPI.BLL.RHCargos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
+using Utilitarios.Utilitários.PDF;
+using Utilitarios.Utilitários.email;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -317,8 +315,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                     var insereCompra = await _compras.Insert(compras);
 
-                    List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
-                    VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
                     EmailRequestDTO email = new EmailRequestDTO();
                     RHEmpContatoDTO empContato = new RHEmpContatoDTO();
                     var checkUsuario = await _usuario.GetEmp(compras.idUsuario);
@@ -348,14 +346,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                             empContato = await _usuario.getEmail(compras.idUsuario);
 
-                            conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                             {
-                                idPedido = insereCompra.id,
+                                idPedido = insereCompra.id.ToString(),
                                 nomeColaborador = nomeEmp.nome,
                                 departamento = departamento.titulo
                             };
 
-                            conteudoEmails.Add(new VestConteudoEmailDTO
+                            conteudoEmails.Add(new ConteudoEmailDTO
                             {
                                 nome = getNomeItem.nome,
                                 tamanho = item.tamanho,

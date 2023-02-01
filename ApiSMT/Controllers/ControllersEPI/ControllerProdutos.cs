@@ -54,6 +54,18 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                     if (insereProduto != null)
                     {
+                        EPIProdutosEstoqueDTO novoEstoque = new EPIProdutosEstoqueDTO();
+
+                        //foreach (var item in collection)
+                        //{
+                        //    novoEstoque.idProduto = insereProduto.id;
+                        //    novoEstoque.quantidade = 0;
+
+                        //    novoEstoque.ativo = "S";
+                        //}
+
+                        
+
                         return Ok(new { message = "Produto inserido com sucesso!!!", result = true });
                     }
                     else
@@ -116,6 +128,27 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
             }
             catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lista produtos por categoria
+        /// </summary>
+        /// <param name="idCategoria"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("categoria/{idCategoria}")]
+        public async Task<IActionResult> listaPorCategoria(int idCategoria)
+        {
+            try
+            {
+                var produtosCategoria = await _produtos.verificaCategoria(idCategoria);
+
+                return Ok(new { message = "Produtos encontrados", result = true, data = produtosCategoria });
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

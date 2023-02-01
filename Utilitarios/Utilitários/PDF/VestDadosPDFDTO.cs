@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Vestimenta.DTO.DinkPDF
+namespace Utilitarios.Utilitários.PDF
 {
     public class VestDadosPDFDTO : IEntityTypeConfiguration<VestDadosPDFDTO>
     {
@@ -20,7 +20,7 @@ namespace Vestimenta.DTO.DinkPDF
         public string departamento { get; set; }
         public string cargo { get; set; }
         [JsonField]
-        public IList<Historico> vestimentas { get; set; }        
+        public IList<Historico> vestimentas { get; set; }
     }
 
     public class Historico

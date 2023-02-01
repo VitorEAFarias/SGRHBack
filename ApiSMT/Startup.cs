@@ -9,7 +9,6 @@ using Vestimenta.DTO._DbContext;
 using Vestimenta.DAL;
 using Vestimenta.BLL;
 using Microsoft.EntityFrameworkCore;
-using ApiSMT.Utilitários;
 using System.Reflection;
 using System.IO;
 using System;
@@ -19,7 +18,6 @@ using System.Text;
 using ApiSMT.Utilitários.JWT;
 using DinkToPdf.Contracts;
 using DinkToPdf;
-using ApiSMT.Utilitários.email;
 using ControleEPI.BLL.EPICategorias;
 using ControleEPI.DAL.EPICategorias;
 using ControleEPI.DAL.EPIProdutos;
@@ -56,6 +54,8 @@ using ControleEPI.DAL.RHCargos;
 using ControleEPI.DAL.RHUsuarios;
 using ControleEPI.DAL.RHDepartamentos;
 using ControleEPI.DAL.RHContratos;
+using Utilitarios.Utilitários.email;
+using Utilitarios.Utilitários;
 
 namespace ApiSMT
 {

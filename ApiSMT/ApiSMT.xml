@@ -9,7 +9,7 @@
             Classe de categorias
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.IEPICategoriasBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.EPICategorias.IEPICategoriasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtos CategoriasController
             </summary>
@@ -53,7 +53,7 @@
             Classe ControllerCertificadoAprovacao
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtor ControllerCertificadoAprovacao
             </summary>
@@ -97,14 +97,11 @@
             Classe que manipula os dados de colaborador
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.#ctor(ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.#ctor(ControleEPI.BLL.RHUsuarios.IRHConUserBLL)">
             <summary>
             Construtor ColaboradorController
             </summary>
             <param name="usuario"></param>
-            <param name="contrato"></param>
-            <param name="departamento"></param>
-            <param name="cargo"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerColaborador.getListColaboradores(System.Int32)">
             <summary>
@@ -125,7 +122,7 @@
             Classe que manipula as informações relacionadas a compras de produtos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPILogComprasBLL,ControleEPI.BLL.IRHEmpContratosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IRHDepartamentosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPILogCompras.IEPILogComprasBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL)">
             <summary>
             Construtor ComprasController
             </summary>
@@ -155,12 +152,6 @@
             Seleciona uma compra
             </summary>
             <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.localizaCompras">
-            <summary>
-            Lista todas as compras
-            </summary>
             <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.cadastraCompra(System.Int32,System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
@@ -199,7 +190,7 @@
             Classe que manipula os dados de fornecedores
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.IEPIFornecedoresBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.EPIFornecedores.IEPIFornecedoresBLL)">
             <summary>
             Construtos de FornecedorController
             </summary>
@@ -238,33 +229,17 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:ApiSMT.Controllers.ControllersEPI.Extensions">
-            <summary>
-            Classe para identificar usuarios administradores
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.Extensions.findIndex``1(``0[],``0)">
-            <summary>
-            Função array
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="array"></param>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerLogin">
             <summary>
             Classe de login do sistema
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.#ctor(ControleEPI.BLL.IRHConUserBLL,Microsoft.Extensions.Configuration.IConfiguration,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL,ApiSMT.Utilitários.JWT.ITokenService)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.#ctor(ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Microsoft.Extensions.Configuration.IConfiguration,ApiSMT.Utilitários.JWT.ITokenService)">
             <summary>
             Construtor LoginController
             </summary>
             <param name="conuser"></param>
             <param name="config"></param>
-            <param name="departamento"></param>
-            <param name="contrato"></param>
             <param name="tokenService"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerLogin.MainWindow(ApiSMT.Utilitários.JWT.TokenObject)">
@@ -286,7 +261,7 @@
             Classe ControllerMotivos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.#ctor(ControleEPI.BLL.IEPIMotivosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.#ctor(ControleEPI.BLL.EPIMotivos.IEPIMotivosBLL)">
             <summary>
             Construtor ControllerMotivos
             </summary>
@@ -310,7 +285,7 @@
             Classe de manipulação de pedidos de epi's
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IEPIMotivosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IEPITamanhosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPIMotivos.IEPIMotivosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Construtor PedidosController
             </summary>
@@ -325,6 +300,7 @@
             <param name="departamento"></param>
             <param name="mail"></param>
             <param name="tamanho"></param>
+            <param name="produtos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.inserePedido(ControleEPI.DTO.EPIPedidosDTO)">
             <summary>
@@ -396,7 +372,7 @@
             Classe ProdutosAprovadosController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.IEPIPedidosAprovadosBLL,ControleEPI.BLL.IEPIPedidosBLL,ControleEPI.BLL.IEPIComprasBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIStatusBLL,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ApiSMT.Utilitários.IMailService)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL)">
             <summary>
             Construtor ProdutosAprovadosController
             </summary>
@@ -409,6 +385,13 @@
             <param name="tamanho"></param>
             <param name="estoque"></param>
             <param name="mail"></param>
+            <param name="vinculo"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.produtosAvulsos(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
+            <summary>
+            Envia produtos avulsos para compras
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.enviaParaCompras(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO},System.Int32)">
             <summary>
@@ -426,11 +409,18 @@
             <param name="status"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.produtosAprovados(System.String)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.aprovarVinculo(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
+            <summary>
+            Aprovar para vinculo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.produtosAprovados(System.String,System.String)">
             <summary>
             Lista todos os produtos aprovados
             </summary>
-            <param name="status"></param>
+            <param name="statusCompra"></param>
+            <param name="statusVinculo"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerProdutos">
@@ -438,7 +428,7 @@
             Classe ControllerProdutos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.IEPICategoriasBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
             <summary>
             Contrutor ControllerProdutos
             </summary>
@@ -490,7 +480,7 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPITamanhosBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPILogEstoqueBLL,ControleEPI.BLL.IEPICertificadoAprovacaoBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL)">
             <summary>
             Construtor ProdutosEstoqueController
             </summary>
@@ -538,11 +528,12 @@
             Classe ControllerTamanhos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.IEPITamanhosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
             <summary>
             Construtor ControllerTamanhos
             </summary>
             <param name="tamanhos"></param>
+            <param name="categoria"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.insereTamanho(ControleEPI.DTO.EPITamanhosDTO)">
             <summary>
@@ -589,7 +580,7 @@
             Classe ControllerVinculo
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.IEPIVinculoBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IEPIProdutosEstoqueBLL,ControleEPI.BLL.IEPIProdutosBLL,ControleEPI.BLL.IEPIStatusBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL)">
             <summary>
             Construtor ControllerVinculo
             </summary>
@@ -660,7 +651,7 @@
             Classe de PDF
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IDinkPDFBLL,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHCargosBLL,Vestimenta.BLL.IVestimentaBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IDinkPDFBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHCargos.IRHCargosBLL,Vestimenta.BLL.IVestimentaBLL)">
             <summary>
             Construtor VestimentaController
             </summary>
@@ -735,7 +726,7 @@
             Classe de Compras
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.#ctor(Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL,Vestimenta.BLL.IVestRepositorioBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestCompras.#ctor(Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL,Vestimenta.BLL.IVestRepositorioBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL)">
             <summary>
             Construtor de Compras
             </summary>
@@ -858,7 +849,7 @@
             Classe de pedidos de vestimenta
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestVinculoBLL,Vestimenta.BLL.ILogBLL,ApiSMT.Utilitários.IMailService,Vestimenta.BLL.IVestimentaBLL,ControleEPI.BLL.IRHDepartamentosBLL,ControleEPI.BLL.IRHEmpContratosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IStatusVestBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestVinculoBLL,Vestimenta.BLL.ILogBLL,Utilitarios.Utilitários.email.IMailService,Vestimenta.BLL.IVestimentaBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL)">
             <summary>
             Construtor de Pedidos
             </summary>
@@ -931,7 +922,7 @@
             Controller VestRepositorioController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IStatusVestBLL,ApiSMT.Utilitários.IMailService,ControleEPI.BLL.IRHConUserBLL,ControleEPI.BLL.IRHEmpContratosBLL,ControleEPI.BLL.IRHDepartamentosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IRHCargosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.IVestRepositorioBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.IComprasVestBLL,Vestimenta.BLL.IStatusVestBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.RHCargos.IRHCargosBLL)">
             <summary>
             Construtor VestRepositorioController
             </summary>
@@ -986,7 +977,7 @@
             Classe VestVinculoController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.IVestVinculoBLL,ControleEPI.BLL.IRHConUserBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.IVestVinculoBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.IEstoqueBLL,Vestimenta.BLL.IVestimentaBLL,Vestimenta.BLL.ILogBLL,Vestimenta.BLL.IPedidosVestBLL)">
             <summary>
             Construtor VestVinculoController
             </summary>
@@ -1054,7 +1045,7 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.DashboardController.#ctor(ControleEPI.BLL.IEPIPedidosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.IEPIPedidosAprovadosBLL,Vestimenta.BLL.IVestRepositorioBLL)">
+        <member name="M:ApiSMT.Controllers.DashboardController.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.IPedidosVestBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.IVestRepositorioBLL)">
             <summary>
             Construtor DashboardController
             </summary>
@@ -1115,230 +1106,6 @@
             </summary>
             <param name="app"></param>
             <param name="env"></param>
-        </member>
-        <member name="T:ApiSMT.Utilitários.email.EmailSettingsDTO">
-            <summary>
-            Objeto conexão com o objeto de conexao com servidor de email
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.email.EmailSettingsDTO.usuario">
-            <summary>
-            usuario
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.email.EmailSettingsDTO.DisplayName">
-            <summary>
-            display name
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.email.EmailSettingsDTO.Password">
-            <summary>
-            password
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.email.EmailSettingsDTO.Host">
-            <summary>
-            host
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.email.EmailSettingsDTO.Port">
-            <summary>
-            port
-            </summary>
-        </member>
-        <member name="T:ApiSMT.Utilitários.IMailService">
-            <summary>
-            Interface IMailService
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.IMailService.SendEmailAsync(Vestimenta.DTO.email.EmailRequestDTO)">
-            <summary>
-            Chamada do envio de email para vestimenta
-            </summary>
-            <param name="emailRequest"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.IMailService.SendEmailAsync(ControleEPI.DTO.E_Mail.EPIEmailRequestDTO)">
-            <summary>
-            Chamada do envio de email para EPI
-            </summary>
-            <param name="emailRequestDTO"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.MailService">
-            <summary>
-            Classe de envio de e-mail
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.MailService.#ctor(Microsoft.Extensions.Options.IOptions{ApiSMT.Utilitários.email.EmailSettingsDTO})">
-            <summary>
-            Construtor MailService
-            </summary>
-            <param name="emailSettings"></param>
-        </member>
-        <member name="M:ApiSMT.Utilitários.MailService.SendEmailAsync(ControleEPI.DTO.E_Mail.EPIEmailRequestDTO)">
-            <summary>
-            Função para enviar EPI
-            </summary>
-            <param name="mailRequest"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.MailService.SendEmailAsync(Vestimenta.DTO.email.EmailRequestDTO)">
-            <summary>
-            Função para enviar e-mail vestimenta
-            </summary>
-            <param name="mailRequest"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.EncryptDecrypt">
-            <summary>
-            Classe de criptografia
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.EncryptDecrypt.Encrypt(System.String)">
-            <summary>
-            Função Encrypt
-            </summary>
-            <param name="clearText"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.EncryptDecrypt.Decrypt(System.String)">
-            <summary>
-            Função Decrypt
-            </summary>
-            <param name="cipherText"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.GerarMD5">
-            <summary>
-            Classe que gera criptografia MD5
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.GerarMD5.GeraMD5(System.String)">
-            <summary>
-            Função que converte o valor digitado para criptografia MD5
-            </summary>
-            <param name="valor"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.JWT.ITokenService">
-            <summary>
-            Interface repositorio de token
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.JWT.ITokenService.BuildToken(System.String,System.String,System.String)">
-            <summary>
-            Cria token
-            </summary>
-            <param name="key"></param>
-            <param name="issuer"></param>
-            <param name="usuario"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.JWT.ITokenService.IsTokenValid(System.String,System.String,System.String)">
-            <summary>
-            Verifica validade do token
-            </summary>
-            <param name="key"></param>
-            <param name="issuer"></param>
-            <param name="token"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.JWT.TokenObject">
-            <summary>
-            FromBody token
-            </summary>
-        </member>
-        <member name="P:ApiSMT.Utilitários.JWT.TokenObject.token">
-            <summary>
-            Objeto token
-            </summary>
-        </member>
-        <member name="T:ApiSMT.Utilitários.JWT.TokenService">
-            <summary>
-            Classe TokenService
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.JWT.TokenService.BuildToken(System.String,System.String,System.String)">
-            <summary>
-            Função cria token
-            </summary>
-            <param name="key"></param>
-            <param name="issuer"></param>
-            <param name="usuario"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.JWT.TokenService.IsTokenValid(System.String,System.String,System.String)">
-            <summary>
-            Função verifica validade do token
-            </summary>
-            <param name="key"></param>
-            <param name="issuer"></param>
-            <param name="token"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.JWT.TokenService.BuildMessage(System.String,System.Int32)">
-            <summary>
-            Constrói a mensagem que mostra o token
-            </summary>
-            <param name="stringToSplit"></param>
-            <param name="chunkSize"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.PDF.RelatórioPDF">
-            <summary>
-            Template html relatorio vestimentas a serem entregues
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.PDF.RelatórioPDF.GetHTMLString(System.Collections.Generic.List{Vestimenta.DTO.DinkPDF.VestRelatorioVestimentasDTO})">
-            <summary>
-            Função para montar o html com as informações enviadas
-            </summary>
-            <param name="dadosPDF"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.PDF.TemplatePDF">
-            <summary>
-            CLasse template html
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.PDF.TemplatePDF.GetHTMLString(Vestimenta.DTO.DinkPDF.VestDadosPDFDTO)">
-            <summary>
-            Função para montar o html com as informações enviadas
-            </summary>
-            <param name="dadosPDF"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Utilitários.TimerHostedService">
-            <summary>
-            Classe que monitora quando um processo é executado ou pausado
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Utilitários.TimerHostedService.#ctor(Microsoft.Extensions.Logging.ILogger{ApiSMT.Utilitários.TimerHostedService})">
-            <summary>
-            Construtor TimerHostedService
-            </summary>
-            <param name="logger"></param>
-        </member>
-        <member name="M:ApiSMT.Utilitários.TimerHostedService.StartAsync(System.Threading.CancellationToken)">
-            <summary>
-            Função que inicia o monitoramento processo
-            </summary>
-            <param name="cancellationToken"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Utilitários.TimerHostedService.ExecuteProcess(System.Object)">
-            <summary>
-            Funçao que mostra o processo em execução
-            </summary>
-            <param name="state"></param>
-        </member>
-        <member name="M:ApiSMT.Utilitários.TimerHostedService.StopAsync(System.Threading.CancellationToken)">
-            <summary>
-            Funçao que mostra o processo que foi pausado
-            </summary>
-            <param name="cancellationToken"></param>
-            <returns></returns>
         </member>
     </members>
 </doc>

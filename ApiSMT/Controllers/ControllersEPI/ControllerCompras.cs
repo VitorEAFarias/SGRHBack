@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using ApiSMT.Utilitários;
-using ControleEPI.DTO.E_Mail;
-using ControleEPI.DTO.email;
 using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.BLL.EPICompras;
 using ControleEPI.BLL.EPILogCompras;
@@ -20,6 +17,7 @@ using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
+using Utilitarios.Utilitários.email;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -200,33 +198,6 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
-        /// Lista todas as compras
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> localizaCompras()
-        {
-            try
-            {
-                var todasCompras = await _compras.getTodasCompras();
-
-                if (todasCompras != null || !todasCompras.Equals(0))
-                {
-                    return Ok(new { message = "Todas as compras", result = true, data = todasCompras });
-                }
-                else
-                {
-                    return BadRequest(new { message = "Nenhuma compra enconrada", result = false });
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Cadastra uma nova compra
         /// </summary>
         /// <param name="produtosAprovados"></param>
@@ -309,9 +280,9 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaCompra != null)
                 {
-                    EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                    EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                    List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                    EmailRequestDTO email = new EmailRequestDTO();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                     var getEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
                     var getEmail = await _usuario.getEmail(localizaCompra.id);
@@ -332,7 +303,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 var verificaTamanho = await _tamanhos.localizaTamanho(localizaPedidoAprovado.idTamanho);
                                 var nomeStatus = await _status.getStatus(14);
 
-                                conteudoEmails.Add(new EPIConteudoEmailDTO
+                                conteudoEmails.Add(new ConteudoEmailDTO
                                 {
                                     nome = localizaProduto.nome,
                                     tamanho = verificaTamanho.tamanho,
@@ -343,7 +314,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 numeroPedidos += localizaPedidoAprovado.id;
                             }
 
-                            conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                             {
                                 idPedido = numeroPedidos,
                                 nomeColaborador = getEmp.nome,
@@ -395,9 +366,9 @@ namespace ApiSMT.Controllers.ControllersEPI
             try
             {
                 var localizaUsuarioReprova = await _usuario.GetEmp(idUsuario);
-                EPIEmailRequestDTO email = new EPIEmailRequestDTO();
-                EPIConteudoEmailColaboradorDTO conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO();
-                List<EPIConteudoEmailDTO> conteudoEmails = new List<EPIConteudoEmailDTO>();
+                EmailRequestDTO email = new EmailRequestDTO();
+                ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                 if (localizaUsuarioReprova != null || !localizaUsuarioReprova.Equals(0))
                 {
@@ -435,7 +406,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                                 var nomeTamanho = await _tamanhos.localizaTamanho(pedidoProduto.tamanho);
                                                 var nomeStatus = await _status.getStatus(pedidoProduto.status);
 
-                                                conteudoEmails.Add(new EPIConteudoEmailDTO
+                                                conteudoEmails.Add(new ConteudoEmailDTO
                                                 {
                                                     nome = pedidoProduto.nome,
                                                     tamanho = nomeTamanho.tamanho,
@@ -487,7 +458,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                                         await _pedidos.Update(localizaPedido);
 
-                                        conteudoEmailColaborador = new EPIConteudoEmailColaboradorDTO
+                                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                         {
                                             idPedido = localizaPedido.id.ToString(),
                                             nomeColaborador = usuarioPedido.nome,

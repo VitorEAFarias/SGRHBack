@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ApiSMT.Utilitários
+namespace Utilitarios.Utilitários
 {
     /// <summary>
     /// Classe que monitora quando um processo é executado ou pausado

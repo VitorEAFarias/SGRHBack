@@ -5,11 +5,10 @@ using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ApiSMT.Utilitários;
-using Vestimenta.DTO.email;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
+using Utilitarios.Utilitários.email;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -87,14 +86,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
 
                         EmailRequestDTO email = new EmailRequestDTO();
-                        VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
-                        List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
+                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
                         foreach (var item in pedido.item)
                         {
                             var checkStatusItem = await _status.getStatus(item.status);
 
-                            conteudoEmails.Add(new VestConteudoEmailDTO
+                            conteudoEmails.Add(new ConteudoEmailDTO
                             {
                                 nome = item.nome,
                                 tamanho = item.tamanho,
@@ -103,8 +102,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             });
                         }
 
-                        conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO {
-                            idPedido = 1,//novoPedido.id,
+                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO {
+                            idPedido = 1.ToString(),//novoPedido.id,
                             nomeColaborador = checkUsuario.nome,
                             departamento = getDepartamento.titulo
                         };
@@ -152,8 +151,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                 {
                     bool verificaCompra = false;
                     List<ItemDTO> listaItens = new List<ItemDTO>();
-                    List<VestConteudoEmailDTO> conteudoEmails = new List<VestConteudoEmailDTO>();
-                    VestConteudoEmailColaboradorDTO conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
 
                     int cont = 0;
 
@@ -189,14 +188,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                                 dataAlteracao = DateTime.Now
                             });
 
-                            conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                             {
-                                idPedido = pedidoItem.id,
+                                idPedido = pedidoItem.id.ToString(),
                                 nomeColaborador = nomeColaborador.nome,
                                 departamento = departamento.titulo
                             };
 
-                            conteudoEmails.Add(new VestConteudoEmailDTO
+                            conteudoEmails.Add(new ConteudoEmailDTO
                             {
                                 nome = nomeItem.nome,
                                 tamanho = item.tamanho,
@@ -246,14 +245,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                                 liberadoVinculo.idPedido = checkPedido.id;
                                 liberadoVinculo.usado = "N";                                
 
-                                conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
-                                    idPedido = pedidoItem.id,
+                                    idPedido = pedidoItem.id.ToString(),
                                     nomeColaborador = nomeColaborador.nome,
                                     departamento = departamento.titulo
                                 };
 
-                                conteudoEmails.Add(new VestConteudoEmailDTO
+                                conteudoEmails.Add(new ConteudoEmailDTO
                                 {
                                     nome = nomeItem.nome,
                                     tamanho = item.tamanho,
@@ -316,14 +315,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                                     }
                                 }
 
-                                conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
-                                    idPedido = pedidoItem.id,
+                                    idPedido = pedidoItem.id.ToString(),
                                     nomeColaborador = nomeColaborador.nome,
                                     departamento = departamento.titulo
                                 };
 
-                                conteudoEmails.Add(new VestConteudoEmailDTO
+                                conteudoEmails.Add(new ConteudoEmailDTO
                                 {
                                     nome = nomeItem.nome,
                                     tamanho = item.tamanho,
@@ -350,14 +349,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             var nomeItem = await _vestimenta.getVestimenta(item.id);
                             var statusItem = await _status.getStatus(item.status);
 
-                            conteudoEmailColaborador = new VestConteudoEmailColaboradorDTO
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                             {
-                                idPedido = pedidoItem.id,
+                                idPedido = pedidoItem.id.ToString(),
                                 nomeColaborador = nomeColaborador.nome,
                                 departamento = departamento.titulo
                             };
 
-                            conteudoEmails.Add(new VestConteudoEmailDTO
+                            conteudoEmails.Add(new ConteudoEmailDTO
                             {
                                 nome = nomeItem.nome,
                                 tamanho = item.tamanho,

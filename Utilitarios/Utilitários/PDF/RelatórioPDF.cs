@@ -1,19 +1,19 @@
-﻿using System.Text;
-using Vestimenta.DTO.DinkPDF;
+﻿using System.Collections.Generic;
+using System.Text;
 
-namespace ApiSMT.Utilitários.PDF
+namespace Utilitarios.Utilitários.PDF
 {
     /// <summary>
-    /// CLasse template html
+    /// Template html relatorio vestimentas a serem entregues
     /// </summary>
-    public class TemplatePDF
+    public class RelatórioPDF
     {
         /// <summary>
         /// Função para montar o html com as informações enviadas
         /// </summary>
         /// <param name="dadosPDF"></param>
         /// <returns></returns>
-        public static string GetHTMLString(VestDadosPDFDTO dadosPDF)
+        public static string GetHTMLString(List<VestRelatorioVestimentasDTO> dadosPDF)
         {
             var sb = new StringBuilder();
             sb.AppendFormat(@"
@@ -32,7 +32,7 @@ namespace ApiSMT.Utilitários.PDF
 
                                     th {{
                                         height: 70px;
-                                        font-size: 21px;
+                                        font-size: 16px;
                                         background-color: #4B0082;
                                         color: white;
                                     }}
@@ -45,7 +45,7 @@ namespace ApiSMT.Utilitários.PDF
 
                                     td {{
                                         height: 50px;
-                                        font-size: 18px;
+                                        font-size: 14px;
                                     }}
 
                                     table {{
@@ -55,29 +55,23 @@ namespace ApiSMT.Utilitários.PDF
                                     tr:nth-child(even) {{
                                         background-color: #f2f2f2;
                                     }}
-
-                                    p {{
-                                        color: black;
-                                        text-align: left;
-                                        font-size: 20px;
-                                    }}
                                 </style>
                             </head>
                             <body>
                                 <div class='row'><img src='https://www.reisoffice.com.br/images/logo-reisoffice-novo.png'/></div>
-                                <div class='header'><h1>Histórico de Vestimentas</h1></div>
+                                <div class='header'><h1>Relatório de entrega de uniforme</h1></div>
                                 <div style='overflow-x: auto;'>
                                     <table align='center'>
                                         <tr>
-                                            <th>Nome</th>
+                                            <th>Número do Pedido</th>
+                                            <th>Data do Pedido</th>
+                                            <th>Colaborador</th>
+                                            <th>Departamento</th>
+                                            <th>Vestimenta</th>
                                             <th>Tamanho</th>
                                             <th>Quantidade</th>
-                                            <th>Data de Recebimento</th>
-                                            <th>Data de Devolução</th>
-                                            <th>Item Usado</th>
-                                            <th>Item recebido por: </th>
                                         </tr>");
-            foreach (var item in dadosPDF.vestimentas)
+            foreach (var item in dadosPDF)
             {
                 sb.AppendFormat(@"<tr>
                                     <td>{0}</td>
@@ -87,9 +81,8 @@ namespace ApiSMT.Utilitários.PDF
                                     <td>{4}</td>
                                     <td>{5}</td>
                                     <td>{6}</td>
-                                  </tr>", item.nomeVestimenta, item.tamanho, item.quantidade, item.dataVinculo.ToString("dd/MM/yyyy HH:mm"), 
-                                  item.dataDesvinculo.ToString("dd/MM/yyyy HH:mm") == "01/01/0001 00:00"? "-" : item.dataDesvinculo.ToString("dd/MM/yyyy HH:mm"), 
-                                  item.usado, dadosPDF.nome);
+                                  </tr>", item.numeroPedido, item.dataPedido.ToString("dd/MM/yyyy HH:mm"), item.colaborador, item.departamento, item.vestimenta.ToUpper(), 
+                                  item.tamanho, item.quantidade);
             }
             sb.Append(@"
                                     </table>

@@ -4,7 +4,6 @@ using Vestimenta.BLL;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
-using Vestimenta.DTO.DinkPDF;
 using DinkToPdf.Contracts;
 using DinkToPdf;
 using System.IO;
@@ -13,6 +12,7 @@ using ControleEPI.BLL.RHCargos;
 using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
+using Utilitarios.Utilitários.PDF;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

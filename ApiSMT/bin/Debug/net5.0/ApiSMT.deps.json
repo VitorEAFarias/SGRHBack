@@ -34,12 +34,11 @@
       "ApiSMT/1.0.0": {
         "dependencies": {
           "ControleEPI": "1.0.0",
-          "DinkToPdf.Standard": "1.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.17",
           "Microsoft.Extensions.Hosting.WindowsServices": "3.1.29",
           "Serilog.AspNetCore": "5.0.0",
           "Swashbuckle.AspNetCore": "5.6.3",
-          "System.IdentityModel.Tokens.Jwt": "6.21.0",
+          "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "5.0.0.0",
@@ -1041,6 +1040,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0"
         },
         "runtime": {
@@ -1050,11 +1050,29 @@
           "ControleEPI.dll": {}
         }
       },
+      "Utilitarios/1.0.0": {
+        "dependencies": {
+          "DinkToPdf.Standard": "1.1.0",
+          "Innofactor.EfCoreJsonValueConverter": "2.0.2",
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Microsoft.Extensions.Hosting.Abstractions": "3.1.29",
+          "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
+          "Microsoft.Extensions.Options": "5.0.0",
+          "System.IdentityModel.Tokens.Jwt": "6.21.0"
+        },
+        "runtime": {
+          "Utilitarios.dll": {}
+        },
+        "compile": {
+          "Utilitarios.dll": {}
+        }
+      },
       "Vestimenta/1.0.0": {
         "dependencies": {
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
-          "Pomelo.EntityFrameworkCore.MySql": "5.0.0"
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
         },
         "runtime": {
           "Vestimenta.dll": {}
@@ -3276,6 +3294,11 @@
       "hashPath": "system.text.json.4.6.0.nupkg.sha512"
     },
     "ControleEPI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Utilitarios/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -4,10 +4,10 @@ using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
-using ApiSMT.Utilitários;
 using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO.FromBody;
 using ControleEPI.BLL.RHUsuarios;
+using Utilitarios.Utilitários;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {

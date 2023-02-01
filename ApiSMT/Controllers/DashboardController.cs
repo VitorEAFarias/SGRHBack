@@ -46,7 +46,7 @@ namespace ApiSMT.Controllers
             {
                 var todosPedidosEPI = await _pedidosEPI.getPedidosUsuario(idUsuario);
                 var todosPedidosVest = await _pedidosVest.getPedidosUsuarios(idUsuario);
-                var todosAprovadosEPI = await _EPIAprovados.getProdutosAprovados("S");
+                var todosAprovadosEPI = await _EPIAprovados.getProdutosAprovados("S", "S");
                 var todosAprovadosVest = await _VestAprovados.getRepositorioStatus("S");
 
                 List<object> pendentes = new List<object>();
