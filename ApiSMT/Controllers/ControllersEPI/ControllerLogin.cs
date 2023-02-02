@@ -5,8 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using ApiSMT.Utilitários.JWT;
 using ControleEPI.BLL.RHUsuarios;
-using ControleEPI.BLL.RHDepartamentos;
-using ControleEPI.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

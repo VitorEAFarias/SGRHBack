@@ -7,10 +7,15 @@ namespace ControleEPI.BLL.EPIPedidos
     public interface IEPIPedidosBLL
     {
         Task<EPIPedidosDTO> Insert(EPIPedidosDTO pedido);
-        Task<IList<EPIPedidosDTO>> getPedidos();
+        Task<IList<PedidosUsuarioDTO>> getPedidos();
         Task<EPIPedidosDTO> getPedido(int Id);
+        Task<IList<ProdutosEstoqueDTO>> getPedidoProduto(int Id);
         Task<IList<EPIPedidosDTO>> getTodosPedidos(int status);
-        Task<IList<EPIPedidosDTO>> getPedidosUsuario(int Id);
+        Task<IList<PedidosUsuarioDTO>> getPedidosUsuario(int Id);
         Task<EPIPedidosDTO> Update(EPIPedidosDTO pedido);
+        Task<EPIPedidosDTO> aprovaPedido(EPIPedidosDTO aprovaPedido);
+        Task<EPIPedidosDTO> reprovaPedido(int status, EPIPedidosDTO pedido);
+        Task<EPIPedidosDTO> aprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido);
+        Task<EPIPedidosDTO> reprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido);        
     }
 }

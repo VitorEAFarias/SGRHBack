@@ -10,6 +10,7 @@ namespace ControleEPI.BLL.EPITamanhos
         Task<EPITamanhosDTO> localizaTamanho(int Id);
         Task<EPITamanhosDTO> verificaTamanho(string nome);
         Task<IList<EPITamanhosDTO>> localizaTamanhos();
+        Task<IList<EPITamanhosDTO>> tamanhosCategoria(int idCategoria);
         Task<EPITamanhosDTO> Update(EPITamanhosDTO tamanho);
         Task<EPITamanhosDTO> Delete(int id);
     }

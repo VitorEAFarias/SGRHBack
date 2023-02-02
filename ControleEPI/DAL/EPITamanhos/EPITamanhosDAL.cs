@@ -27,6 +27,11 @@ namespace ControleEPI.DAL.EPITamanhos
             return await _context.EPITamanhos.FindAsync(Id);
         }
 
+        public async Task<IList<EPITamanhosDTO>> tamanhosCategoria(int idCategoria)
+        {
+            return await _context.EPITamanhos.FromSqlRaw("SELECT * FROM EPITamanhos WHERE idCategoriaProduto = '" + idCategoria + "' AND ativo = 'S'").OrderBy(c => c.id).ToListAsync();
+        }
+
         public async Task<IList<EPITamanhosDTO>> localizaTamanhos()
         {
             return await _context.EPITamanhos.ToListAsync();

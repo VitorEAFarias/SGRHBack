@@ -285,22 +285,11 @@
             Classe de manipulação de pedidos de epi's
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPIMotivos.IEPIMotivosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL)">
             <summary>
             Construtor PedidosController
             </summary>
             <param name="pedidos"></param>
-            <param name="status"></param>
-            <param name="motivos"></param>
-            <param name="conUser"></param>
-            <param name="produtosEstoque"></param>
-            <param name="pedidosAprovados"></param>
-            <param name="usuario"></param>
-            <param name="contrato"></param>
-            <param name="departamento"></param>
-            <param name="mail"></param>
-            <param name="tamanho"></param>
-            <param name="produtos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.inserePedido(ControleEPI.DTO.EPIPedidosDTO)">
             <summary>
@@ -450,13 +439,20 @@
             <param name="produto"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.listaPorCategoria(System.Int32)">
+            <summary>
+            Lista produtos por categoria
+            </summary>
+            <param name="idCategoria"></param>
+            <returns></returns>
+        </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.localizaProduto(System.Int32)">
             <summary>
             Localiza produto
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.produtosStatus(System.String)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.produtosTamanhos(System.String)">
             <summary>
             Lista produtos por status
             </summary>
@@ -566,6 +562,13 @@
             <summary>
             Localiza todos os tamanhos
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.tamanhosCategoria(System.Int32)">
+            <summary>
+            Tamanhos por categoria
+            </summary>
+            <param name="idCategoria"></param>
             <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.deleteStatus(System.Int32)">
@@ -1053,12 +1056,6 @@
             <param name="pedidosVest"></param>
             <param name="EPIAprovados"></param>
             <param name="vestAprovados"></param>
-        </member>
-        <member name="M:ApiSMT.Controllers.DashboardController.contagemPedidos(System.Int32)">
-            <summary>
-            Pega todos os pedidos
-            </summary>
-            <returns></returns>
         </member>
         <member name="T:ApiSMT.Program">
             <summary>

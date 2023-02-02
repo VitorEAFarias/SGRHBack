@@ -10,6 +10,6 @@ namespace ControleEPI.BLL.EPIFornecedores
         Task<EPIFornecedoresDTO> getFornecedor(int Id);
         Task<EPIFornecedoresDTO> verificaFornecedor(string nome, string cnpj);
         Task<IEnumerable<EPIFornecedoresDTO>> getFornecedores();
-        Task Update(EPIFornecedoresDTO fornecedor);
+        Task<EPIFornecedoresDTO> Update(EPIFornecedoresDTO fornecedor);
     }
 }

@@ -102,7 +102,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var localizaUsuario = await _usuario.GetEmp(idUsuario);
 
-                if (localizaUsuario != null || !localizaUsuario.Equals(0))
+                if (localizaUsuario != null)
                 {
                     if (enviaCompra != null)
                     {
@@ -125,46 +125,52 @@ namespace ApiSMT.Controllers.ControllersEPI
                             var localizaPedido = await _pedidos.getPedido(produto.idPedido);
                             var localizaProduto = await _produtos.localizaProduto(produto.idProduto);
                             var checkStatusItem = await _status.getStatus(4);
-                            var getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
 
-                            EPITamanhosDTO localizaTamanho = new EPITamanhosDTO();
-
-                            foreach (var item in localizaPedido.produtos)
+                            if (localizaPedido != null)
                             {
-                                var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(item.id, item.tamanho);
+                                var getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
 
-                                if (localizaProdutoEstoque != null || !localizaProdutoEstoque.Equals(0))
+                                EPITamanhosDTO localizaTamanho = new EPITamanhosDTO();
+
+                                foreach (var item in localizaPedido.produtos)
                                 {
-                                    localizaTamanho = await _tamanho.localizaTamanho(item.tamanho);
-                                }
-                            }                             
+                                    var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(item.id, item.tamanho);
 
-                            if (localizaTamanho != null || !localizaTamanho.Equals(0))
-                            {
-                                tamanho = "";
+                                    if (localizaProdutoEstoque != null || !localizaProdutoEstoque.Equals(0))
+                                    {
+                                        localizaTamanho = await _tamanho.localizaTamanho(item.tamanho);
+                                    }
+                                }
+
+                                if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                {
+                                    tamanho = "";
+                                }
+                                else
+                                {
+                                    tamanho = localizaTamanho.tamanho;
+                                }
+
+                                conteudoEmails.Add(new ConteudoEmailDTO
+                                {
+                                    nome = localizaProduto.nome,
+                                    tamanho = tamanho,
+                                    status = checkStatusItem.nome,
+                                    quantidade = produto.quantidade
+                                });
+
+                                email.EmailDe = getEmail.valor;
+                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                email.ConteudoColaborador = conteudoEmailColaborador;
+                                email.Conteudo = conteudoEmails;
+                                email.Assunto = "EPI enviado para compras";
+
+                                await _mail.SendEmailAsync(email);
                             }
                             else
                             {
-                                tamanho = localizaTamanho.tamanho;
+                                produto.enviadoCompra = "S";
                             }
-
-                            conteudoEmails.Add(new ConteudoEmailDTO
-                            {
-                                nome = localizaProduto.nome,
-                                tamanho = tamanho,
-                                status = checkStatusItem.nome,
-                                quantidade = produto.quantidade
-                            });
-
-                            produto.enviadoCompra = "S";
-
-                            email.EmailDe = getEmail.valor;
-                            email.EmailPara = "fabiana.lie@reisoffice.com.br";
-                            email.ConteudoColaborador = conteudoEmailColaborador;
-                            email.Conteudo = conteudoEmails;
-                            email.Assunto = "EPI enviado para compras";
-
-                            await _mail.SendEmailAsync(email);
 
                             await _pedidosAprovados.Update(produto);
                         }
@@ -307,25 +313,50 @@ namespace ApiSMT.Controllers.ControllersEPI
                     var localizaProduto = _produtos.localizaProduto(item.idProduto).Result;
                     var localizaTamanho = _tamanho.localizaTamanho(item.idTamanho).Result;
                     var localizaPedido = _pedidos.getPedido(item.idPedido).Result;
-                    var localizaUsuario = _usuario.GetEmp(localizaPedido.idUsuario).Result;
-                    var localizaEstoque = _estoque.getProdutoExistente(item.idProduto).Result;
 
-                    produtos.Add(new
+                    if (localizaPedido != null)
                     {
-                        idProdutoAprovado = item.id,
-                        enviadoCompra = item.enviadoCompra,
-                        idPedido = item.idPedido,
-                        idProduto = localizaProduto.id,
-                        nome = localizaProduto.nome,
-                        idTamanho = localizaTamanho.id,
-                        tamanho = localizaTamanho.tamanho,
-                        quantidade = item.quantidade,
-                        idUsuario = localizaUsuario.id,
-                        usuario = localizaUsuario.nome,
-                        dataPedido = localizaPedido.dataPedido,
-                        estoque = localizaEstoque.quantidade,
-                        liberadoVinculo = item.liberadoVinculo
-                    });
+                        var localizaUsuario = _usuario.GetEmp(localizaPedido.idUsuario).Result;
+                        var localizaEstoque = _estoque.getProdutoExistente(item.idProduto).Result;
+
+                        produtos.Add(new
+                        {
+                            idProdutoAprovado = item.id,
+                            enviadoCompra = item.enviadoCompra,
+                            idPedido = item.idPedido,
+                            idProduto = localizaProduto.id,
+                            nome = localizaProduto.nome,
+                            idTamanho = localizaTamanho.id,
+                            tamanho = localizaTamanho.tamanho,
+                            quantidade = item.quantidade,
+                            idUsuario = localizaUsuario.id,
+                            usuario = localizaUsuario.nome,
+                            dataPedido = localizaPedido.dataPedido,
+                            estoque = localizaEstoque.quantidade,
+                            liberadoVinculo = item.liberadoVinculo
+                        });
+                    }
+                    else
+                    {
+                        var localizaEstoque = _estoque.getProdutoExistente(item.idProduto).Result;
+
+                        produtos.Add(new
+                        {
+                            idProdutoAprovado = item.id,
+                            enviadoCompra = item.enviadoCompra,
+                            idPedido = item.idPedido,
+                            idProduto = localizaProduto.id,
+                            nome = localizaProduto.nome,
+                            idTamanho = localizaTamanho.id,
+                            tamanho = localizaTamanho.tamanho,
+                            quantidade = item.quantidade,
+                            idUsuario = 0,
+                            usuario = string.Empty,
+                            dataPedido = string.Empty,
+                            estoque = localizaEstoque.quantidade,
+                            liberadoVinculo = item.liberadoVinculo
+                        });
+                    }
                 }
 
                 if (produtos != null)

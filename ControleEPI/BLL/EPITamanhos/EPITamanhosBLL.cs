@@ -99,6 +99,27 @@ namespace ControleEPI.BLL.EPITamanhos
             }
         }
 
+        public async Task<IList<EPITamanhosDTO>> tamanhosCategoria(int idCategoria)
+        {
+            try
+            {
+                var localizaTamanhosCategoria = await _tamanho.tamanhosCategoria(idCategoria);
+
+                if (localizaTamanhosCategoria != null)
+                {
+                    return localizaTamanhosCategoria;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<EPITamanhosDTO> Update(EPITamanhosDTO tamanho)
         {
             try

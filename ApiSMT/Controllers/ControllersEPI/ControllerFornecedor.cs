@@ -77,9 +77,16 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaFornecedor != null)
                 {
-                    await _fornecedor.Update(fornecedor);
+                    var atualizaFornecedor = await _fornecedor.Update(fornecedor);
 
-                    return Ok(new { message = "Dados do fornecedor '"+localizaFornecedor.nome+"' atualizado com sucesso!!!", result = true });
+                    if (atualizaFornecedor != null)
+                    {
+                        return Ok(new { message = "Dados do fornecedor '" + localizaFornecedor.nome + "' atualizado com sucesso!!!", result = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Erro ao atualizar fornecedor", result = false });
+                    }                    
                 }
                 else
                 {

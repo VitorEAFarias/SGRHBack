@@ -1,5 +1,7 @@
 ﻿using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DTO;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,9 +11,12 @@ namespace ControleEPI.BLL.EPIProdutos
     public class EPIProdutosBLL : IEPIProdutosBLL
     {
         private readonly IEPIProdutosDAL _produto;
-        public EPIProdutosBLL(IEPIProdutosDAL produto)
+        private readonly IEPITamanhosDAL _tamanhos;
+
+        public EPIProdutosBLL(IEPIProdutosDAL produto, IEPITamanhosDAL tamanhos)
         {
             _produto = produto;
+            _tamanhos = tamanhos;
         }
 
         public Task<EPIProdutosDTO> ativaDesativaProduto(int id)
@@ -124,15 +129,49 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<IList<EPIProdutosDTO>> produtosStatus(string status)
+        public async Task<IList<ProdutosTamanhosDTO>> produtosTamanhos(string status)
         {
             try
             {
-                var statusProduto = await _produto.produtosStatus(status);
+                var localizaTamanhosCategoria = await _tamanhos.localizaTamanhos();
+                var LocalizaProdutosAtivos = await _produto.produtosStatus(status);
 
-                if (statusProduto != null)
+                List<ProdutosTamanhosDTO> produtos = new List<ProdutosTamanhosDTO>();                
+
+                foreach (var produto in LocalizaProdutosAtivos)
                 {
-                    return statusProduto;
+                    List<Tamanho> tamanhos = new List<Tamanho>();
+
+                    foreach (var tamanho in localizaTamanhosCategoria)
+                    {
+                        if (produto.idCategoria == tamanho.idCategoriaProduto)
+                        {
+                            tamanhos.Add(new Tamanho
+                            {
+                                idTamanho = tamanho.id,
+                                tamanho = tamanho.tamanho
+                            });                            
+                        }
+                    }
+
+                    produtos.Add(new ProdutosTamanhosDTO
+                    {
+                        id = produto.id,
+                        nome = produto.nome,
+                        idCategoria = produto.idCategoria,
+                        preco = produto.preco,
+                        idCertificadoAprovacao = produto.idCertificadoAprovacao,
+                        validadeEmUso = produto.validadeEmUso,
+                        ativo = produto.ativo,
+                        foto = produto.foto,
+                        maximo = produto.maximo,
+                        tamanhos = tamanhos
+                    });
+                }
+
+                if (produtos != null)
+                {
+                    return produtos;
                 }
                 else
                 {
@@ -167,7 +206,7 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<EPIProdutosDTO> verificaCategoria(int idCategoria)
+        public async Task<IList<EPIProdutosDTO>> verificaCategoria(int idCategoria)
         {
             try
             {

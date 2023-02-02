@@ -237,13 +237,41 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Tamanhos por categoria
+        /// </summary>
+        /// <param name="idCategoria"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("categoria/{idCategoria}")]
+        public async Task<IActionResult> tamanhosCategoria(int idCategoria)
+        {
+            try
+            {
+                var localizaTamanhosCategoria = await _tamanhos.tamanhosCategoria(idCategoria);
+
+                if (localizaTamanhosCategoria != null)
+                {
+                    return Ok(new { message = "Tamanhos encontrados", result = true, data = localizaTamanhosCategoria});
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum tamanho encontrado", result = false });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Deleta tamanho
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> deleteStatus(int id)
+        public async Task<IActionResult> deleteStatus(int id)
         {
             var deletaTamanho = await _tamanhos.localizaTamanho(id);
 

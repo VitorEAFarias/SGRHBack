@@ -37,9 +37,9 @@ namespace ControleEPI.DAL.EPIProdutos
             return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE ativo = '" + status + " '").OrderBy(p => p.id).ToListAsync();
         }
 
-        public async Task<EPIProdutosDTO> verificaCategoria(int idCategoria)
+        public async Task<IList<EPIProdutosDTO>> verificaCategoria(int idCategoria)
         {
-            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE idCategoria = '" + idCategoria + "'").OrderBy(c => c.id).FirstOrDefaultAsync();
+            return await _context.EPIProdutos.FromSqlRaw("SELECT * FROM EPIProdutos WHERE idCategoria = '" + idCategoria + "'").OrderBy(c => c.id).ToListAsync();
         }
 
         public async Task<IList<EPIProdutosDTO>> getProdutosSolicitacao()

@@ -207,13 +207,13 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpGet("todosStatus/{status}")]
-        public async Task<IActionResult> produtosStatus(string status)
+        public async Task<IActionResult> produtosTamanhos(string status)
         {
             try
             {
-                var todosProdutos = await _produtos.produtosStatus(status);
+                var todosProdutos = await _produtos.produtosTamanhos(status);
 
-                if (todosProdutos != null || !todosProdutos.Equals(0))
+                if (todosProdutos != null)
                 {
                     return Ok(new { message = "Produtos encontrados", result = true, data = todosProdutos });
                 }

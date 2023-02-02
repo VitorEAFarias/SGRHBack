@@ -57,19 +57,67 @@ namespace ControleEPI.BLL.EPIFornecedores
             }
         }
 
-        public Task<EPIFornecedoresDTO> Insert(EPIFornecedoresDTO fornecedor)
+        public async Task<EPIFornecedoresDTO> Insert(EPIFornecedoresDTO fornecedor)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var insereFornecedor = await _fornecedor.Insert(fornecedor);
+
+                if (insereFornecedor != null)
+                {
+                    return insereFornecedor;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public Task Update(EPIFornecedoresDTO fornecedor)
+        public async Task<EPIFornecedoresDTO> Update(EPIFornecedoresDTO fornecedor)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var atualizaFornecedor = await _fornecedor.Update(fornecedor);
+
+                if (atualizaFornecedor != null)
+                {
+                    return atualizaFornecedor;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public Task<EPIFornecedoresDTO> verificaFornecedor(string nome, string cnpj)
+        public async Task<EPIFornecedoresDTO> verificaFornecedor(string nome, string cnpj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var verificaFornecedor = await _fornecedor.verificaFornecedor(nome, cnpj);
+
+                if (verificaFornecedor != null)
+                {
+                    return verificaFornecedor;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

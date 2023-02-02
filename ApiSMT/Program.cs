@@ -42,8 +42,8 @@ namespace ApiSMT
         {
             webBuilder.UseContentRoot(Directory.GetCurrentDirectory()).UseIISIntegration().UseKestrel().ConfigureKestrel(options =>
             {
-                options.ListenLocalhost(778);
-                options.ListenAnyIP(778);
+                options.ListenLocalhost(777);
+                options.ListenAnyIP(777);
 
             }).UseStartup<Startup>();
         }).UseWindowsService();
