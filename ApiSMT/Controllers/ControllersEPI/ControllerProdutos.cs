@@ -3,10 +3,7 @@ using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using ControleEPI.BLL.EPICategorias;
 using ControleEPI.BLL.EPIProdutos;
-using ControleEPI.BLL.EPICertificados;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -17,20 +14,14 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerProdutos : ControllerBase
     {
         private readonly IEPIProdutosBLL _produtos;
-        private readonly IEPICertificadoAprovacaoBLL _certificado;
-        private readonly IEPICategoriasBLL _categoria;
 
         /// <summary>
         /// Contrutor ControllerProdutos
         /// </summary>
         /// <param name="produtos"></param>
-        /// <param name="certificado"></param>
-        /// <param name="categoria"></param>
-        public ControllerProdutos(IEPIProdutosBLL produtos, IEPICertificadoAprovacaoBLL certificado, IEPICategoriasBLL categoria)
+        public ControllerProdutos(IEPIProdutosBLL produtos)
         {
             _produtos = produtos;
-            _certificado = certificado;
-            _categoria = categoria;
         }
 
         /// <summary>
@@ -44,40 +35,16 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaProduto = await _produtos.getNomeProduto(produto.nome);
+                var insereProduto = await _produtos.Insert(produto);
 
-                if (localizaProduto == null)
+                if (insereProduto != null)
                 {
-                    produto.ativo = "S";
-
-                    var insereProduto = await _produtos.Insert(produto);
-
-                    if (insereProduto != null)
-                    {
-                        EPIProdutosEstoqueDTO novoEstoque = new EPIProdutosEstoqueDTO();
-
-                        //foreach (var item in collection)
-                        //{
-                        //    novoEstoque.idProduto = insereProduto.id;
-                        //    novoEstoque.quantidade = 0;
-
-                        //    novoEstoque.ativo = "S";
-                        //}
-
-                        
-
-                        return Ok(new { message = "Produto inserido com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao inserir produto", result = false });
-                    }
+                    return Ok(new { message = "Produto inserido com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Ja existe um produto chamado '" + produto.nome + "'", result = false });
+                    return BadRequest(new { message = "Erro ao inserir produtro", result = false });
                 }
-
             }
             catch (System.Exception ex)
             {
@@ -96,35 +63,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaProduto = await _produtos.localizaProduto(produto.id);
+                var atualizaProduto = await _produtos.Update(produto);
 
-                if (localizaProduto != null)
+                if (atualizaProduto != null)
                 {
-                    if (localizaProduto.nome == produto.nome)
-                    {
-                        await _produtos.Update(produto);
-
-                        return Ok(new { message = "Produtor atualizado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        var verificaNomeProduto = await _produtos.getNomeProduto(produto.nome);
-
-                        if (verificaNomeProduto == null)
-                        {
-                            await _produtos.Update(produto);
-
-                            return Ok(new { message = "Produtor atualizado com sucesso!!!", result = true });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Ja existe um produto chamado '" + produto.nome + "'", result = false });
-                        }
-                    }
+                    return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Produto não encontrado", result = false });
+                    return BadRequest(new { message = "Erro ao atualiza produto", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -146,7 +93,14 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var produtosCategoria = await _produtos.verificaCategoria(idCategoria);
 
-                return Ok(new { message = "Produtos encontrados", result = true, data = produtosCategoria });
+                if (produtosCategoria != null)
+                {
+                    return Ok(new { message = "Produtos encontrados", result = true, data = produtosCategoria });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum produto encontrado", result = false });
+                }                
             }
             catch (Exception ex)
             {
@@ -164,34 +118,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaProduto = await _produtos.ativaDesativaProduto(id);
+                var localizaProduto = await _produtos.localizaProduto(id);
 
                 if (localizaProduto != null)
                 {
-                    List<object> produtoRetorno = new List<object>();
-
-                    var verificaCategoria = await _categoria.getCategoria(localizaProduto.idCategoria);
-                    var verificaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
-
-                    produtoRetorno.Add(new
-                    {
-                        idProduto = localizaProduto.id,
-                        idCategoria = verificaCategoria.id,
-                        idCertificado = verificaCertificado.id,
-                        produto = localizaProduto.nome,
-                        categoria = verificaCategoria.nome,
-                        certificado = verificaCertificado.numero,
-                        ativo = localizaProduto.ativo,
-                        foto = localizaProduto.foto,
-                        validadeEmUso = localizaProduto.validadeEmUso,
-                        preco = localizaProduto.preco
-                    });
-
-                    return Ok(new { message = "Produto encontrado", result = true, data = produtoRetorno });
+                    return Ok(new { message = "Produtos encontrados", result = true, data = localizaProduto });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Produto não encontrado", result = false });
+                    return BadRequest(new { message = "Nenhum produto encontrado", result = false });
                 }
             }
             catch (Exception ex)
@@ -238,26 +173,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaProduto = await _produtos.ativaDesativaProduto(id);
+                var ativaDesativaProduto = await _produtos.ativaDesativaProduto(status, id);
 
-                if (localizaProduto != null)
+                if (ativaDesativaProduto != null)
                 {
-                    localizaProduto.ativo = status;
-
-                    await _produtos.Update(localizaProduto);
-
-                    if (status == "S")
-                    {
-                        return Ok(new { message = "Fornecedor ativado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return Ok(new { message = "Fornecedor desativado com sucesso!!!", result = true });
-                    }
+                    return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Fornecedor não encontrado", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar status do produto", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -278,31 +202,9 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var localizaProdutos = await _produtos.getProdutosSolicitacao();
 
-                if (localizaProdutos != null || !localizaProdutos.Equals(0))
+                if (localizaProdutos != null)
                 {
-                    List<object> produtoRetorno = new List<object>();
-
-                    foreach (var item in localizaProdutos)
-                    {
-                        var verificaCategoria = await _categoria.getCategoria(item.idCategoria);
-                        var verificaCertificado = await _certificado.getCertificado(item.idCertificadoAprovacao);
-
-                        produtoRetorno.Add(new
-                        {
-                            idProduto = item.id,
-                            idCategoria = verificaCategoria.id,
-                            idCertificado = verificaCertificado.id,
-                            produto = item.nome,
-                            categoria = verificaCategoria.nome,
-                            certificado = verificaCertificado.numero,
-                            ativo = item.ativo,
-                            foto = item.foto,
-                            validadeEmUso = item.validadeEmUso,
-                            preco = item.preco
-                        });
-                    }
-
-                    return Ok(new { message = "Produtos encontrados", result = true, data = produtoRetorno });
+                    return Ok(new { message = "Produtos encontrados", result = true, data = localizaProdutos });
                 }
                 else
                 {

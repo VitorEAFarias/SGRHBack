@@ -116,7 +116,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         listaVinculos.Add(new VinculoDTO
                         {
                             nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.nome,
+                            nomeItem = localizaProduto.produto,
                             dataVinculo = item.dataVinculo,
                             dataDevolucao = item.dataDevolucao,
                             status = localizaStatus.nome,
@@ -163,7 +163,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                         listaVinculos.Add(new VinculoDTO
                         {
                             nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.nome,
+                            nomeItem = localizaProduto.produto,
                             dataVinculo = item.dataVinculo,
                             dataDevolucao = item.dataDevolucao,
                             status = localizaStatus.nome,

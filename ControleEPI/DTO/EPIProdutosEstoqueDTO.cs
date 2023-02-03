@@ -1,4 +1,6 @@
-﻿namespace ControleEPI.DTO
+﻿using System;
+
+namespace ControleEPI.DTO
 {    
     public class EPIProdutosEstoqueDTO
     {        
@@ -13,5 +15,17 @@
         {
             this.ativo = ativo;
         }
+    }
+
+    public class TodosProdutosEstoqueDTO
+    {
+        public int idEstoque { get; set; }
+        public int quantidade { get; set; }
+        public string tamanho { get; set; }
+        public string produto { get; set; }
+        public decimal preco { get; set; }
+        public string certificado { get; set; }
+        public DateTime validadeCertificado { get; set; }
+        public string ativo { get; set; }
     }
 }

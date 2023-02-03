@@ -1,7 +1,9 @@
-﻿using ControleEPI.DAL.EPIProdutos;
+﻿using ControleEPI.DAL.EPICategorias;
+using ControleEPI.DAL.EPICertificados;
+using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DTO;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,16 +14,17 @@ namespace ControleEPI.BLL.EPIProdutos
     {
         private readonly IEPIProdutosDAL _produto;
         private readonly IEPITamanhosDAL _tamanhos;
+        private readonly IEPIProdutosEstoqueDAL _estoque;
+        private readonly IEPICategoriasDAL _categoria;
+        private readonly IEPICertificadoAprovacaoDAL _certificado;
 
-        public EPIProdutosBLL(IEPIProdutosDAL produto, IEPITamanhosDAL tamanhos)
+        public EPIProdutosBLL(IEPIProdutosDAL produto, IEPITamanhosDAL tamanhos, IEPIProdutosEstoqueDAL estoque, IEPICategoriasDAL categoria, IEPICertificadoAprovacaoDAL certificado)
         {
             _produto = produto;
             _tamanhos = tamanhos;
-        }
-
-        public Task<EPIProdutosDTO> ativaDesativaProduto(int id)
-        {
-            throw new NotImplementedException();
+            _estoque = estoque;
+            _categoria = categoria;
+            _certificado = certificado;
         }
 
         public async Task<EPIProdutosDTO> getCertificadoProduto(int idCertificado)
@@ -64,9 +67,41 @@ namespace ControleEPI.BLL.EPIProdutos
             {
                 throw new Exception(ex.Message);
             }
-        }        
+        }
 
-        public async Task<IList<EPIProdutosDTO>> getProdutosSolicitacao()
+        public async Task<EPIProdutosDTO> ativaDesativaProduto(string status, int id)
+        {
+            try
+            {
+                var localizaProduto = await _produto.localizaProduto(id);
+
+                if (localizaProduto != null)
+                {
+                    localizaProduto.ativo = status;
+
+                    await _produto.Update(localizaProduto);
+
+                    if (status == "S")
+                    {
+                        return localizaProduto;
+                    }
+                    else
+                    {
+                        return localizaProduto;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IList<ProdutosDTO>> getProdutosSolicitacao()
         {
             try
             {
@@ -74,7 +109,29 @@ namespace ControleEPI.BLL.EPIProdutos
 
                 if (localizaProdutos != null)
                 {
-                    return localizaProdutos;
+                    List<ProdutosDTO> produtoRetorno = new List<ProdutosDTO>();
+
+                    foreach (var item in localizaProdutos)
+                    {
+                        var verificaCategoria = await _categoria.getCategoria(item.idCategoria);
+                        var verificaCertificado = await _certificado.getCertificado(item.idCertificadoAprovacao);
+
+                        produtoRetorno.Add(new ProdutosDTO
+                        {
+                            idProduto = item.id,
+                            idCategoria = verificaCategoria.id,
+                            idCertificado = verificaCertificado.id,
+                            produto = item.nome,
+                            categoria = verificaCategoria.nome,
+                            certificado = verificaCertificado.numero,
+                            ativo = item.ativo,
+                            foto = item.foto,
+                            validadeEmUso = item.validadeEmUso,
+                            preco = item.preco
+                        });
+                    }
+
+                    return produtoRetorno;
                 }
                 else
                 {
@@ -91,11 +148,36 @@ namespace ControleEPI.BLL.EPIProdutos
         {
             try
             {
-                var insereProduto = await _produto.Insert(produto);
+                var localizaProduto = await _produto.getNomeProduto(produto.nome);
 
-                if (insereProduto != null)
+                if (localizaProduto == null)
                 {
-                    return insereProduto;
+                    produto.ativo = "S";
+
+                    var insereProduto = await _produto.Insert(produto);
+
+                    if (insereProduto != null)
+                    {
+                        EPIProdutosEstoqueDTO novoEstoque = new EPIProdutosEstoqueDTO();
+
+                        var localizaTamanhosProduto = await _tamanhos.tamanhosCategoria(insereProduto.idCategoria);
+
+                        foreach (var item in localizaTamanhosProduto)
+                        {
+                            novoEstoque.idProduto = insereProduto.id;
+                            novoEstoque.quantidade = 0;
+                            novoEstoque.idTamanho = item.id;
+                            novoEstoque.ativo = "S";
+
+                            await _estoque.Update(novoEstoque);
+                        }
+
+                        return insereProduto;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -108,7 +190,7 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<EPIProdutosDTO> localizaProduto(int id)
+        public async Task<ProdutosDTO> localizaProduto(int id)
         {
             try
             {
@@ -116,7 +198,26 @@ namespace ControleEPI.BLL.EPIProdutos
 
                 if (localizaProduto != null)
                 {
-                    return localizaProduto;
+                    ProdutosDTO produtoRetorno = new ProdutosDTO();
+
+                    var verificaCategoria = await _categoria.getCategoria(localizaProduto.idCategoria);
+                    var verificaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
+
+                    produtoRetorno = new ProdutosDTO
+                    {
+                        idProduto = localizaProduto.id,
+                        idCategoria = verificaCategoria.id,
+                        idCertificado = verificaCertificado.id,
+                        produto = localizaProduto.nome,
+                        categoria = verificaCategoria.nome,
+                        certificado = verificaCertificado.numero,
+                        ativo = localizaProduto.ativo,
+                        foto = localizaProduto.foto,
+                        validadeEmUso = localizaProduto.validadeEmUso,
+                        preco = localizaProduto.preco
+                    };
+
+                    return produtoRetorno;
                 }
                 else
                 {
@@ -185,15 +286,35 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<EPIProdutosDTO> Update(EPIProdutosDTO produto)
+        public async Task<EPIProdutosDTO> Update(EPIProdutosDTO produtos)
         {
             try
             {
-                var atualizaProduto = await _produto.Update(produto);
+                var localizaProduto = await _produto.localizaProduto(produtos.id);
 
-                if (atualizaProduto != null)
+                if (localizaProduto != null)
                 {
-                    return atualizaProduto;
+                    if (localizaProduto.nome == produtos.nome)
+                    {
+                        await _produto.Update(produtos);
+
+                        return localizaProduto;
+                    }
+                    else
+                    {
+                        var verificaNomeProduto = await _produto.getNomeProduto(produtos.nome);
+
+                        if (verificaNomeProduto == null)
+                        {
+                            await _produto.Update(produtos);
+
+                            return localizaProduto;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                 }
                 else
                 {

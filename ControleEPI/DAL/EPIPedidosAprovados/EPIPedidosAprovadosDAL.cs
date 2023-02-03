@@ -16,7 +16,7 @@ namespace ControleEPI.DAL.EPIPedidosAprovados
         }
         public async Task<EPIPedidosAprovadosDTO> getProdutoAprovado(int Id, string status)
         {
-            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE enviadoCompra = '" + status + "'" +
+            return await _context.EPIPedidosAprovados.FromSqlRaw("SELECT * FROM EPIPedidosAprovados WHERE enviadoCompra = '" + status + "' AND id = '" + Id + "'" +
                 "").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
@@ -27,6 +27,8 @@ namespace ControleEPI.DAL.EPIPedidosAprovados
 
         public async Task<EPIPedidosAprovadosDTO> Insert(EPIPedidosAprovadosDTO produtoAprovado)
         {
+            _context.ChangeTracker.Clear();
+
             _context.EPIPedidosAprovados.Add(produtoAprovado);
             await _context.SaveChangesAsync();
 

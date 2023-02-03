@@ -351,9 +351,3 @@ C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\refint\ApiSMT.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ApiSMT.pdb
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ApiSMT.genruntimeconfig.cache
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ref\ApiSMT.dll
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.deps.json
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.runtimeconfig.json
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.runtimeconfig.dev.json
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.exe
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.dll
-C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.pdb

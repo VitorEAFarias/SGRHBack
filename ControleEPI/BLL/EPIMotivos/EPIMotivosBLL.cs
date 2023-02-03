@@ -15,6 +15,36 @@ namespace ControleEPI.BLL.EPIMotivos
             _motivo = motivo;
         }
 
+        public async Task<EPIMotivoDTO> insereMotivo(EPIMotivoDTO motivo)
+        {
+            try
+            {
+                var verificaMotivo = await _motivo.verificaNome(motivo.nome);
+
+                if (verificaMotivo != null)
+                {
+                    return null;
+                }
+                else
+                {
+                    var insereMotivo = await _motivo.insereMotivo(motivo);
+
+                    if (insereMotivo != null)
+                    {
+                        return insereMotivo;
+                    }
+                    else
+                    {
+                        return null;
+                    }                    
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<EPIMotivoDTO> getMotivo(int Id)
         {
             try
@@ -50,6 +80,59 @@ namespace ControleEPI.BLL.EPIMotivos
                 {
                     return null;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<EPIMotivoDTO> atualizaMotivo(EPIMotivoDTO motivo)
+        {
+            try
+            {
+                var localizaMotivo = await _motivo.getMotivo(motivo.id);
+
+                if (localizaMotivo != null)
+                {
+                    if (localizaMotivo.nome == motivo.nome)
+                    {
+                        var atualizaMotivo = await _motivo.atualizaMotivo(motivo);
+
+                        if (atualizaMotivo != null)
+                        {
+                            return atualizaMotivo;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        if (localizaMotivo.nome != motivo.nome)
+                        {
+                            var atualizaMotivo = await _motivo.atualizaMotivo(motivo);
+
+                            if (atualizaMotivo != null)
+                            {
+                                return atualizaMotivo;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    return null;
+                }                
             }
             catch (Exception ex)
             {

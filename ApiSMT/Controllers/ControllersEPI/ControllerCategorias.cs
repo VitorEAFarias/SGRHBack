@@ -15,17 +15,14 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerCategorias : ControllerBase
     {
         private readonly IEPICategoriasBLL _categoria;
-        private readonly IEPIProdutosBLL _produto;
 
         /// <summary>
         /// Construtos CategoriasController
         /// </summary>
         /// <param name="categoria"></param>
-        /// <param name="produto"></param>
-        public ControllerCategorias(IEPICategoriasBLL categoria, IEPIProdutosBLL produto)
+        public ControllerCategorias(IEPICategoriasBLL categoria)
         {
             _categoria = categoria;
-            _produto = produto;
         }
 
         /// <summary>
@@ -175,33 +172,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaCategoria = await _categoria.getCategoria(id);
+                var deletaVinculoProduto = await _categoria.Delete(id);
 
-                if (localizaCategoria != null)
+                if (deletaVinculoProduto != null)
                 {
-                    var verificaProduto = await _produto.verificaCategoria(localizaCategoria.id);
-
-                    if (verificaProduto == null)
-                    {
-                        var deletaVinculoProduto = await _categoria.Delete(localizaCategoria.id);
-
-                        if (deletaVinculoProduto != null)
-                        {
-                            return Ok(new { message = "Categoria deletada com sucesso!!!", result = true });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Erro ao deletar categoria", result = false });
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Não é possivel deletar categorias vinculadas a produtos", result = false });
-                    }
+                    return Ok(new { message = "Categoria deletada com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Categoria não encontrada", result = false });
+                    return BadRequest(new { message = "Erro ao deletar categoria, verifique se nao esta vinculado a algum produto", result = false });
                 }
             }
             catch (System.Exception ex)

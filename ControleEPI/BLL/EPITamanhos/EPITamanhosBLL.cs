@@ -3,6 +3,7 @@ using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Vestimenta.DTO;
 
 namespace ControleEPI.BLL.EPITamanhos
 {
@@ -40,16 +41,32 @@ namespace ControleEPI.BLL.EPITamanhos
         {
             try
             {
-                var insereTamanho = await _tamanho.insereTamanho(tamanho);
+                try
+                {
+                    var verificaTamanho = await _tamanho.verificaTamanho(tamanho.tamanho);
 
-                if (insereTamanho != null)
-                {
-                    return insereTamanho;
+                    if (verificaTamanho != null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        var insereTamanho = await _tamanho.insereTamanho(tamanho);
+
+                        if (insereTamanho != null)
+                        {
+                            return insereTamanho;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return null;
-                }
+                    throw new Exception(ex.Message);
+                }                
             }
             catch (Exception ex)
             {

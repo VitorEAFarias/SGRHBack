@@ -6,10 +6,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.BLL.EPICertificados;
-using ControleEPI.BLL.EPILogEstoque;
 using ControleEPI.BLL.EPIProdutosEstoque;
 using ControleEPI.BLL.EPITamanhos;
-using ControleEPI.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -20,30 +18,14 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerProdutosEstoque : ControllerBase
     {
         private readonly IEPIProdutosEstoqueBLL _produtosEstoque;
-        private readonly IEPIProdutosBLL _produtos;
-        private readonly IEPITamanhosBLL _tamanhos;
-        private readonly IRHConUserBLL _usuario;
-        private readonly IEPILogEstoqueBLL _logEstoque;
-        private readonly IEPICertificadoAprovacaoBLL _certificado;
 
         /// <summary>
         /// Construtor ProdutosEstoqueController
         /// </summary>
         /// <param name="produtosEstoque"></param>
-        /// <param name="produtos"></param>
-        /// <param name="tamanhos"></param>
-        /// <param name="usuario"></param>
-        /// <param name="logEstoque"></param>
-        /// <param name="certificado"></param>
-        public ControllerProdutosEstoque(IEPIProdutosEstoqueBLL produtosEstoque, IEPIProdutosBLL produtos, IEPITamanhosBLL tamanhos,
-            IRHConUserBLL usuario, IEPILogEstoqueBLL logEstoque, IEPICertificadoAprovacaoBLL certificado)
+        public ControllerProdutosEstoque(IEPIProdutosEstoqueBLL produtosEstoque)
         {
             _produtosEstoque = produtosEstoque;
-            _produtos = produtos;
-            _tamanhos = tamanhos;
-            _usuario = usuario;
-            _logEstoque = logEstoque;
-            _certificado = certificado;
         }
 
         /// <summary>
@@ -91,30 +73,16 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                string message = string.Empty;
+                var atualizaEstoque = await _produtosEstoque.Update(estoque);
 
-                if (estoque != null)
-                {                    
-                    var localizaEstoque = await _produtosEstoque.getProdutoEstoqueTamanho(estoque.idProduto, estoque.idTamanho);
-
-                    if (localizaEstoque != null)
-                    {
-                        localizaEstoque.quantidade = estoque.quantidade;
-
-                        await _produtosEstoque.Update(localizaEstoque);
-                    }
-                    else
-                    {
-                        message += "Produtos não encontrados '" + estoque.idProduto + "'";
-                    } 
-
-                    return Ok(new { message = "Estoque atualizado com sucesso", wrongData = message, result = true });
+                if (atualizaEstoque != null)
+                {
+                    return Ok(new { message = "Estoque atualizado com sucesso", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhuma atualização em estoque enviado", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar estoque", result = true });
                 }
-               
             }
             catch (Exception ex)
             {
@@ -132,30 +100,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaProduto = await _produtosEstoque.getProdutoEstoque(idEstoque);
+                var ativaDesativaProdutoEstoque = await _produtosEstoque.ativaDesativaProdutoEstoque(idEstoque, status);
 
-                if (localizaProduto != null)
+                if (ativaDesativaProdutoEstoque != null)
                 {
-                    localizaProduto.ativo = status;
-
-                    await _produtosEstoque.Update(localizaProduto);
-
-                    if (status == "S")
-                    {
-                        return Ok(new { message = "Produto do estoque ativado com sucesso!!!", result = true });
-                    }
-                    else if (status == "N")
-                    {
-                        return Ok(new { message = "Produto do estoque desativado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao atualizar status do produto no estoque", result = false });
-                    }
+                    return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Produto em estoque não encontrado ", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar produtos", result = false });
                 }
             }
             catch (Exception ex)
@@ -178,28 +131,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (listaDeProdutosEstoque != null)
                 {
-                    List<object> gerenciaEstoque = new List<object>();
-
-                    foreach (var item in listaDeProdutosEstoque)
-                    {
-                        var nomeProduto = await _produtos.localizaProduto(item.idProduto);
-                        var localizaCertificado = await _certificado.getCertificado(nomeProduto.idCertificadoAprovacao);                        
-                        var tamanho = await _tamanhos.localizaTamanho(item.idTamanho);
-
-                        gerenciaEstoque.Add(new
-                        {
-                            idEstoque = item.id,
-                            quantidade = item.quantidade,
-                            tamanho = tamanho.tamanho,
-                            produto = nomeProduto.nome,
-                            preco = nomeProduto.preco,
-                            certificado = localizaCertificado.numero,
-                            validadeCertificado = localizaCertificado.validade,
-                            ativo = item.ativo
-                        });
-                    }
-
-                    return Ok(new { message = "Produtos encontrados", result = true, lista = gerenciaEstoque });
+                    return Ok(new { message = "Produtos em estoque encontrados", result = true, data = listaDeProdutosEstoque });
                 }
                 else
                 {
@@ -224,33 +156,14 @@ namespace ApiSMT.Controllers.ControllersEPI
             try
             {
                 var localizaProdutoEstoque = await _produtosEstoque.getProdutoEstoque(id);
-                var localizaProduto = await _produtos.localizaProduto(localizaProdutoEstoque.idProduto);
-                var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
-                var tamanho = await _tamanhos.localizaTamanho(localizaProdutoEstoque.idTamanho);
 
-                List<object> gerenciaEstoque = new List<object>();
-
-                if (localizaProduto != null)
+                if (localizaProdutoEstoque != null)
                 {
-                    gerenciaEstoque.Add(new
-                    {
-                        idEstoque = localizaProdutoEstoque.id,
-                        idProduto = localizaProduto.id,
-                        quantidade = localizaProdutoEstoque.quantidade,
-                        idTamanho = tamanho.id,
-                        tamanho = tamanho.tamanho,
-                        produto = localizaProduto.nome,
-                        preco = localizaProduto.preco,
-                        certificado = localizaCertificado.numero,
-                        validadeCertificado = localizaCertificado.validade,
-                        ativo = localizaProduto.ativo
-                    });
-
-                    return Ok(new { message = "Produto encontrado", result = true, produto = gerenciaEstoque });
+                    return Ok(new { message = "Produto encontrado", result = true, data = localizaProdutoEstoque });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Produto não encontrado", result = false });
+                    return BadRequest(new { message = "Nenhum produto em estoque encontrad", result = false });
                 }
             }
             catch (System.Exception ex)

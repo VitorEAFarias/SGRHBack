@@ -18,6 +18,7 @@ using ControleEPI.BLL.RHUsuarios;
 using ControleEPI.BLL.RHDepartamentos;
 using ControleEPI.BLL.RHContratos;
 using Utilitarios.Utilitários.email;
+using ControleEPI.BLL.EPIFornecedores;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -41,6 +42,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         private readonly IMailService _mail;
         private readonly IEPITamanhosBLL _tamanhos;
         private readonly IRHDepartamentosBLL _departamento;
+        private readonly IEPIFornecedoresBLL _fornecedor;
 
         /// <summary>
         /// Construtor ComprasController
@@ -58,9 +60,10 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="mail"></param>
         /// <param name="tamanhos"></param>
         /// <param name="departamento"></param>
+        /// <param name="fornecedor"></param>
         public ControllerCompras(IEPIComprasBLL compras, IEPIPedidosBLL pedidos, IEPIProdutosBLL produtos, IEPILogEstoqueBLL log, IEPIStatusBLL status,
             IRHConUserBLL usuario, IEPIPedidosAprovadosBLL pedidoAprovado, IEPIProdutosEstoqueBLL produtoEstoque, IEPILogComprasBLL logCompras,
-            IRHEmpContratosBLL contrato, IMailService mail, IEPITamanhosBLL tamanhos, IRHDepartamentosBLL departamento)
+            IRHEmpContratosBLL contrato, IMailService mail, IEPITamanhosBLL tamanhos, IRHDepartamentosBLL departamento, IEPIFornecedoresBLL fornecedor)
         {
             _compras = compras;
             _pedidos = pedidos;
@@ -75,6 +78,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             _mail = mail;
             _tamanhos = tamanhos;
             _departamento = departamento;
+            _fornecedor = fornecedor;
         }
 
         /// <summary>
@@ -83,50 +87,62 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="status"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("{status}")]
-        public async Task<IActionResult> getcompras(string status)
+        [HttpGet("localizaCompras/{status}")]
+        public async Task<IActionResult> getCompras(string status)
         {
             try
             {
                 var compras = await _compras.getCompras(status);
                 EPIStatusDTO nomeStatus = new EPIStatusDTO();
 
-                List<object> compra = new List<object>();
-                List<object> compraProdutos = new List<object>();
+                List<object> compra = new List<object>();                
 
                 if (compras != null)
                 {
                     foreach (var item in compras)
                     {
+                        List<object> compraProdutos = new List<object>();
+
                         foreach (var pedidosAprovados in item.idPedidosAprovados)
                         {
                             var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
                             var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                            var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
                             compraProdutos.Add(new
                             {
-                                localizaProdutoAprovado.idPedido,
-                                localizaProdutoAprovado.idProduto,
-                                localizaProduto.nome
+                                idPedido = localizaProdutoAprovado.idPedido,
+                                idProduto = localizaProdutoAprovado.idProduto,
+                                nomeProduto = localizaProduto.produto,
+                                idProdutoAprovado = localizaProdutoAprovado.id,
+                                quantidade = localizaProdutoAprovado.quantidade,
+                                preco = localizaProduto.preco,
+                                idTamanho = tamanho.id,
+                                tamanho = tamanho.tamanho
                             });
                         }
 
                         nomeStatus = await _status.getStatus(item.status);
                         var nomeEmp = await _usuario.GetEmp(item.idUsuario);
+                        var localizaFornecedor = await _fornecedor.getFornecedor(item.idFornecedor);
 
                         compra.Add(new
                         {
                             idCompra = item.id,
-                            ProdutosAprovados = compraProdutos,
-                            DataCadastroCompra = item.dataCadastroCompra,
-                            DataFinalizacaoCompra = item.dataFinalizacaoCompra,
-                            ValorTotalCompra = item.valorTotalCompra,
-                            Status = nomeStatus.nome,
-                            Usuario = nomeEmp.nome
+                            produtosAprovados = compraProdutos,
+                            dataCadastraCompra = item.dataCadastroCompra,
+                            dataFinalizacaoCompra = item.dataFinalizacaoCompra,
+                            valorTotalCompra = item.valorTotalCompra,
+                            idStatus = nomeStatus.id,
+                            status = nomeStatus.nome,
+                            idUsuario = nomeEmp.id,
+                            usuario = nomeEmp.nome,
+                            idFornecedor = localizaFornecedor.id,
+                            fornecedor = localizaFornecedor.razaoSocial
                         });
                     }
 
-                    return Ok(new { message = "Compras encontradas", result = true, lista = compra });
+                    return Ok(new { message = "Compras encontradas", result = true, data = compra });
                 }
                 else
                 {
@@ -146,13 +162,13 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EPIComprasDTO>> getCompra(int id)
+        public async Task<IActionResult> getCompra(int id)
         {
             try
             {
                 var localizaCompra = await _compras.getCompra(id);
 
-                List<object> compra = new List<object>();
+                object compra = new object();
                 List<object> compraProdutos = new List<object>();
 
                 if (localizaCompra != null)
@@ -161,37 +177,48 @@ namespace ApiSMT.Controllers.ControllersEPI
                     {
                         var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
                         var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                        var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
                         compraProdutos.Add(new
                         {
-                            localizaProdutoAprovado.idPedido,
-                            localizaProdutoAprovado.idProduto,
-                            localizaProduto.nome
+                            idPedido = localizaProdutoAprovado.idPedido,
+                            idProduto = localizaProdutoAprovado.idProduto,
+                            nomeProduto = localizaProduto.produto,
+                            idProdutoAprovado = localizaProdutoAprovado.id,
+                            quantidade = localizaProdutoAprovado.quantidade,
+                            preco = localizaProduto.preco,
+                            idTamanho = tamanho.id,
+                            tamanho = tamanho.tamanho
                         });
                     }
 
                     var nomeStatus = await _status.getStatus(localizaCompra.status);
                     var nomeEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
+                    var localizaFornecedor = await _fornecedor.getFornecedor(localizaCompra.idFornecedor);
 
-                    compra.Add(new
+                    compra = new
                     {
                         idCompra = localizaCompra.id,
-                        ProdutosAprovados = compraProdutos,
-                        DataCadastraCompra = localizaCompra.dataCadastroCompra,
-                        DataFinalizacaoCompra = localizaCompra.dataFinalizacaoCompra,
-                        ValorTotalCompra = localizaCompra.valorTotalCompra,
-                        Status = nomeStatus.nome,
-                        Usuario = nomeEmp.nome
-                    });
+                        produtosAprovados = compraProdutos,
+                        dataCadastraCompra = localizaCompra.dataCadastroCompra,
+                        dataFinalizacaoCompra = localizaCompra.dataFinalizacaoCompra,
+                        valorTotalCompra = localizaCompra.valorTotalCompra,
+                        idStatus = nomeStatus.id,
+                        status = nomeStatus.nome,
+                        idUsuario = nomeEmp.id,
+                        usuario = nomeEmp.nome,
+                        idFornecedor = localizaFornecedor.id,
+                        fornecedor = localizaFornecedor.razaoSocial
+                    };
 
-                    return Ok(new { message = "Compra encontrada: '" + compra, result = true });
+                    return Ok(new { message = "Compra encontrada", result = true, data = compra });
                 }
                 else
                 {
                     return BadRequest(new { message = "Compra não encontrada", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -205,7 +232,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> cadastraCompra(int idUsuario, [FromBody] List<EPIPedidosAprovadosDTO> produtosAprovados)
+        public async Task<IActionResult> cadastraCompra(int idUsuario, [FromBody] List<EPIPedidosAprovadosDTO> produtosAprovados)
         {
             try
             {
@@ -259,7 +286,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -272,7 +299,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpPut("compras")]
-        public async Task<ActionResult> aprovarCompra([FromBody] EPIComprasDTO compras)
+        public async Task<IActionResult> aprovarCompra([FromBody] EPIComprasDTO compras)
         {
             try
             {
@@ -283,13 +310,15 @@ namespace ApiSMT.Controllers.ControllersEPI
                     EmailRequestDTO email = new EmailRequestDTO();
                     ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
                     List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    
+                    EPIPedidosDTO localizaPedido = new EPIPedidosDTO();
 
                     var getEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
                     var getEmail = await _usuario.getEmail(localizaCompra.id);
 
                     if (getEmail != null || !getEmail.Equals(0))
                     {
-                        var localizaContrato = await _contrato.getContrato(localizaCompra.id);
+                        var localizaContrato = await _contrato.getContrato(localizaCompra.idUsuario);
 
                         if (localizaContrato != null || !localizaContrato.Equals(0))
                         {
@@ -299,20 +328,78 @@ namespace ApiSMT.Controllers.ControllersEPI
                             foreach (var compra in localizaCompra.idPedidosAprovados)
                             {
                                 var localizaPedidoAprovado = await _pedidoAprovado.getProdutoAprovado(compra.idPedidosAprovados, "S");
-                                var localizaProduto = await _produtos.localizaProduto(localizaPedidoAprovado.id);
+                                var localizaProduto = await _produtos.localizaProduto(localizaPedidoAprovado.idProduto);
                                 var verificaTamanho = await _tamanhos.localizaTamanho(localizaPedidoAprovado.idTamanho);
                                 var nomeStatus = await _status.getStatus(14);
 
+                                var localizaEstoque = await _produtoEstoque.getProdutoEstoqueTamanho(localizaProduto.idProduto, verificaTamanho.id);
+
+                                localizaEstoque.quantidade += localizaPedidoAprovado.quantidade;
+
+                                localizaPedido = await _pedidos.getPedido(localizaPedidoAprovado.idPedido);
+
+                                List<Produtos> atualizarStatusProdutos = new List<Produtos>();
+
+                                if (localizaPedido != null)
+                                {
+                                    foreach (var item in localizaPedido.produtos)
+                                    {
+                                        if (localizaEstoque.idProduto == item.id && localizaEstoque.idTamanho == item.tamanho)
+                                        {
+                                            atualizarStatusProdutos.Add(new Produtos
+                                            {
+                                                id = item.id,
+                                                nome = item.nome,
+                                                quantidade = item.quantidade,
+                                                status = 7,
+                                                tamanho = item.tamanho,
+                                            });
+                                        }
+                                        else
+                                        {
+                                            atualizarStatusProdutos.Add(new Produtos
+                                            {
+                                                id = item.id,
+                                                nome = item.nome,
+                                                quantidade = item.quantidade,
+                                                status = item.status,
+                                                tamanho = item.tamanho,
+                                            });
+                                        }
+                                    }
+                                }                                
+
+                                var insereEstoque = await _produtoEstoque.Update(localizaEstoque);
+
                                 conteudoEmails.Add(new ConteudoEmailDTO
                                 {
-                                    nome = localizaProduto.nome,
+                                    nome = localizaProduto.produto,
                                     tamanho = verificaTamanho.tamanho,
                                     status = nomeStatus.nome,
                                     quantidade = localizaPedidoAprovado.quantidade
                                 });
 
                                 numeroPedidos += localizaPedidoAprovado.id;
-                            }
+
+                                int contador = 0;
+
+                                foreach (var item in atualizarStatusProdutos)
+                                {
+                                    if (item.status == 7 || item.status == 3 || item.status == 10)
+                                    {
+                                        contador++;
+                                    }
+                                }
+
+                                if (contador == atualizarStatusProdutos.Count)
+                                {
+                                    localizaPedido.status = 10;
+                                }
+
+                                localizaPedido.produtos = atualizarStatusProdutos;
+                            }                            
+
+                            await _pedidos.Update(localizaPedido);
 
                             conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                             {
@@ -347,7 +434,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -360,7 +447,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="idUsuario"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("reprovar/idUsuario")]
+        [HttpPut("reprovar/{idUsuario}")]
         public async Task<IActionResult> reprovaCompra([FromBody] List<EPIComprasDTO> reprovarCompra, int idUsuario)
         {
             try
@@ -546,7 +633,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nome,
+                                    nome = localizaProduto.produto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
                                     tamanho = localizaProdutoAprovado.idTamanho
@@ -576,7 +663,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nome,
+                                    nome = localizaProduto.produto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = 7,
                                     tamanho = localizaProdutoAprovado.idTamanho
@@ -606,7 +693,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                                 pedidoProduto.Add(new Produtos
                                 {
                                     id = produto.id,
-                                    nome = localizaProduto.nome,
+                                    nome = localizaProduto.produto,
                                     quantidade = localizaProdutoAprovado.quantidade,
                                     status = produto.status,
                                     tamanho = localizaProdutoAprovado.idTamanho

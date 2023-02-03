@@ -39,32 +39,16 @@ namespace ApiSMT.Controllers.ControllersEPI
         public async Task<IActionResult> insereTamanho([FromBody] EPITamanhosDTO tamanho)
         {
             try
-             {
-                if (tamanho != null)
+            {
+                var insereTamanho = await _tamanhos.insereTamanho(tamanho);
+
+                if (insereTamanho != null)
                 {
-                    var verificaTamanho = await _tamanhos.verificaTamanho(tamanho.tamanho);
-
-                    if (verificaTamanho == null)
-                    {
-                        var insereTamanho = await _tamanhos.insereTamanho(tamanho);
-
-                        if (insereTamanho != null)
-                        {
-                            return Ok(new { message = "Tamanho '" + tamanho.tamanho + "' inserido com sucesso!!!", result = true });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Erro ao inserir novo tamanho", result = false });
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Já existe esse tamanho cadastrado no sistema", result = false });
-                    }
+                    return Ok(new { message = "Tamanho inserido com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum tamanho enviado para inserir", result = false });
+                    return BadRequest(new { message = "Erro ao inserir tamanho", result = false});
                 }
             }
             catch (System.Exception ex)
@@ -79,7 +63,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <returns></returns>
         [Authorize]
         [HttpPut("status/{status}/{id}")]
-        public async Task<IActionResult> ativaDesativaProduto(string status, int id)
+        public async Task<IActionResult> ativaDesativaTamanho(string status, int id)
         {
             try
             {

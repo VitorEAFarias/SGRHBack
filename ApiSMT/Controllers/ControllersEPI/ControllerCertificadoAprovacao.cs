@@ -15,17 +15,14 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerCertificadoAprovacao : ControllerBase
     {
         private readonly IEPICertificadoAprovacaoBLL _certificado;
-        private readonly IEPIProdutosBLL _produtos;
 
         /// <summary>
         /// Construtor ControllerCertificadoAprovacao
         /// </summary>
         /// <param name="certificado"></param>
-        /// <param name="produtos"></param>
-        public ControllerCertificadoAprovacao(IEPICertificadoAprovacaoBLL certificado, IEPIProdutosBLL produtos)
+        public ControllerCertificadoAprovacao(IEPICertificadoAprovacaoBLL certificado)
         {
             _certificado = certificado;
-            _produtos = produtos;
         }
 
         /// <summary>
@@ -102,52 +99,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaCertificado = await _certificado.getCertificado(id);
+                var ativaDesativaCertificado = await _certificado.ativaDesativaCertificado(status, id, observacao);
 
-                if (localizaCertificado != null)
+                if (ativaDesativaCertificado != null)
                 {
-                    localizaCertificado.ativo = status;
-                    localizaCertificado.observacao = observacao;
-
-                    if (status == "S")
-                    {
-                        var ativaCertificado = await _certificado.Update(localizaCertificado);
-
-                        if (ativaCertificado != null)
-                        {
-                            return Ok(new { message = "Certificado ativado com sucesso!!!", result = true });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Erro ao ativar certificado", result = false });
-                        }                        
-                    }
-                    else
-                    {
-                        var verificaCertificado = await _produtos.getCertificadoProduto(localizaCertificado.id);
-
-                        if (verificaCertificado == null)
-                        {
-                            var desativaCertificado = await _certificado.Update(localizaCertificado);
-
-                            if (desativaCertificado != null)
-                            {
-                                return Ok(new { message = "Certificado desativado com sucesso!!!", result = true });
-                            }
-                            else
-                            {
-                                return BadRequest(new { message = "Erro ao desativar certificado", result = false });
-                            }                            
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Não é possivel desativar um certificado vinculado a um produto", result = false });
-                        }                        
-                    }
+                    return Ok(new { message = "Status atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Fornecedor não encontrado", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar status do certificado", result = false });
                 }
             }
             catch (System.Exception ex)

@@ -46,7 +46,7 @@ namespace ControleEPI.BLL.EPIPedidos
             _produtos = produtos;
         }
 
-        public async Task<IList<ProdutosEstoqueDTO>> getPedidoProduto(int Id)
+        public async Task<PedidosDTO> getPedidoProduto(int Id)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace ControleEPI.BLL.EPIPedidos
                         status = status.nome
                     };
 
-                    return lista;
+                    return item;
                 }
                 else
                 {
@@ -511,8 +511,7 @@ namespace ControleEPI.BLL.EPIPedidos
                     if (localizaPedido != null)
                     {
                         string tamanho = string.Empty;
-
-                        EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
+                                                
                         List<Produtos> produtos = new List<Produtos>();
                         EmailRequestDTO email = new EmailRequestDTO();
                         ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
@@ -532,6 +531,8 @@ namespace ControleEPI.BLL.EPIPedidos
                                 {
                                     if (produto.id == idProduto)
                                     {
+                                        EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
+
                                         var checkStatusItem = await _status.getStatus(produto.status);
                                         var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
 

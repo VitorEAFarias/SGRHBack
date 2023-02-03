@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using ControleEPI.BLL.EPIMotivos;
+using ControleEPI.DTO;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -25,12 +26,40 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Insere novo motivo
+        /// </summary>
+        /// <param name="motivo"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> insereMotivo([FromBody] EPIMotivoDTO motivo)
+        {
+            try
+            {
+                var insereMotivo = await _motivos.insereMotivo(motivo);
+
+                if (insereMotivo != null)
+                {
+                    return Ok(new { message = "Motivo inserido com sucesso!!!", result = true });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao inserir motivo, verifique se ja nao existe algum cadastrado com o mesmo nome", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Localizar motivo
         /// </summary>
         /// <param name="idMotivo"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("idMotivo")]
+        [HttpGet("{idMotivo}")]
         public async Task<IActionResult> localizaMotivo(int idMotivo)
         {
             try
@@ -71,6 +100,34 @@ namespace ApiSMT.Controllers.ControllersEPI
                 else
                 {
                     return BadRequest(new { message = "Nenhum motivo encontrado", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar motivo
+        /// </summary>
+        /// <param name="atualizaMotivo"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> atualizaMotivo([FromBody] EPIMotivoDTO atualizaMotivo)
+        {
+            try
+            {
+                var atualizarMotivo = await _motivos.atualizaMotivo(atualizaMotivo);
+
+                if (atualizarMotivo != null)
+                {
+                    return Ok(new { message = "Motivo atualizado com sucesso!!!", result = true });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao atualizar motivo, verifique se ja nao existem valores iguais cadastrados", result = false });
                 }
             }
             catch (Exception ex)

@@ -18,6 +18,20 @@ namespace ControleEPI.DTO
         public int maximo { get; set; }
     }
 
+    public class ProdutosDTO
+    {
+        public int idProduto { get; set; }
+        public int idCategoria { get; set; }
+        public int idCertificado { get; set; }
+        public string produto { get; set; }
+        public string categoria { get; set; }
+        public string certificado { get; set; }
+        public string ativo { get; set; }
+        public byte[] foto { get; set; }
+        public int validadeEmUso { get; set; }
+        public decimal preco { get; set; }
+    }
+
     public class ProdutosTamanhosDTO : IEntityTypeConfiguration<ProdutosTamanhosDTO>
     {
         public void Configure(EntityTypeBuilder<ProdutosTamanhosDTO> builder)

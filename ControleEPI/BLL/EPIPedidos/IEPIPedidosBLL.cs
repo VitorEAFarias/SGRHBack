@@ -9,7 +9,7 @@ namespace ControleEPI.BLL.EPIPedidos
         Task<EPIPedidosDTO> Insert(EPIPedidosDTO pedido);
         Task<IList<PedidosUsuarioDTO>> getPedidos();
         Task<EPIPedidosDTO> getPedido(int Id);
-        Task<IList<ProdutosEstoqueDTO>> getPedidoProduto(int Id);
+        Task<PedidosDTO> getPedidoProduto(int Id);
         Task<IList<EPIPedidosDTO>> getTodosPedidos(int status);
         Task<IList<PedidosUsuarioDTO>> getPedidosUsuario(int Id);
         Task<EPIPedidosDTO> Update(EPIPedidosDTO pedido);

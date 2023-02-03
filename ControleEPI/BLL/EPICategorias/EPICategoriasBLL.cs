@@ -1,4 +1,5 @@
 ﻿using ControleEPI.DAL.EPICategorias;
+using ControleEPI.DAL.EPIProdutos;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
@@ -9,21 +10,41 @@ namespace ControleEPI.BLL.EPICategorias
     public class EPICategoriasBLL : IEPICategoriasBLL
     {
         private readonly IEPICategoriasDAL _categoria;
+        private readonly IEPIProdutosDAL _produto;
 
-        public EPICategoriasBLL(IEPICategoriasDAL categoria)
+        public EPICategoriasBLL(IEPICategoriasDAL categoria, IEPIProdutosDAL produto)
         {
             _categoria = categoria;
+            _produto = produto;
         }
 
         public async Task<EPICategoriasDTO> Delete(int id)
         {
             try
             {
-                var deletaCategoria = await _categoria.Delete(id);
+                var localizaCategoria = await _categoria.getCategoria(id);
 
-                if (deletaCategoria != null)
+                if (localizaCategoria != null)
                 {
-                    return deletaCategoria;
+                    var verificaProduto = await _produto.verificaCategoria(localizaCategoria.id);
+
+                    if (verificaProduto == null)
+                    {
+                        var deletaVinculoProduto = await _categoria.Delete(localizaCategoria.id);
+
+                        if (deletaVinculoProduto != null)
+                        {
+                            return localizaCategoria;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {

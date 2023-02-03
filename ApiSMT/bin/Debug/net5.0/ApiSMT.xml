@@ -9,12 +9,11 @@
             Classe de categorias
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.EPICategorias.IEPICategoriasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.#ctor(ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
             <summary>
             Construtos CategoriasController
             </summary>
             <param name="categoria"></param>
-            <param name="produto"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCategorias.insereCategoria(ControleEPI.DTO.EPICategoriasDTO)">
             <summary>
@@ -53,12 +52,11 @@
             Classe ControllerCertificadoAprovacao
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.#ctor(ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL)">
             <summary>
             Construtor ControllerCertificadoAprovacao
             </summary>
             <param name="certificado"></param>
-            <param name="produtos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCertificadoAprovacao.insereCertificadoAprovacao(ControleEPI.DTO.EPICertificadoAprovacaoDTO)">
             <summary>
@@ -122,7 +120,7 @@
             Classe que manipula as informações relacionadas a compras de produtos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPILogCompras.IEPILogComprasBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPILogCompras.IEPILogComprasBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.EPIFornecedores.IEPIFornecedoresBLL)">
             <summary>
             Construtor ComprasController
             </summary>
@@ -139,8 +137,9 @@
             <param name="mail"></param>
             <param name="tamanhos"></param>
             <param name="departamento"></param>
+            <param name="fornecedor"></param>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getcompras(System.String)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getCompras(System.String)">
             <summary>
             Lista todas as compras
             </summary>
@@ -267,6 +266,13 @@
             </summary>
             <param name="motivos"></param>
         </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.insereMotivo(ControleEPI.DTO.EPIMotivoDTO)">
+            <summary>
+            Insere novo motivo
+            </summary>
+            <param name="motivo"></param>
+            <returns></returns>
+        </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.localizaMotivo(System.Int32)">
             <summary>
             Localizar motivo
@@ -278,6 +284,13 @@
             <summary>
             Localiza todos os motivos cadastrados
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerMotivos.atualizaMotivo(ControleEPI.DTO.EPIMotivoDTO)">
+            <summary>
+            Atualizar motivo
+            </summary>
+            <param name="atualizaMotivo"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerPedidos">
@@ -361,20 +374,11 @@
             Classe ProdutosAprovadosController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.#ctor(ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL)">
             <summary>
             Construtor ProdutosAprovadosController
             </summary>
             <param name="pedidosAprovados"></param>
-            <param name="pedidos"></param>
-            <param name="compras"></param>
-            <param name="produtos"></param>
-            <param name="usuario"></param>
-            <param name="status"></param>
-            <param name="tamanho"></param>
-            <param name="estoque"></param>
-            <param name="mail"></param>
-            <param name="vinculo"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.produtosAvulsos(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
             <summary>
@@ -388,14 +392,6 @@
             </summary>
             <param name="enviaCompra"></param>
             <param name="idUsuario"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.localizaProdutoAprovado(System.Int32,System.String)">
-            <summary>
-            Localiza um produto aprovado
-            </summary>
-            <param name="id"></param>
-            <param name="status"></param>
             <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados.aprovarVinculo(System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
@@ -417,13 +413,11 @@
             Classe ControllerProdutos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.#ctor(ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL)">
             <summary>
             Contrutor ControllerProdutos
             </summary>
             <param name="produtos"></param>
-            <param name="certificado"></param>
-            <param name="categoria"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.insereProduto(ControleEPI.DTO.EPIProdutosDTO)">
             <summary>
@@ -476,16 +470,11 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPICertificados.IEPICertificadoAprovacaoBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.#ctor(ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL)">
             <summary>
             Construtor ProdutosEstoqueController
             </summary>
             <param name="produtosEstoque"></param>
-            <param name="produtos"></param>
-            <param name="tamanhos"></param>
-            <param name="usuario"></param>
-            <param name="logEstoque"></param>
-            <param name="certificado"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.insereEstoque(ControleEPI.DTO.EPIProdutosEstoqueDTO)">
             <summary>
@@ -538,7 +527,7 @@
             <param name="tamanho"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.ativaDesativaProduto(System.String,System.Int32)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.ativaDesativaTamanho(System.String,System.Int32)">
             <summary>
             Ativa ou desativa produto
             </summary>

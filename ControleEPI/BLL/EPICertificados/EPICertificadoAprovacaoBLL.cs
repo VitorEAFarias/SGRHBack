@@ -1,4 +1,5 @@
 ﻿using ControleEPI.DAL.EPICertificados;
+using ControleEPI.DAL.EPIProdutos;
 using ControleEPI.DTO;
 using ControleEPI.DTO.FromBody;
 using System;
@@ -10,10 +11,70 @@ namespace ControleEPI.BLL.EPICertificados
     public class EPICertificadoAprovacaoBLL : IEPICertificadoAprovacaoBLL
     {
         private readonly IEPICertificadoAprovacaoDAL _certificado;
+        private readonly IEPIProdutosDAL _produtos;
 
-        public EPICertificadoAprovacaoBLL(IEPICertificadoAprovacaoDAL certificado)
+        public EPICertificadoAprovacaoBLL(IEPICertificadoAprovacaoDAL certificado, IEPIProdutosDAL produtos)
         {
             _certificado = certificado;
+            _produtos = produtos;
+        }
+
+        public async Task<EPICertificadoAprovacaoDTO> ativaDesativaCertificado(string status, int id, string observacao)
+        {
+            try
+            {
+                var localizaCertificado = await _certificado.getCertificado(id);
+
+                if (localizaCertificado != null)
+                {
+                    localizaCertificado.ativo = status;
+                    localizaCertificado.observacao = observacao;
+
+                    if (status == "S")
+                    {
+                        var ativaCertificado = await _certificado.Update(localizaCertificado);
+
+                        if (ativaCertificado != null)
+                        {
+                            return ativaCertificado;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        var verificaCertificado = await _produtos.getCertificadoProduto(localizaCertificado.id);
+
+                        if (verificaCertificado == null)
+                        {
+                            var desativaCertificado = await _certificado.Update(localizaCertificado);
+
+                            if (desativaCertificado != null)
+                            {
+                                return desativaCertificado;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<EPICertificadoAprovacaoDTO> getCertificado(int id)
