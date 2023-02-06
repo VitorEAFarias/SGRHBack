@@ -120,24 +120,11 @@
             Classe que manipula as informações relacionadas a compras de produtos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL,ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPILogEstoque.IEPILogEstoqueBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPILogCompras.IEPILogComprasBLL,ControleEPI.BLL.RHContratos.IRHEmpContratosBLL,Utilitarios.Utilitários.email.IMailService,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.RHDepartamentos.IRHDepartamentosBLL,ControleEPI.BLL.EPIFornecedores.IEPIFornecedoresBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.#ctor(ControleEPI.BLL.EPICompras.IEPIComprasBLL)">
             <summary>
             Construtor ComprasController
             </summary>
             <param name="compras"></param>
-            <param name="pedidos"></param>
-            <param name="produtos"></param>
-            <param name="log"></param>
-            <param name="status"></param>
-            <param name="usuario"></param>
-            <param name="pedidoAprovado"></param>
-            <param name="produtoEstoque"></param>
-            <param name="logCompras"></param>
-            <param name="contrato"></param>
-            <param name="mail"></param>
-            <param name="tamanhos"></param>
-            <param name="departamento"></param>
-            <param name="fornecedor"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getCompras(System.String)">
             <summary>
@@ -153,35 +140,18 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.cadastraCompra(System.Int32,System.Collections.Generic.List{ControleEPI.DTO.EPIPedidosAprovadosDTO})">
-            <summary>
-            Cadastra uma nova compra
-            </summary>
-            <param name="produtosAprovados"></param>
-            <param name="idUsuario"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.aprovarCompra(ControleEPI.DTO.EPIComprasDTO)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.efetuarCompra(ControleEPI.DTO.EPIComprasDTO)">
             <summary>
             Efetuar compra e atualizar estoque
             </summary>
             <param name="compras"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.reprovaCompra(System.Collections.Generic.List{ControleEPI.DTO.EPIComprasDTO},System.Int32)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.reprovaCompra(ControleEPI.DTO.EPIComprasDTO)">
             <summary>
             Reprovar compra
             </summary>
             <param name="reprovarCompra"></param>
-            <param name="idUsuario"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.efetuarCompra(System.Int32,System.Int32)">
-            <summary>
-            Realizar compra e atualizar status do pedido
-            </summary>
-            <param name="idCompra"></param>
-            <param name="idUsuario"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor">
@@ -349,6 +319,14 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.pedidosUsuarioStatus(System.Int32,System.Int32)">
+            <summary>
+            Localiza pedidos por usuario e status
+            </summary>
+            <param name="idUsuario"></param>
+            <param name="idStatus"></param>
+            <returns></returns>
+        </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.getPedidosUsuario(System.Int32)">
             <summary>
             Seleciona os produto ao qual fazem parte de uma categoria especifica
@@ -367,6 +345,13 @@
             Lista todos os pedidos
             </summary>
             <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.liberarParaVinculo(System.Int32)">
+            <summary>
+            Liberar produtos para vinculo ao colaborador
+            </summary>
+            <param name="idPedido"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerPedidosAprovados">
@@ -513,12 +498,11 @@
             Classe ControllerTamanhos
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL,ControleEPI.BLL.EPICategorias.IEPICategoriasBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.#ctor(ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL)">
             <summary>
             Construtor ControllerTamanhos
             </summary>
             <param name="tamanhos"></param>
-            <param name="categoria"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerTamanhos.insereTamanho(ControleEPI.DTO.EPITamanhosDTO)">
             <summary>
@@ -572,22 +556,32 @@
             Classe ControllerVinculo
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,ControleEPI.BLL.RHUsuarios.IRHConUserBLL,ControleEPI.BLL.EPIProdutosEstoque.IEPIProdutosEstoqueBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPIStatus.IEPIStatusBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.#ctor(ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL)">
             <summary>
             Construtor ControllerVinculo
             </summary>
             <param name="vinculo"></param>
-            <param name="usuario"></param>
-            <param name="produtoEstoque"></param>
-            <param name="produtos"></param>
-            <param name="status"></param>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.modificaStatus(System.Int32,System.Int32)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.vincularItem(System.Collections.Generic.List{ControleEPI.DTO.EPIVinculoDTO},System.Int32,System.String)">
             <summary>
-            Modifica os status do item vinculado
+            Vincular item(s) com colaborador
             </summary>
-            <param name="status"></param>
+            <param name="vinculos"></param>
+            <param name="idUsuario"></param>
+            <param name="senha"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.devolverItem(System.Int32)">
+            <summary>
+            Devolver item
+            </summary>
             <param name="idVinculo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.vinculoUsuarioStatus(System.Int32,System.Int32)">
+            <summary>
+            Lista vinculos usuario por status
+            </summary>
             <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.listaVinculosStatus(System.Int32)">

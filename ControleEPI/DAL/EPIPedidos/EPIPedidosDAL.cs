@@ -3,6 +3,7 @@ using ControleEPI.DTO;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ControleEPI.DAL.EPIPedidos
 {
@@ -30,6 +31,11 @@ namespace ControleEPI.DAL.EPIPedidos
         public async Task<IList<EPIPedidosDTO>> getTodosPedidos(int status)
         {
             return await _context.EPIPedidos.FromSqlRaw("SELECT * FROM EPIPedidos WHERE status = '" + status + "'").ToListAsync();
+        }
+
+        public async Task<IList<EPIPedidosDTO>> localizaPedidosUsuarioStatus(int idUsuario, int idStatus)
+        {
+            return await _context.EPIPedidos.FromSqlRaw("SELECT * FROM EPIPedidos WHERE idUsuario = '" + idUsuario + "' AND status = '" + idStatus + "'").OrderBy(p => p.id).ToListAsync();
         }
 
         public async Task<IList<EPIPedidosDTO>> getPedidosUsuario(int id)

@@ -91,7 +91,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var produtosCategoria = await _produtos.verificaCategoria(idCategoria);
+                var produtosCategoria = await _produtos.verificaCategorias(idCategoria);
 
                 if (produtosCategoria != null)
                 {

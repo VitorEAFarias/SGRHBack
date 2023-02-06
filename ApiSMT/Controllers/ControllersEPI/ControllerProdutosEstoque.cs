@@ -2,12 +2,8 @@
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.BLL.EPIProdutos;
-using ControleEPI.BLL.EPICertificados;
 using ControleEPI.BLL.EPIProdutosEstoque;
-using ControleEPI.BLL.EPITamanhos;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

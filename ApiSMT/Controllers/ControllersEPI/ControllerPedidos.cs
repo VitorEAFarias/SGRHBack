@@ -205,6 +205,35 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Localiza pedidos por usuario e status
+        /// </summary>
+        /// <param name="idUsuario"></param>
+        /// <param name="idStatus"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("usuarioStatus/{idUsuario}/{idStatus}")]
+        public async Task<IActionResult> pedidosUsuarioStatus(int idUsuario, int idStatus)
+        {
+            try
+            {
+                var localizaPedidosUsuarioStatus = await _pedidos.localizaPedidosUsuarioStatus(idUsuario, idStatus);
+
+                if (localizaPedidosUsuarioStatus != null)
+                {
+                    return Ok(new { message = "Pedidos encontrados!!!", result = true, data = localizaPedidosUsuarioStatus });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum pedido encontrado", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Seleciona os produto ao qual fazem parte de uma categoria especifica
         /// </summary>
         /// <param name="idUsuario"></param>
@@ -280,6 +309,34 @@ namespace ApiSMT.Controllers.ControllersEPI
                 {
                     return BadRequest(new { message = "Nenhum pedido encontrado", result = false});
                 }                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Liberar produtos para vinculo ao colaborador
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("liberarVinculo/{idPedido}")]
+        public async Task<IActionResult> liberarParaVinculo(int idPedido)
+        {
+            try
+            {
+                var liberarVinculo = await _pedidos.liberarParaVinculo(idPedido);
+
+                if (liberarVinculo != null)
+                {
+                    return Ok(new { message = "Produtos liberados para vinculo", result = true, data = liberarVinculo });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao liberar produtos para o colaborador", result = false });
+                }
             }
             catch (Exception ex)
             {

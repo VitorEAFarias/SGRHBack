@@ -327,11 +327,11 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<IList<EPIProdutosDTO>> verificaCategoria(int idCategoria)
+        public async Task<IList<EPIProdutosDTO>> verificaCategorias(int idCategoria)
         {
             try
             {
-                var verificaVinculoProduto = await _produto.verificaCategoria(idCategoria);
+                var verificaVinculoProduto = await _produto.verificaCategorias(idCategoria);
 
                 if (verificaVinculoProduto != null)
                 {

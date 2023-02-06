@@ -1,14 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.DTO.FromBody;
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.BLL.EPIProdutos;
-using ControleEPI.BLL.EPIProdutosEstoque;
-using ControleEPI.BLL.EPIStatus;
 using ControleEPI.BLL.EPIVinculos;
-using ControleEPI.BLL.RHUsuarios;
+using System.Collections.Generic;
+using ControleEPI.DTO;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -20,68 +16,93 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerVinculo : ControllerBase
     {
         private readonly IEPIVinculoBLL _vinculo;
-        private readonly IRHConUserBLL _usuario;
-        private readonly IEPIProdutosEstoqueBLL _produtoEstoque;
-        private readonly IEPIProdutosBLL _produtos;
-        private readonly IEPIStatusBLL _status;
 
         /// <summary>
         /// Construtor ControllerVinculo
         /// </summary>
         /// <param name="vinculo"></param>
-        /// <param name="usuario"></param>
-        /// <param name="produtoEstoque"></param>
-        /// <param name="produtos"></param>
-        /// <param name="status"></param>
-        public ControllerVinculo(IEPIVinculoBLL vinculo, IRHConUserBLL usuario, IEPIProdutosEstoqueBLL produtoEstoque, IEPIProdutosBLL produtos, IEPIStatusBLL status)
+        public ControllerVinculo(IEPIVinculoBLL vinculo)
         {
             _vinculo = vinculo;
-            _usuario = usuario;
-            _produtoEstoque = produtoEstoque;
-            _produtos = produtos;
-            _status = status;
         }
 
         /// <summary>
-        /// Modifica os status do item vinculado
+        /// Vincular item(s) com colaborador
         /// </summary>
-        /// <param name="status"></param>
-        /// <param name="idVinculo"></param>
+        /// <param name="vinculos"></param>
+        /// <param name="idUsuario"></param>
+        /// <param name="senha"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("{idVinculo}/{status}")]
-        public async Task<IActionResult> modificaStatus(int status, int idVinculo)
+        [HttpPut("vincular/{idUsuario}/{senha}")]
+        public async Task<IActionResult> vincularItem([FromBody] List<EPIVinculoDTO> vinculos, int idUsuario, string senha)
         {
             try
             {
-                var localizaVinculo = await _vinculo.localizaVinculo(idVinculo);
+                var vinculaItem = await _vinculo.vincularItem(vinculos, idUsuario, senha);
 
-                if (localizaVinculo != null)
+                if (vinculaItem != null)
                 {
-                    string message = string.Empty;
-
-                    if (idVinculo == 13)
-                    {
-                        localizaVinculo.dataVinculo = DateTime.Now;
-                        localizaVinculo.status = status;
-
-                        message = "Item vinculado com sucesso!!!";
-                    }
-                    else if (idVinculo == 12)
-                    {
-                        localizaVinculo.dataDevolucao = DateTime.Now;
-                        localizaVinculo.status = status;
-
-                        message = "Item devolvido com sucesso";
-                    }
-
-                    await _vinculo.Update(localizaVinculo);
-
-                    return Ok(new { message = message, result = true });
+                    return Ok(new { message = "Retirada de itens realizada com sucesso!!!", result = true, data = vinculaItem });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Vinculo não encontrado", result = false });
+                    return BadRequest(new { message = "Erro ao vincular itens com colaborador", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Devolver item
+        /// </summary>
+        /// <param name="idVinculo"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("devolverItem/{idVinculo}")]
+        public async Task<IActionResult> devolverItem(int idVinculo)
+        {
+            try
+            {
+                var devolveItem = await _vinculo.devolverItem(idVinculo);
+
+                if (devolveItem != null)
+                {
+                    return Ok(new { message = "Item devolvido com sucesso!!!", result = true, data = devolveItem });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Errro ao devolver item", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lista vinculos usuario por status
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("usuarioStatus/{idUsuario}/{idStatus}")]
+        public async Task<IActionResult> vinculoUsuarioStatus(int idUsuario, int idStatus)
+        {
+            try
+            {
+                var listaVinculos = await _vinculo.vinculoUsuarioStatus(idUsuario, idStatus);
+
+                if (listaVinculos != null)
+                {
+                    return Ok(new { message = "Vinculos encontrados", result = true, data = listaVinculos });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum vinculo encontrado!!!", result = false });
                 }
             }
             catch (Exception ex)
@@ -105,31 +126,12 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaVinculos != null)
                 {
-                    List<VinculoDTO> listaVinculos = new List<VinculoDTO>();
-
-                    foreach (var item in localizaVinculos)
-                    {
-                        var localizaEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaProduto = await _produtos.localizaProduto(item.idItem);
-                        var localizaStatus = await _status.getStatus(item.status);
-
-                        listaVinculos.Add(new VinculoDTO
-                        {
-                            nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.produto,
-                            dataVinculo = item.dataVinculo,
-                            dataDevolucao = item.dataDevolucao,
-                            status = localizaStatus.nome,
-                            validade = DateTime.MinValue
-                        });
-                    }
-
-                    return Ok(new { message = "Lista encontrada", result = true, lista = listaVinculos });
+                    return Ok(new { message = "Lista encontrada", result = true, lista = localizaVinculos });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum vinculo encontrado com esse status", result = false }); 
-                }                
+                    return BadRequest(new { message = "Nenhum vinculo encontrado com esse status", result = false });
+                }
             }
             catch (Exception ex)
             {
@@ -143,7 +145,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <param name="idUsuario"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("{idUsuario}")]
+        [HttpGet("usuario/{idUsuario}")]
         public async Task<IActionResult> listaVinculosUsuarios(int idUsuario)
         {
             try
@@ -152,30 +154,11 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaVinculos != null)
                 {
-                    List<VinculoDTO> listaVinculos = new List<VinculoDTO>();
-
-                    foreach (var item in localizaVinculos)
-                    {
-                        var localizaEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaProduto = await _produtos.localizaProduto(item.idItem);
-                        var localizaStatus = await _status.getStatus(item.status);
-
-                        listaVinculos.Add(new VinculoDTO
-                        {
-                            nomeUsuario = localizaEmp.nome,
-                            nomeItem = localizaProduto.produto,
-                            dataVinculo = item.dataVinculo,
-                            dataDevolucao = item.dataDevolucao,
-                            status = localizaStatus.nome,
-                            validade = DateTime.MinValue
-                        });
-                    }
-
-                    return Ok(new { message = "Lista encontrada", result = true, lista = listaVinculos });
+                    return Ok(new { message = "Itens encontrados!!!", result = true, data = localizaVinculos });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum vinculo encontrado para esse usuário", result = false });
+                    return BadRequest(new { message = "Nenhum vinculo encontrado com esse usuário", result = false });
                 }
             }
             catch (Exception ex)

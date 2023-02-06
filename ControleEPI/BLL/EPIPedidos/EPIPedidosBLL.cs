@@ -13,6 +13,7 @@ using ControleEPI.DAL.EPIPedidosAprovados;
 using ControleEPI.DAL.EPIMotivos;
 using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.DAL.EPIVinculos;
 
 namespace ControleEPI.BLL.EPIPedidos
 {
@@ -29,9 +30,10 @@ namespace ControleEPI.BLL.EPIPedidos
         private readonly IEPIMotivosDAL _motivos;
         private readonly IEPIProdutosEstoqueDAL _estoque;
         private readonly IEPIProdutosDAL _produtos;
+        private readonly IEPIVinculoDAL _vinculo;
 
         public EPIPedidosBLL(IEPIPedidosDAL pedidos, IRHConUserDAL usuario, IRHEmpContratosDAL contrato, IRHDepartamentosDAL departamento, IEPIStatusDAL status, IEPITamanhosDAL tamanho,
-            IMailService mail, IEPIPedidosAprovadosDAL pedidosAprovados, IEPIMotivosDAL motivos, IEPIProdutosEstoqueDAL estoque, IEPIProdutosDAL produtos)
+            IMailService mail, IEPIPedidosAprovadosDAL pedidosAprovados, IEPIMotivosDAL motivos, IEPIProdutosEstoqueDAL estoque, IEPIProdutosDAL produtos, IEPIVinculoDAL vinculo)
         {
             _pedidos = pedidos;
             _usuario = usuario;
@@ -44,6 +46,7 @@ namespace ControleEPI.BLL.EPIPedidos
             _motivos = motivos;
             _estoque = estoque;
             _produtos = produtos;
+            _vinculo = vinculo;
         }
 
         public async Task<PedidosDTO> getPedidoProduto(int Id)
@@ -63,7 +66,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                     foreach (var produto in pedido.produtos)
                     {
-                        var query = await _estoque.getProdutoExistente(produto.id);
+                        var query = await _estoque.getProdutoEstoqueTamanho(produto.id, produto.tamanho);
 
                         if (query != null)
                         {
@@ -157,13 +160,65 @@ namespace ControleEPI.BLL.EPIPedidos
                             produtos = pedido.produtos,
                             motivo = motivo.nome,
                             idUsuario = nomeColaborador.id,
-                            nomeUsuario = nomeColaborador.nome
+                            nomeUsuario = nomeColaborador.nome,
+                            idStatus = status.id,
+                            status = status.nome
                         });
                     }
 
                     if (pedidosEncontrados != null)
                     {
                         return pedidosEncontrados;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IList<PedidosUsuarioDTO>> localizaPedidosUsuarioStatus(int idUsuario, int idStatus)
+        {
+            try
+            {
+                var localizaPedidos = await _pedidos.localizaPedidosUsuarioStatus(idUsuario, idStatus);
+
+                if (localizaPedidos != null)
+                {
+                    List<PedidosUsuarioDTO> listaPedidos = new List<PedidosUsuarioDTO>();
+
+                    foreach (var item in localizaPedidos)
+                    {
+                        var motivo = await _motivos.getMotivo(item.motivo);
+                        var usuario = await _usuario.GetEmp(item.idUsuario);
+                        var status = await _status.getStatus(item.status);
+
+                        listaPedidos.Add(new PedidosUsuarioDTO
+                        {
+                            idPedido = item.id,
+                            dataPedido = item.dataPedido,
+                            descricao = item.descricao,
+                            produtos = item.produtos,
+                            motivo = motivo.nome,
+                            idUsuario = usuario.id,
+                            nomeUsuario = usuario.nome,
+                            idStatus = status.id,
+                            status = status.nome
+                        });
+                    }
+
+                    if (listaPedidos != null)
+                    {
+                        return listaPedidos;
                     }
                     else
                     {
@@ -193,6 +248,7 @@ namespace ControleEPI.BLL.EPIPedidos
                 {
                     var motivo = await _motivos.getMotivo(item.motivo);
                     var usuario = await _usuario.GetEmp(item.idUsuario);
+                    var status = await _status.getStatus(item.status);
 
                     listaPedidos.Add(new PedidosUsuarioDTO
                     {
@@ -202,7 +258,9 @@ namespace ControleEPI.BLL.EPIPedidos
                         produtos = item.produtos,
                         motivo = motivo.nome,
                         idUsuario = usuario.id,
-                        nomeUsuario = usuario.nome
+                        nomeUsuario = usuario.nome,
+                        idStatus = status.id,
+                        status = status.nome
                     });
                 }
 
@@ -869,6 +927,136 @@ namespace ControleEPI.BLL.EPIPedidos
                 {
                     return null;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IList<Produtos>> liberarParaVinculo(int idPedido)
+        {
+            try
+            {
+                List<Produtos> produtos = new List<Produtos>();
+                List<ConteudoEmailDTO> conteudoEmail = new List<ConteudoEmailDTO>();
+                ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                EmailRequestDTO email = new EmailRequestDTO();
+
+                var localizaPedido = await _pedidos.getPedido(idPedido);
+
+                if (localizaPedido != null)
+                {
+                    var localizaColaborador = await _usuario.GetEmp(localizaPedido.idUsuario);
+
+                    if (localizaColaborador != null)
+                    {
+                        var localizaEmail = await _usuario.getEmail(localizaColaborador.id);
+
+                        if (localizaEmail != null)
+                        {
+                            var localizaContrato = await _contrato.getEmpContrato(localizaColaborador.id);
+
+                            if (localizaContrato != null)
+                            {
+                                foreach (var item in localizaPedido.produtos)
+                                {
+                                    if (item.status == 7)
+                                    {
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = item.id,
+                                            nome = item.nome,
+                                            quantidade = item.quantidade,
+                                            status = 15,
+                                            tamanho = item.tamanho
+                                        });
+
+                                        var localizaVinculo = await _vinculo.localizaProdutoVinculo(item.id);
+
+                                        localizaVinculo.status = 15;
+
+                                        await _vinculo.Update(localizaVinculo);
+                                    }
+                                    else
+                                    {
+                                        produtos.Add(new Produtos
+                                        {
+                                            id = item.id,
+                                            nome = item.nome,
+                                            quantidade = item.quantidade,
+                                            status = item.status,
+                                            tamanho = item.tamanho
+                                        });
+                                    }
+                                }
+
+                                foreach (var produto in produtos)
+                                {
+                                    if (produto.status == 15)
+                                    {
+                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+                                        var nomeStatus = await _status.getStatus(13);
+
+                                        conteudoEmail.Add(new ConteudoEmailDTO
+                                        { 
+                                            nome = produto.nome,
+                                            tamanho = localizaTamanho.tamanho,
+                                            status = nomeStatus.nome,
+                                            quantidade = produto.quantidade
+                                        });
+                                    }
+                                }
+
+                                var localizaDepartamento = await _departamento.getDepartamento(localizaContrato.id_departamento);
+
+                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                                {
+                                    idPedido = localizaPedido.id.ToString(),
+                                    nomeColaborador = localizaColaborador.nome,
+                                    departamento = localizaDepartamento.titulo
+                                };
+
+                                localizaPedido.produtos = produtos;
+
+                                var atualizaPedido = await _pedidos.Update(localizaPedido);
+
+                                if (atualizaPedido != null)
+                                {
+                                    email.EmailDe = localizaEmail.valor;
+                                    email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                                    email.ConteudoColaborador = conteudoEmailColaborador;
+                                    email.Conteudo = conteudoEmail;
+                                    email.Assunto = "Pedido de EPI liberado para retirada";
+
+                                    await _mail.SendEmailAsync(email);
+
+                                    return produtos;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }                                
             }
             catch (Exception ex)
             {

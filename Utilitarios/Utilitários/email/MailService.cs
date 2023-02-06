@@ -164,7 +164,7 @@ namespace Utilitarios.Utilitários.email
             smtp.Credentials = new NetworkCredential(_mailSettings.usuario, hash);
             smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-            //await smtp.SendMailAsync(message);
+            await smtp.SendMailAsync(message);
         }        
     }
 }

@@ -10,7 +10,7 @@ namespace ControleEPI.BLL.EPIProdutos
         Task<ProdutosDTO> localizaProduto(int id);
         Task<EPIProdutosDTO> ativaDesativaProduto(string status, int id);
         Task<EPIProdutosDTO> getCertificadoProduto(int idCertificado);
-        Task<IList<EPIProdutosDTO>> verificaCategoria(int idCategoria);
+        Task<IList<EPIProdutosDTO>> verificaCategorias(int idCategoria);
         Task<EPIProdutosDTO> getNomeProduto(string nome);
         Task<IList<ProdutosDTO>> getProdutosSolicitacao();        
         Task<IList<ProdutosTamanhosDTO>> produtosTamanhos(string status);

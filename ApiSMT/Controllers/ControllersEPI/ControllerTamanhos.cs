@@ -1,9 +1,7 @@
-﻿using ControleEPI.BLL.EPICategorias;
-using ControleEPI.BLL.EPITamanhos;
+﻿using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -16,17 +14,14 @@ namespace ApiSMT.Controllers.ControllersEPI
     public class ControllerTamanhos : ControllerBase
     {
         private readonly IEPITamanhosBLL _tamanhos;
-        private readonly IEPICategoriasBLL _categoria;
 
         /// <summary>
         /// Construtor ControllerTamanhos
         /// </summary>
         /// <param name="tamanhos"></param>
-        /// <param name="categoria"></param>
-        public ControllerTamanhos(IEPITamanhosBLL tamanhos, IEPICategoriasBLL categoria)
+        public ControllerTamanhos(IEPITamanhosBLL tamanhos)
         {
             _tamanhos = tamanhos;
-            _categoria = categoria;
         }
 
         /// <summary>
@@ -151,24 +146,11 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaTamanho != null)
                 {
-                    List<object> tamanhos = new List<object>();
-
-                    var localizaCategoria = await _categoria.getCategoria(localizaTamanho.idCategoriaProduto);
-
-                    tamanhos.Add(new
-                    {
-                        localizaTamanho.id,
-                        localizaTamanho.tamanho,
-                        localizaTamanho.idCategoriaProduto,
-                        localizaCategoria.nome,
-                        localizaTamanho.ativo
-                    });
-
-                    return Ok(new { message = "Tamanho encontrado", result = true, data = tamanhos });
+                    return Ok(new { message = "Tamanhos encontrados", result = true, data = localizaTamanho });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Tamanho não encontrado", result = false });
+                    return BadRequest(new { message = "Nenhum tamanho encontrado", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -191,23 +173,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaTamanhos != null)
                 {
-                    List<object> tamanhos = new List<object>();
-
-                    foreach (var item in localizaTamanhos)
-                    {
-                        var localizaCategoria = await _categoria.getCategoria(item.idCategoriaProduto);
-
-                        tamanhos.Add(new
-                        {
-                            item.id,
-                            item.tamanho,
-                            item.idCategoriaProduto,
-                            localizaCategoria.nome,
-                            item.ativo
-                        });
-                    }
-
-                    return Ok(new { message = "Tamanhos encontrados", result = true, data = tamanhos });
+                    return Ok(new { message = "Tamanhos encontrados!!!", result = true, localizaTamanhos });
                 }
                 else
                 {
@@ -257,13 +223,23 @@ namespace ApiSMT.Controllers.ControllersEPI
         [HttpDelete("{id}")]
         public async Task<IActionResult> deleteStatus(int id)
         {
-            var deletaTamanho = await _tamanhos.localizaTamanho(id);
+            try
+            {
+                var deletaTamanho = await _tamanhos.Delete(id);
 
-            if (deletaTamanho == null)
-                return BadRequest(new { message = "Tamanho não encontrato", result = false });
-
-            await _tamanhos.Delete(deletaTamanho.id);
-            return Ok(new { message = "Tamanho deletado com sucesso!!!", result = true });
+                if (deletaTamanho != null)
+                {
+                    return Ok(new { message = "Tamanho deletado com sucesso!!!", result = true });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao deletar tamanho, verifique se há produto cadastrado com esse tamanho", result = false });
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

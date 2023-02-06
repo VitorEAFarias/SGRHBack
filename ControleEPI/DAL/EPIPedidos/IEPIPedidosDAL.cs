@@ -10,6 +10,7 @@ namespace ControleEPI.DAL.EPIPedidos
         Task<IList<EPIPedidosDTO>> getPedidos();
         Task<EPIPedidosDTO> getPedido(int Id);
         Task<IList<EPIPedidosDTO>> getTodosPedidos(int status);
+        Task<IList<EPIPedidosDTO>> localizaPedidosUsuarioStatus(int idUsuario, int idStatus);
         Task<IList<EPIPedidosDTO>> getPedidosUsuario(int Id);
         Task<EPIPedidosDTO> Update(EPIPedidosDTO pedido);
     }

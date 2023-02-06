@@ -80,5 +80,7 @@ namespace ControleEPI.DTO
         public string motivo { get; set; }
         public int idUsuario { get; set; }
         public string nomeUsuario { get; set; }
+        public int idStatus { get; set; }
+        public string status { get; set; }
     }
 }

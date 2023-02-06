@@ -10,7 +10,8 @@ namespace ControleEPI.DAL.EPIProdutos
         Task<EPIProdutosDTO> localizaProduto(int id);
         Task<EPIProdutosDTO> ativaDesativaProduto(int id);
         Task<EPIProdutosDTO> getCertificadoProduto(int idCertificado);
-        Task<IList<EPIProdutosDTO>> verificaCategoria(int idCategoria);
+        Task<IList<EPIProdutosDTO>> verificaCategorias(int idCategoria);
+        Task<EPIProdutosDTO> verificaCategoria(int idCategoria);
         Task<EPIProdutosDTO> getNomeProduto(string nome);
         Task<IList<EPIProdutosDTO>> getProdutosSolicitacao();        
         Task<IList<EPIProdutosDTO>> produtosStatus(string status);
