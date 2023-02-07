@@ -62,7 +62,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaTamanho = await _tamanhos.localizaTamanho(id);
+                var localizaTamanho = await _tamanhos.localizarTamanho(id);
 
                 if (localizaTamanho != null)
                 {
@@ -101,7 +101,7 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaTamanho = await _tamanhos.localizaTamanho(tamanho.id);
+                var localizaTamanho = await _tamanhos.localizarTamanho(tamanho.id);
 
                 if (localizaTamanho != null)
                 {
@@ -173,7 +173,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (localizaTamanhos != null)
                 {
-                    return Ok(new { message = "Tamanhos encontrados!!!", result = true, localizaTamanhos });
+                    return Ok(new { message = "Tamanhos encontrados!!!", result = true, data = localizaTamanhos });
                 }
                 else
                 {

@@ -1,13 +1,13 @@
-﻿using ControleEPI.DAL.RHDepartamentos;
-using ControleEPI.DAL.EPIPedidos;
-using ControleEPI.DAL.RHContratos;
-using ControleEPI.DAL.RHUsuarios;
+﻿using RH.DAL.RHDepartamentos;
+using RH.DAL.RHContratos;
+using RH.DAL.RHUsuarios;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
 using ControleEPI.DAL.EPIStatus;
+using ControleEPI.DAL.EPIPedidos;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DAL.EPIPedidosAprovados;
 using ControleEPI.DAL.EPIMotivos;

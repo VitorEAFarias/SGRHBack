@@ -1,10 +1,8 @@
 ﻿using ControleEPI.BLL.EPIPedidos;
 using ControleEPI.BLL.EPIPedidosAprovados;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Vestimenta.BLL;
+using Vestimenta.BLL.VestPedidos;
+using Vestimenta.BLL.VestRepositorio;
 
 namespace ApiSMT.Controllers
 {
@@ -15,7 +13,7 @@ namespace ApiSMT.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IEPIPedidosBLL _pedidosEPI;
-        private readonly IPedidosVestBLL _pedidosVest;
+        private readonly IVestPedidosBLL _pedidosVest;
         private readonly IEPIPedidosAprovadosBLL _EPIAprovados;
         private readonly IVestRepositorioBLL _VestAprovados;
 
@@ -26,7 +24,7 @@ namespace ApiSMT.Controllers
         /// <param name="pedidosVest"></param>
         /// <param name="EPIAprovados"></param>
         /// <param name="vestAprovados"></param>
-        public DashboardController(IEPIPedidosBLL pedidosEPI, IPedidosVestBLL pedidosVest, IEPIPedidosAprovadosBLL EPIAprovados, IVestRepositorioBLL vestAprovados)
+        public DashboardController(IEPIPedidosBLL pedidosEPI, IVestPedidosBLL pedidosVest, IEPIPedidosAprovadosBLL EPIAprovados, IVestRepositorioBLL vestAprovados)
         {
             _pedidosEPI = pedidosEPI;
             _pedidosVest = pedidosVest;

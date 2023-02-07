@@ -50,4 +50,55 @@ namespace Vestimenta.DTO
             this.usado = usado;
         }
     }
+
+    public class ItemUsuarioDTO
+    {
+        public int id { get; set; }
+        public string nome { get; set; }
+        public IList<ItemDTO> pedido { get; set; }
+        public string status { get; set; }
+        public DateTime dataPedido { get; set; }
+    }
+
+    public class PedidosPententesDTO
+    {
+        public VestPedidosDTO pedido { get; set; }
+        public int idItem { get; set; }
+        public string emitente { get; set; }
+        public string nomeItem { get; set; }
+        public string tamanhoItem { get; set; }
+        public int quantidade { get; set; }
+        public int quantidadeEstoque { get; set; }
+        public int quantidadeEstoqueUsado { get; set; }
+        public int status { get; set; }
+    }
+
+    public class CompraDTO
+    {
+        public int id { get; set; }
+        public string nome { get; set; }
+        public IList<ItensCompraDTO> pedido { get; set; }
+        public int idStatus { get; set; }
+        public string status { get; set; }
+        public int idUsuario { get; set; }
+        public int idUsuarioAlteracao { get; set; }
+        public DateTime dataAlteracao { get; set; }
+        public string observacoes { get; set; }
+        public DateTime dataPedido { get; set; }
+    }
+
+    public class ItensCompraDTO
+    {
+        public int id { get; set; }
+        public DateTime dataAlteracao { get; set; }
+        public string nome { get; set; }
+        public int quantidade { get; set; }
+        public int status { get; set; }
+        public string tamanho { get; set; }
+        public string usado { get; set; }
+        public string enviadoCompra { get; set; }
+        public string statusNome { get; set; }
+        public int estoque { get; set; }
+        public int estoqueUsado { get; set; }
+    }
 }

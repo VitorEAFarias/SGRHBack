@@ -1,13 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO.FromBody;
-using ControleEPI.BLL.RHUsuarios;
-using Utilitarios.Utilitários;
+using Vestimenta.BLL.VestVinculo;
+using Vestimenta.BLL.VestEstoque;
+using Vestimenta.BLL.VestVestimenta;
+using Vestimenta.BLL.VestLog;
+using Vestimenta.BLL.VestPedidos;
+using RH.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -20,10 +23,10 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     {
         private readonly IVestVinculoBLL _vinculo;
         private readonly IRHConUserBLL _usuario;
-        private readonly IEstoqueBLL _estoque;
-        private readonly IVestimentaBLL _vestimenta;
-        private readonly ILogBLL _log;
-        private readonly IPedidosVestBLL _pedidos;
+        private readonly IVestEstoqueBLL _estoque;
+        private readonly IVestVestimentaBLL _vestimenta;
+        private readonly IVestLogBLL _log;
+        private readonly IVestPedidosBLL _pedidos;
 
         /// <summary>
         /// Construtor VestVinculoController
@@ -34,7 +37,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <param name="vestimenta"></param>
         /// <param name="log"></param>
         /// <param name="pedidos"></param>
-        public ControllerVestVinculo(IVestVinculoBLL vinculo, IRHConUserBLL usuario, IEstoqueBLL estoque, IVestimentaBLL vestimenta, ILogBLL log, IPedidosVestBLL pedidos)
+        public ControllerVestVinculo(IVestVinculoBLL vinculo, IRHConUserBLL usuario, IVestEstoqueBLL estoque, IVestVestimentaBLL vestimenta, IVestLogBLL log, IVestPedidosBLL pedidos)
         {
             _vinculo = vinculo;
             _usuario = usuario;
@@ -51,7 +54,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> vinculoHistorico([FromBody] VestHistoricoVinculadoDTO historico)
+        public async Task<IActionResult> vinculoHistorico([FromBody] VestHistoricoVinculadoDTO historico)
         {
             try
             {
@@ -66,7 +69,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         VestVinculoDTO vinculo = new VestVinculoDTO();
 
                         vinculo.idUsuario = localizaUsuario.id;
-                        vinculo.idVestimenta = localizaVestimenta.id;
+                        vinculo.idVestimenta = localizaVestimenta.idVestimenta;
                         vinculo.dataVinculo = historico.dataVinculo;
                         vinculo.status = 6;
                         vinculo.tamanhoVestVinculo = historico.tamanho;
@@ -76,7 +79,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         vinculo.idPedido = 0;
                         vinculo.quantidade = historico.quantidade;
 
-                        var localizaEstoque = await _estoque.getItemExistente(localizaVestimenta.id, historico.tamanho);
+                        var localizaEstoque = await _estoque.getItemExistente(localizaVestimenta.idVestimenta, historico.tamanho);
 
                         if (localizaEstoque != null)
                         {                            
@@ -124,7 +127,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("{idUsuario}")]
-        public async Task<ActionResult> postVinculo(int idUsuario, [FromBody] VestVinculoDTO itemVinculo)
+        public async Task<IActionResult> postVinculo(int idUsuario, [FromBody] VestVinculoDTO itemVinculo)
         {
             try
             {
@@ -140,7 +143,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                         var nomeVest = await _vestimenta.getVestimenta(itemVinculo.idVestimenta);
                         var checkPedido = await _pedidos.getPedido(itemVinculo.idPedido);
 
-                        foreach (var item in checkPedido.item)
+                        foreach (var item in checkPedido.pedido)
                         {
                             for (int i = 0; i < item.quantidade; i++)
                             {
@@ -163,7 +166,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                             log.data = DateTime.Now;
                             log.idUsuario = usuario.id;
-                            log.idItem = nomeVest.id;
+                            log.idItem = nomeVest.idVestimenta;
                             log.quantidadeAnt = checkEstoque.quantidade;
                             log.quantidadeDep = checkEstoque.quantidade - item.quantidade;
 
@@ -193,7 +196,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("desvincular/{enviarEstoque}/{idVinculo}")]
-        public async Task<ActionResult> retiraItemVinculo(bool enviarEstoque, int idVinculo)
+        public async Task<IActionResult> retiraItemVinculo(bool enviarEstoque, int idVinculo)
         {
             try
             {
@@ -244,110 +247,19 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("verificacao/{idUsuario}/{senha}")]
-        public async Task<ActionResult> aceitaVinculo(int idUsuario, string senha, [FromBody] List<VestPedidoItensVinculoDTO> pedidosItens)
+        public async Task<IActionResult> aceitaVinculo(int idUsuario, string senha, [FromBody] List<VestPedidoItensVinculoDTO> pedidosItens)
         {
             try
             {
-                if (pedidosItens != null)
+                var aceitarVinculo = await _vinculo.aceitaVinculo(idUsuario, senha, pedidosItens);
+
+                if (aceitarVinculo != null)
                 {
-                    var checkUsuario = await _usuario.GetSenha(idUsuario);
-
-                    if (checkUsuario != null)
-                    {
-                        GerarMD5 md5 = new GerarMD5();
-
-                        var senhaMD5 = md5.GeraMD5(senha);
-
-                        if (checkUsuario.senha == senhaMD5)
-                        {
-                            foreach (var pedido in pedidosItens)
-                            {
-                                foreach (var itemTamanho in pedido.idItens)
-                                {
-                                    var checkVinculo = await _vinculo.getVinculoTamanho(pedido.idPedido, itemTamanho.tamanho);
-
-                                    if (checkVinculo != null)
-                                    {
-                                        List<ItemDTO> getItemPedido = new List<ItemDTO>();
-
-                                        checkVinculo.status = 6;
-                                        checkVinculo.dataVinculo = DateTime.Now;
-                                        checkVinculo.statusAtual = "Y";
-
-                                        await _vinculo.Update(checkVinculo);
-
-                                        var checkPedido = await _pedidos.getPedido(pedido.idPedido);
-
-                                        foreach (var item in checkPedido.item)
-                                        {
-                                            if (checkVinculo.idVestimenta == item.id && checkVinculo.tamanhoVestVinculo == item.tamanho)
-                                            {
-                                                getItemPedido.Add(new ItemDTO
-                                                {
-                                                    id = item.id,
-                                                    nome = item.nome,
-                                                    tamanho = item.tamanho,
-                                                    quantidade = item.quantidade,
-                                                    status = 6,
-                                                    dataAlteracao = DateTime.Now,
-                                                    usado = item.usado
-                                                });
-                                            }
-                                            else
-                                            {
-                                                getItemPedido.Add(new ItemDTO
-                                                {
-                                                    id = item.id,
-                                                    nome = item.nome,
-                                                    tamanho = item.tamanho,
-                                                    quantidade = item.quantidade,
-                                                    status = item.status,
-                                                    dataAlteracao = item.dataAlteracao,
-                                                    usado = item.usado
-                                                });
-                                            }
-                                        }
-
-                                        int contador = 0;
-
-                                        foreach (var status in getItemPedido)
-                                        {
-                                            if (status.status == 2 || status.status == 7 || status.status == 3 || status.status == 6)
-                                                contador++;
-                                        }
-
-                                        checkPedido.item = getItemPedido;
-
-                                        if (contador == getItemPedido.Count)
-                                        {
-                                            checkPedido.status = 2;
-                                        }
-                                        else
-                                        {
-                                            checkPedido.status = checkPedido.status;
-                                        }
-
-                                        await _pedidos.Update(checkPedido);
-                                        
-                                    }
-                                }                                
-                            }
-
-                            return Ok(new { message = "Itens vinculados com sucesso!!!", result = true });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Senha incorreta", result = false });
-                        }                        
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Nenhum usuario encontrado!!!", result = false });
-                    }         
+                    return Ok(new { message = "Itens adquiridos com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum item enviado para vincular", result = false });
+                    return BadRequest(new { message = "Erro ao vincular itens com colaborador", result = false });
                 }
             }
             catch (Exception ex)
@@ -359,42 +271,24 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <summary>
         /// Get de vinculos pendentes
         /// </summary>
-        /// <param name="idSatus"></param>
+        /// <param name="idStatus"></param>
         /// <param name="idUsuario"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("status/{idSatus}/{idUsuario}")]
-        public async Task<ActionResult> getStatus(int idSatus, int idUsuario)
+        [HttpGet("status/{idStatus}/{idUsuario}")]
+        public async Task<IActionResult> getStatus(int idStatus, int idUsuario)
         {
             try
             {
-                var itensPendentes = await _vinculo.getVinculoPendente(idSatus, idUsuario);
+                var itensPendentes = await _vinculo.getVinculoPendente(idStatus, idUsuario);
 
                 if (itensPendentes != null)
                 {
-                    List<object> vinculoPendente = new List<object>();
-
-                    foreach (var item in itensPendentes)
-                    {
-                        var checkVestimenta = await _vestimenta.getVestimenta(item.idVestimenta);
-                        var checkUsuario = await _usuario.GetEmp(item.idUsuario);
-
-                        vinculoPendente.Add(new {
-                            id = item.id,
-                            idPedido = item.idPedido,
-                            idItem = item.idVestimenta,
-                            nomeUsuario = checkUsuario.nome,
-                            nomeVestimenta = checkVestimenta.nome,
-                            tamanho = item.tamanhoVestVinculo,
-                            data = item.dataVinculo
-                        });
-                    }
-
-                    return Ok(new { message = "Itens pendentes encontrados!!!", result = true, lista = vinculoPendente });
+                    return Ok(new { message = "Itens pendentes encontrados!!!", result = true, data = itensPendentes });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum colaborador encontrado!!!", result = false });
+                    return BadRequest(new { message = "Nenhum item pendente encontrado", result = false });
                 }
             }
             catch (Exception ex)
@@ -410,7 +304,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("situacoes/{idUsuario}")]
-        public async Task<ActionResult> getSituações(int idUsuario)
+        public async Task<IActionResult> getSituações(int idUsuario)
         {
             try
             {
@@ -441,14 +335,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                 foreach (var item in getPedidos)
                 {
-                    if (item.status == 2)
+                    if (item.status.Equals(2))
                     {
                         pedidosFinalizados.Add(new { 
                             item = item.id
                         });
 
                     }
-                    else if (item.status == 1)
+                    else if (item.status.Equals(1))
                     {
                         pedidosPendentes.Add(new {
                             item = item.id
@@ -479,41 +373,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("vinculados/{idUsuario}")]
-        public async Task<ActionResult<VestVinculoDTO>> getItensVinculados(int idUsuario)
+        public async Task<IActionResult> getItensVinculados(int idUsuario)
         {
             try
             {
                 var checkVinculados = await _vinculo.getItensVinculados(idUsuario);
 
                 if (checkVinculados != null)
-                {
-                    List<object> lista = new List<object>();
-
-                    foreach (var item in checkVinculados)
-                    {
-                        var vestimenta = await _vestimenta.getVestimenta(item.idVestimenta);
-
-                        lista.Add(new { 
-                            idItem = vestimenta.id,
-                            idVinculado = item.id,
-                            Vestimenta = vestimenta.nome,
-                            Tamanho = item.tamanhoVestVinculo,
-                            DataVinculo = item.dataVinculo,
-                            DataDesvinculo = item.dataDesvinculo,
-                            Usado = item.usado,
-                            Status = item.status,
-                            Quantidade = item.quantidade
-                        });
-                    }
-
-                    if (lista != null)
-                    {
-                        return Ok(new { message = "Itens encontrados", lista = lista, result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Nenhum item pendente encontrado", result = false });
-                    }
+                {                    
+                    return Ok(new { message = "Itens encontrados", data = checkVinculados, result = true });                    
                 }
                 else
                 {

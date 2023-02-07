@@ -6,7 +6,7 @@ using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIStatus;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DAL.EPIVinculos;
-using ControleEPI.DAL.RHUsuarios;
+using RH.DAL.RHUsuarios;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;

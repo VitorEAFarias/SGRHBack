@@ -351,3 +351,9 @@ C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\refint\ApiSMT.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ApiSMT.pdb
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ApiSMT.genruntimeconfig.cache
 C:\Projects\dotnet\ApiSMT\ApiSMT\obj\Debug\net5.0\ref\ApiSMT.dll
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.deps.json
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.runtimeconfig.json
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.runtimeconfig.dev.json
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.exe
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.dll
+C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.pdb

@@ -535,6 +535,21 @@
           }
         }
       },
+      "RH/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/RH.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/RH.dll": {}
+        }
+      },
       "Utilitarios/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
@@ -1390,6 +1405,11 @@
         "version.txt"
       ]
     },
+    "RH/1.0.0": {
+      "type": "project",
+      "path": "../RH/RH.csproj",
+      "msbuildProject": "../RH/RH.csproj"
+    },
     "Utilitarios/1.0.0": {
       "type": "project",
       "path": "../Utilitarios/Utilitarios.csproj",
@@ -1403,6 +1423,7 @@
       "Microsoft.EntityFrameworkCore.Design >= 5.0.1",
       "Microsoft.EntityFrameworkCore.Tools >= 5.0.1",
       "Pomelo.EntityFrameworkCore.MySql >= 5.0.0",
+      "RH >= 1.0.0",
       "Utilitarios >= 1.0.0"
     ]
   },
@@ -1441,6 +1462,9 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
+            "C:\\Projects\\dotnet\\Teste\\ApiSMT\\RH\\RH.csproj": {
+              "projectPath": "C:\\Projects\\dotnet\\Teste\\ApiSMT\\RH\\RH.csproj"
+            },
             "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Utilitarios\\Utilitarios.csproj": {
               "projectPath": "C:\\Projects\\dotnet\\Teste\\ApiSMT\\Utilitarios\\Utilitarios.csproj"
             }

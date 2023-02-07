@@ -1040,6 +1040,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0"
         },
@@ -1048,6 +1049,19 @@
         },
         "compile": {
           "ControleEPI.dll": {}
+        }
+      },
+      "RH/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
+        },
+        "runtime": {
+          "RH.dll": {}
+        },
+        "compile": {
+          "RH.dll": {}
         }
       },
       "Utilitarios/1.0.0": {
@@ -1072,6 +1086,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0"
         },
         "runtime": {
@@ -3294,6 +3309,11 @@
       "hashPath": "system.text.json.4.6.0.nupkg.sha512"
     },
     "ControleEPI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RH/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

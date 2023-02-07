@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Vestimenta.BLL.VestVestimenta;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -16,18 +14,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     [ApiController]
     public class ControllerVestimenta : ControllerBase
     {
-        private readonly IVestimentaBLL _vestimenta;
-        private readonly IEstoqueBLL _estoque;
+        private readonly IVestVestimentaBLL _vestimenta;
 
         /// <summary>
         /// Construtor VestimentaController
         /// </summary>
         /// <param name="vestimenta"></param>
-        /// <param name="estoque"></param>
-        public ControllerVestimenta(IVestimentaBLL vestimenta, IEstoqueBLL estoque)
+        public ControllerVestimenta(IVestVestimentaBLL vestimenta)
         {
             _vestimenta = vestimenta;
-            _estoque = estoque;
         }
 
         /// <summary>
@@ -40,57 +35,16 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         public async Task<ActionResult<VestVestimentaDTO>> postVestimenta([FromForm] VestVestimentaDTO vestimenta)
         {
             try
-            {
-                if (vestimenta != null)
+            {                
+                var checkVestimenta = await _vestimenta.getNomeVestimenta(vestimenta);
+
+                if (checkVestimenta != null)
                 {
-                    var checkVestimenta = await _vestimenta.getNomeVestimenta(vestimenta.nome);
-
-                    if (checkVestimenta != null)
-                    {
-                        return BadRequest(new { message = "Ja existe uma vestimenta chamada: " + vestimenta.nome, result = false });
-                    }
-                    else
-                    {
-                        VestVestimentaDTO inserirVestimenta = new VestVestimentaDTO();
-
-                        inserirVestimenta.ativo = 1;
-                        inserirVestimenta.foto = vestimenta.foto;
-                        inserirVestimenta.preco = vestimenta.preco;
-                        inserirVestimenta.dataCadastro = DateTime.Now;
-                        inserirVestimenta.tamanho = vestimenta.tamanho;
-                        inserirVestimenta.nome = vestimenta.nome;
-                        inserirVestimenta.maximo = vestimenta.maximo;
-
-                        var novaVestimenta = await _vestimenta.Insert(inserirVestimenta);
-
-                        if (novaVestimenta != null)
-                        {
-                            foreach (var tamanho in novaVestimenta.tamanho)
-                            {
-                                VestEstoqueDTO estoque = new VestEstoqueDTO();
-
-                                estoque.idItem = novaVestimenta.id;
-                                estoque.quantidade = 0;
-                                estoque.quantidadeVinculado = 0;
-                                estoque.dataAlteracao = DateTime.Now;
-                                estoque.tamanho = tamanho.tamanho;
-                                estoque.quantidadeUsado = 0;
-                                estoque.ativado = "Y";
-
-                                var attEstoque = await _estoque.Insert(estoque);
-                            }
-
-                            return Ok(new { message = "Vestimenta inserido com sucesso!!!", result = true, data = novaVestimenta });
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Erro ao inserir vestimenta!!!", result = false });
-                        }
-                    }
+                    return Ok(new { message = "Vestimenta inserida com sucesso!!!", result = true, data = checkVestimenta });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao inserir vestimenta " + vestimenta.nome, result = false });
+                    return BadRequest(new { message = "Erro ao inserir vestimenta", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -106,7 +60,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("ativaVestimenta/{id}")]
-        public async Task<ActionResult> ativaVestimenta(int id)
+        public async Task<IActionResult> ativaVestimenta(int id)
         {
             try
             {
@@ -114,31 +68,11 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                 if (checkVestimenta != null)
                 {
-                    if (checkVestimenta.ativo != 1)
-                    {
-                        checkVestimenta.ativo = 1;
-
-                        await _vestimenta.Update(checkVestimenta);
-
-                        foreach (var tamanho in checkVestimenta.tamanho)
-                        {
-                            var getEstoque = await _estoque.getDesativados(checkVestimenta.id, tamanho.tamanho);
-
-                            getEstoque.ativado = "Y";
-
-                            await _estoque.Update(getEstoque);
-                        }
-
-                        return Ok(new { message = "Vestimenta ativada com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Vestimenta ja esta ativa", result = false });
-                    }
+                    return Ok(new { message = "Vestimenta ativada com sucesso!!!", result = true });                    
                 }
                 else
                 {
-                    return BadRequest(new { message = "Vestimenta não encontrada", result = false });
+                    return BadRequest(new { message = "Erro ao ativar vestimenta", result = false });
                 }
             }
             catch (Exception ex)
@@ -154,83 +88,22 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult> putVestimenta([FromForm] VestVestimentaDTO vestimenta)
+        public async Task<IActionResult> putVestimenta([FromForm] VestVestimentaDTO vestimenta)
         {
             try
             {
-                VestVestimentaDTO checkVestimenta = await _vestimenta.getVestimenta(vestimenta.id);
+                var atualizaVestimenta = await _vestimenta.Update(vestimenta);
 
-                if (checkVestimenta != null)
+                if (atualizaVestimenta != null)
                 {
-                    if (vestimenta.tamanho.Count > checkVestimenta.tamanho.Count)
-                    {
-                        foreach (var tamanho in vestimenta.tamanho)
-                        {
-                            VestEstoqueDTO estoque = await _estoque.getItemExistente(checkVestimenta.id, tamanho.tamanho);
-                            VestEstoqueDTO newEstoque = new VestEstoqueDTO();
-
-                            if (estoque == null)
-                            {
-                                newEstoque.idItem = checkVestimenta.id;
-                                newEstoque.quantidade = 0;
-                                newEstoque.tamanho = tamanho.tamanho;
-                                newEstoque.dataAlteracao = DateTime.Now;
-                                newEstoque.quantidadeVinculado = 0;
-                                newEstoque.quantidadeUsado = 0;
-                                newEstoque.ativado = "Y";
-
-                                await _estoque.Insert(newEstoque);                               
-                            }
-                        }
-
-                        checkVestimenta.tamanho = vestimenta.tamanho;
-
-                        await _vestimenta.Update(checkVestimenta);
-
-                        return Ok(new { message = "Tamanhos atualizados com sucesso!!!", result = true });                        
-                        
-                    }
-                    else if (vestimenta.tamanho.Count < checkVestimenta.tamanho.Count)
-                    {
-                        var listaProdutosDiferentes = checkVestimenta.tamanho.Where(x => !vestimenta.tamanho.Any(x1 => x1.tamanho == x.tamanho))
-                            .Union(vestimenta.tamanho.Where(x => !checkVestimenta.tamanho.Any(x1 => x1.tamanho == x.tamanho)));
-
-                        foreach (var item in listaProdutosDiferentes)
-                        {
-                            var estoque = await _estoque.getItemExistente(checkVestimenta.id, item.tamanho);
-
-                            if (estoque.quantidade == 0 && estoque.quantidadeUsado == 0 && estoque.quantidadeVinculado == 0)
-                            {
-                                estoque.ativado = "N";
-
-                                await _estoque.Update(estoque);
-                                await _vestimenta.Update(vestimenta);
-                            }
-                            else
-                            {
-                                return BadRequest(new { message = "Não é possivel desativar um tamanho com itens disponiveis em estoque", result = false });
-                            }
-                        }
-
-                        return Ok(new { message = "Vestimenta desativada com sucesso!!!", result = true });
-                    }
-                    else if (checkVestimenta != vestimenta)
-                    {
-                        await _vestimenta.Update(vestimenta);
-
-                        return Ok(new { message = "Vestimenta alterado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao atualizar informações!!!", result = false });
-                    }
+                    return Ok(new { message = "Vestimenta atualizada com sucesso!!!", result = true, data = atualizaVestimenta });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum item encontrado!!!", result = false });
+                    return BadRequest(new { message = "Verifique se não há tamanhos vinculados no sistema", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -244,35 +117,22 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpDelete("{id}/{status}")]
-        public async Task<ActionResult> desativaVestimenta(int id, int status)
+        public async Task<IActionResult> desativaVestimenta(int id, int status)
         {
             try
             {
-                var desativaVes = await _vestimenta.getVestimenta(id);                
+                var desativaVes = await _vestimenta.desativaVestimenta(id, status);
 
                 if (desativaVes != null)
                 {
-                    desativaVes.ativo = status;                        
-                    
-                    await _vestimenta.Update(desativaVes);
-
-                    foreach (var tamanho in desativaVes.tamanho)
-                    {
-                        var getEstoque = await _estoque.getItemExistente(desativaVes.id, tamanho.tamanho);
-
-                        getEstoque.ativado = "N";
-
-                        await _estoque.Update(getEstoque);
-                    }
-
-                    return Ok(new { message = desativaVes.nome + " Desativado com sucesso!!!", result = true });
+                    return Ok(new { message = "Vestimenta desativada com sucesso!!!", result = true, data = desativaVes });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhuma vestimenta encontrada!!!", result = false });
+                    return BadRequest(new { message = "Erro ao desativar vestimenta", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -284,38 +144,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> getVestimentas()
+        public async Task<IActionResult> getVestimentas()
         {
             try
             {
                 var vestimenta = await _vestimenta.getVestimentas();
-                                               
-                List<object> tamanhoTotal = new List<object>();                
 
                 if (vestimenta != null)
                 {
-                    foreach (var item in vestimenta)
-                    {
-                        var quantidadeEstoque = await _estoque.getItensExistentes(item.id);
-
-                        List<object> tamanhosRam = new List<object>();
-
-                        tamanhosRam.Add(new
-                        {
-                            nome = item.nome,
-                            idVestimenta = item.id,
-                            tamanho = item.tamanho,
-                            quantidade = quantidadeEstoque,
-                            preco = item.preco,
-                            Foto = item.foto,
-                            Maximo = item.maximo,
-                            Ativo = item.ativo
-                        });                         
-
-                        tamanhoTotal.AddRange(tamanhosRam);                        
-                    }
-
-                    return Ok(new { message = "lista encontrada", result = true, lista = tamanhoTotal });
+                    return Ok(new { message = "lista encontrada", result = true, lista = vestimenta });
                 }
                 else
                 {
@@ -335,32 +172,19 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<VestVestimentaDTO>> getVestimenta(int id)
+        public async Task<IActionResult> getVestimenta(int id)
         {
             try
-            {
-                if (id != 0)
+            {                
+                var vestimenta = await _vestimenta.getVestimenta(id);
+
+                if (vestimenta != null)
                 {
-                    var vestimenta = await _vestimenta.getVestimenta(id);
-                    var quantidadeEstoque = await _estoque.getItensExistentes(vestimenta.id);
-
-                    var tamanhosRam  = new
-                    {
-                        nome = vestimenta.nome,
-                        idVestimenta = vestimenta.id,
-                        tamanho = vestimenta.tamanho,
-                        quantidade = quantidadeEstoque,
-                        preco = vestimenta.preco,
-                        Foto = vestimenta.foto,
-                        Maximo = vestimenta.maximo,
-                        Ativo = vestimenta.ativo
-                    };
-
-                    return Ok(new { message = "Vestimenta encontrada", vestimenta = tamanhosRam, result = true });
+                    return Ok(new { message = "Vestimenta encontrada!!!", result = true, data = vestimenta });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Vestimenta não encontrado", result = false });
+                    return BadRequest(new { message = "Vestimenta não encontrada", result = false });
                 }
             }
             catch (Exception ex)

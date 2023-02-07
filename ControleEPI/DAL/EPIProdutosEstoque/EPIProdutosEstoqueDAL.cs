@@ -13,6 +13,7 @@ namespace ControleEPI.DAL.EPIProdutosEstoque
         public EPIProdutosEstoqueDAL(AppDbContext context)
         {
             _context = context;
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public async Task<EPIProdutosEstoqueDTO> Insert(EPIProdutosEstoqueDTO produto)
@@ -51,7 +52,6 @@ namespace ControleEPI.DAL.EPIProdutosEstoque
 
         public async Task<EPIProdutosEstoqueDTO> Update(EPIProdutosEstoqueDTO produto)
         {
-            _context.ChangeTracker.Clear();
             _context.Entry(produto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 

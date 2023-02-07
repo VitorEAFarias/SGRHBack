@@ -19,9 +19,11 @@ namespace ControleEPI.DTO
 
     public class TodosProdutosEstoqueDTO
     {
-        public int idEstoque { get; set; }
+        public int id { get; set; }
         public int quantidade { get; set; }
+        public int idTamanho{ get; set; }
         public string tamanho { get; set; }
+        public int idProduto { get; set; }
         public string produto { get; set; }
         public decimal preco { get; set; }
         public string certificado { get; set; }

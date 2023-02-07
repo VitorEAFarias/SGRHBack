@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Vestimenta.BLL.VestStatus;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -14,13 +14,13 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     [ApiController]
     public class ControllerStatus : ControllerBase
     {
-        private readonly IStatusVestBLL _statusVest;
+        private readonly IVestStatusBLL _statusVest;
 
         /// <summary>
         /// Construtor VestimentaController
         /// </summary>
         /// <param name="statusVest"></param>
-        public ControllerStatus(IStatusVestBLL statusVest)
+        public ControllerStatus(IVestStatusBLL statusVest)
         {
             _statusVest = statusVest;
         }
@@ -32,26 +32,19 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<VestStatusDTO>> postStatus([FromBody] VestStatusDTO status)
+        public async Task<IActionResult> postStatus([FromBody] VestStatusDTO status)
         {
             try
             {
-                if (!string.IsNullOrEmpty(Convert.ToString(status)))
+                var novoStatus = await _statusVest.Insert(status);
+
+                if (novoStatus != null)
                 {
-                    var checkStatus = await _statusVest.getNomeStatus(status.nome);
-                    if (checkStatus != null)
-                    {
-                        return BadRequest(new { message = "Ja existe um status chamado: " + status.nome, result = false });
-                    }
-                    else
-                    {
-                        var novoStatus = await _statusVest.Insert(status);
-                        return Ok(new { message = "Status inserido com sucesso!!!", result = true, data = novoStatus });
-                    }
+                    return Ok(new { message = "Novo status inserido com sucesso!!!", result = true, data = novoStatus });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao inserir status " + status.nome, result = false });
+                    return BadRequest(new { message = "Erro ao inserir novo status, verifique se o mesmo ja nao existe", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -67,14 +60,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult> putStatus([FromBody] VestStatusDTO status)
+        public async Task<IActionResult> putStatus([FromBody] VestStatusDTO status)
         {
             try
-            {
-                if (!string.IsNullOrEmpty(Convert.ToString(status)))
-                {
-                    await _statusVest.Update(status);
+            {                
+                var atualizaStatus = await _statusVest.Update(status);
 
+                if (atualizaStatus != null)
+                { 
                     return Ok(new { message = status.nome + " Atualizado com sucesso!!!", result = true });
                 }
                 else
@@ -82,7 +75,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     return BadRequest(new { message = "Nenhum status encontrado!!!", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -94,13 +87,20 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> getTodosStatus()
+        public async Task<IActionResult> getTodosStatus()
         {
             try
             {
                 var status = await _statusVest.getTodosStatus();
 
-                return Ok(new { message = "lista encontrada", result = true, lista = status });
+                if (status != null)
+                {
+                    return Ok(new { message = "lista encontrada", result = true, data = status });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum status encontrado", result = false });
+                }                
             }
             catch (Exception ex)
             {
@@ -115,14 +115,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<VestVestimentaDTO>> getStatus(int id)
+        public async Task<IActionResult> getStatus(int id)
         {
             try
-            {
-                if (id != 0)
-                {
-                    var status = await _statusVest.getStatus(id);
+            {                
+                var status = await _statusVest.getStatus(id);
 
+                if (status != null)
+                {               
                     return Ok(new { message = "Status encontrado", motivo = status.nome, result = true });
                 }
                 else
@@ -143,24 +143,33 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpDelete]
-        public async Task<ActionResult> deleteStatus(int id)
+        public async Task<IActionResult> deleteStatus(int id)
         {
-            var deletaStatus = await _statusVest.getStatus(id);
+            try
+            {
+                var deletaStatus = await _statusVest.Delete(id);
 
-            if (deletaStatus == null)
-                return BadRequest(new { message = "Status não encontrato", data = false });
-
-            await _statusVest.Delete(deletaStatus.id);
-            return Ok(new { message = "Status deletado com sucesso!!!", data = true });
+                if (deletaStatus != null)
+                {
+                    return Ok(new { message = "Status deletado com sucesso!!!", result = true, data = deletaStatus });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao deletar status", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
         /// teste
         /// </summary>
-        /// <param name="teste"></param>
         /// <returns></returns>
-        [HttpGet("teste/{teste}")]
-        public IActionResult teste(string teste)
+        [HttpGet("teste")]
+        public IActionResult teste()
         {
             string mensagem = "Ta funcionando";
 

@@ -7,14 +7,15 @@ using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIStatus;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DAL.EPIVinculos;
-using ControleEPI.DAL.RHContratos;
-using ControleEPI.DAL.RHDepartamentos;
-using ControleEPI.DAL.RHUsuarios;
+using RH.DAL.RHContratos;
+using RH.DAL.RHDepartamentos;
+using RH.DAL.RHUsuarios;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
+using RH.DTO;
 
 namespace ControleEPI.BLL.EPICompras
 {

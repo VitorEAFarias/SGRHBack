@@ -35,24 +35,15 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var verificaNomeCategoria = _categoria.verificaCategoria(categoria.nome);
+                var insereCategoria = await _categoria.Insert(categoria);
 
-                if (verificaNomeCategoria == null)
+                if (insereCategoria != null)
                 {
-                    var insereCategoria = await _categoria.Insert(categoria);
-
-                    if (insereCategoria != null)
-                    {
-                        return Ok(new { message = "Categoria inserida com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao inserir nova categoria", result = false });
-                    }
+                    return Ok(new { message = "Categoria inserida com sucesso!!!", result = true });                    
                 }
                 else
                 {
-                    return BadRequest(new { message = "Ja existe uma categoria nomeada de '" + categoria.nome + "'", result = false });
+                    return BadRequest(new { message = "Erro ao inserir categoria", result = false });
                 }
             }
             catch (System.Exception ex)

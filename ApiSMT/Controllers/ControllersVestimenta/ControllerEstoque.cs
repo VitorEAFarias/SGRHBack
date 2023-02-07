@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using Vestimenta.BLL.VestEstoque;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -15,21 +15,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     [ApiController]
     public class ControllerEstoque : ControllerBase
     {
-        private readonly IEstoqueBLL _estoque;
-        private readonly ILogBLL _log;
-        private readonly IVestimentaBLL _vestimenta;
+        private readonly IVestEstoqueBLL _estoque;
 
         /// <summary>
         /// Construtor EstoqueController
         /// </summary>
         /// <param name="estoque"></param>
-        /// <param name="log"></param>
-        /// <param name="vestimenta"></param>
-        public ControllerEstoque(IEstoqueBLL estoque, ILogBLL log, IVestimentaBLL vestimenta)
+        public ControllerEstoque(IVestEstoqueBLL estoque)
         {
             _estoque = estoque;
-            _log = log;
-            _vestimenta = vestimenta;
         }
 
         /// <summary>
@@ -40,59 +34,19 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("{id}")]        
-        public async Task<ActionResult> putEstoque(int id, [FromBody] List<VestEstoqueDTO> estoque)
+        public async Task<IActionResult> putEstoque(int id, [FromBody] List<VestEstoqueDTO> estoque)
         {
             try
             {
-                if (estoque != null)
+                var atualizaLogEstoque = await _estoque.atualizaLogEstoque(id, estoque);
+
+                if (atualizaLogEstoque != null)
                 {
-                    foreach (var item in estoque)
-                    {
-                        var checkEstoque = await _estoque.getItemExistente(item.idItem, item.tamanho);
-                                                
-                        if (item.quantidadeUsado == checkEstoque.quantidadeUsado)
-                        {
-                            item.dataAlteracao = DateTime.Now;
-
-                            await _estoque.Update(item);
-
-                            VestLogDTO log = new VestLogDTO();
-
-                            log.data = DateTime.Now;
-                            log.idUsuario = id;
-                            log.idItem = item.idItem;
-                            log.quantidadeAnt = checkEstoque.quantidade;
-                            log.quantidadeDep = checkEstoque.quantidade + item.quantidade;
-                            log.tamanho = checkEstoque.tamanho;
-                            log.usado = "N";
-
-                            await _log.Insert(log);
-                        }
-                        else
-                        {
-                            item.dataAlteracao = DateTime.Now;
-
-                            await _estoque.Update(item);
-
-                            VestLogDTO log = new VestLogDTO();
-
-                            log.data = DateTime.Now;
-                            log.idUsuario = id;
-                            log.idItem = item.idItem;
-                            log.quantidadeAnt = checkEstoque.quantidadeUsado;
-                            log.quantidadeDep = checkEstoque.quantidadeUsado + item.quantidadeUsado;
-                            log.tamanho = checkEstoque.tamanho;
-                            log.usado = "N";
-
-                            var insereLog = await _log.Insert(log);                            
-                        }                        
-                    }
-
-                    return Ok(new { message = "Quantidades atualizadas com êxito!!!", result = true });
+                    return Ok(new { message = "Estoque atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhuma informação enviada!!!", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar estoque", result = false });
                 }
             }
             catch (System.Exception ex)
@@ -107,34 +61,21 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("tamanhos/{idItem}")]
-        public async Task<ActionResult> getEstoque(int idItem)
+        public async Task<IActionResult> getEstoque(int idItem)
         {
             try
             {
                 var itens = await _estoque.getItensExistentes(idItem);
-                List<object> lista = new List<object>();
 
                 if (itens != null)
                 {
-                    foreach (var item in itens)
-                    {
-                        var getNome = await _vestimenta.getVestimenta(item.idItem);
-
-                        lista.Add(new { 
-                            id = item.id,
-                            idItem = item.idItem,
-                            nome = getNome.nome,
-                            quantidade = item.quantidade,
-                            quantidadeUsado = item.quantidadeUsado
-                        });
-                    }
-
-                    return Ok(new { message = "Lista encontrada", result = true, lista = lista });
+                    return Ok(new { message = "Itens encontrados!!!", result = true, data = itens });
                 }
                 else
                 {
                     return BadRequest(new { message = "Nenhum item encontrado", result = false });
                 }
+                
             }
             catch (Exception ex)
             {
@@ -149,15 +90,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<VestEstoqueDTO>> getItemStoque(int id)
+        public async Task<IActionResult> getItemStoque(int id)
         {
             try
-            {
-                if (id != 0)
-                {
-                    var estoque = await _estoque.getItemEstoque(id);
+            {                
+                var estoque = await _estoque.getItemEstoque(id);
 
-                    return Ok(new { message = "Item do estoque encontrado", estoque = estoque, result = true });
+                if (estoque != null)
+                { 
+                    return Ok(new { message = "Item do estoque encontrado", data = estoque, result = true });
                 }
                 else
                 {

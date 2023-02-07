@@ -4,10 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ControleEPI.DTO._DbContext;
-using Vestimenta.DTO._DbContext;
-using Vestimenta.DAL;
-using Vestimenta.BLL;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.IO;
@@ -35,10 +31,10 @@ using ControleEPI.BLL.EPIProdutosEstoque;
 using ControleEPI.BLL.EPIStatus;
 using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.EPIVinculos;
-using ControleEPI.BLL.RHCargos;
-using ControleEPI.BLL.RHUsuarios;
-using ControleEPI.BLL.RHDepartamentos;
-using ControleEPI.BLL.RHContratos;
+using RH.BLL.RHCargos;
+using RH.BLL.RHUsuarios;
+using RH.BLL.RHDepartamentos;
+using RH.BLL.RHContratos;
 using ControleEPI.DAL.EPICompras;
 using ControleEPI.DAL.EPIFornecedores;
 using ControleEPI.DAL.EPILogCompras;
@@ -50,12 +46,30 @@ using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIStatus;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DAL.EPIVinculos;
-using ControleEPI.DAL.RHCargos;
-using ControleEPI.DAL.RHUsuarios;
-using ControleEPI.DAL.RHDepartamentos;
-using ControleEPI.DAL.RHContratos;
+using RH.DAL.RHCargos;
+using RH.DAL.RHUsuarios;
+using RH.DAL.RHDepartamentos;
+using RH.DAL.RHContratos;
 using Utilitarios.Utilitários.email;
 using Utilitarios.Utilitários;
+using Vestimenta.DAL.VestCompras;
+using Vestimenta.DAL.VestPDF;
+using Vestimenta.DAL.VestEstoque;
+using Vestimenta.DAL.VestLog;
+using Vestimenta.DAL.VestPedidos;
+using Vestimenta.DAL.VestRepositorio;
+using Vestimenta.DAL.VestStatus;
+using Vestimenta.DAL.VestVestimenta;
+using Vestimenta.DAL.VestVinculo;
+using Vestimenta.BLL.VestRepositorio;
+using Vestimenta.BLL.VestVinculo;
+using Vestimenta.BLL.VestVestimenta;
+using Vestimenta.BLL.VestCompras;
+using Vestimenta.BLL.VestStatus;
+using Vestimenta.BLL.VestPedidos;
+using Vestimenta.BLL.VestEstoque;
+using Vestimenta.BLL.VestLog;
+using Vestimenta.BLL.VestPDF;
 
 namespace ApiSMT
 {
@@ -102,11 +116,11 @@ namespace ApiSMT
             string SMTConnection = Configuration.GetConnectionString("smt");
             string RHConnection = Configuration.GetConnectionString("rh");
 
-            services.AddDbContextPool<AppDbContext>(options => options.UseMySql(SMTConnection, ServerVersion.AutoDetect(SMTConnection))
+            services.AddDbContextPool<ControleEPI.DTO._DbContext.AppDbContext>(options => options.UseMySql(SMTConnection, ServerVersion.AutoDetect(SMTConnection))
             .ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning)));
-            services.AddDbContextPool<AppDbContextRH>(options => options.UseMySql(RHConnection, ServerVersion.AutoDetect(RHConnection))
+            services.AddDbContextPool<RH.DTO._DbContext.AppDbContext>(options => options.UseMySql(RHConnection, ServerVersion.AutoDetect(RHConnection))
             .ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning)));
-            services.AddDbContextPool<VestAppDbContext>(options => options.UseMySql(SMTConnection, ServerVersion.AutoDetect(SMTConnection))
+            services.AddDbContextPool<Vestimenta.DTO._DbContext.AppDbContext>(options => options.UseMySql(SMTConnection, ServerVersion.AutoDetect(SMTConnection))
             .ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning)));
 
             services.Configure<EmailSettingsDTO>(Configuration.GetSection("EmailSettings"));
@@ -167,22 +181,41 @@ namespace ApiSMT
             services.AddScoped<IRHEmpContratosDAL, RHEmpContratosDAL>();
             services.AddScoped<IRHEmpContratosBLL, RHEmpContratosBLL>();
 
+            //Vestimenta
+            services.AddScoped<IVestVestimentaDAL, VestVestimentaDAL>();
+            services.AddScoped<IVestVestimentaBLL, VestVestimentaBLL>();
+
+            services.AddScoped<IVestComprasDAL, VestComprasDAL>();
+            services.AddScoped<IVestComprasBLL, VestComprasBLL>();
+
+            services.AddScoped<IVestStatusDAL, VestStatusDAL>();
+            services.AddScoped<IVestStatusBLL, VestStatusBLL>();
+
+            services.AddScoped<IVestPedidosDAL, VestPedidosDAL>();
+            services.AddScoped<IVestPedidosBLL, VestPedidosBLL>();
+
+            services.AddScoped<IVestEstoqueDAL, VestEstoqueDAL>();
+            services.AddScoped<IVestEstoqueBLL, VestEstoqueBLL>();
+
+            services.AddScoped<IVestLogDAL, VestLogDAL>();
+            services.AddScoped<IVestLogBLL, VestLogBLL>();
+
+            services.AddScoped<IVestVinculoDAL, VestVinculoDAL>();
+            services.AddScoped<IVestVinculoBLL, VestVinculoBLL>();
+
+            services.AddScoped<IVestRepositorioDAL, VestRepositorioDAL>();
+            services.AddScoped<IVestRepositorioBLL, VestRepositorioBLL>();
+
+            services.AddScoped<IVestDinkPDFDAL, VestDinkPDFDAL>();
+            services.AddScoped<IVestDinkPDFBLL, VestDinkPDFBLL>();
+
             //E-Mail
             services.AddScoped<IMailService, MailService>();
 
-            //Vestimenta
-            services.AddScoped<IVestimentaBLL, VestimentaDAL>();
-            services.AddScoped<IComprasVestBLL, ComprasVestDAL>();
-            services.AddScoped<IStatusVestBLL, StatusVestDAL>();
-            services.AddScoped<IPedidosVestBLL, PedidosVestDAL>();
-            services.AddScoped<IEstoqueBLL, EstoqueDAL>();
-            services.AddScoped<ILogBLL, LogDAL>();
-            services.AddScoped<IVestVinculoBLL, VestVinculoDAL>();
-            services.AddScoped<IVestRepositorioBLL, VestRepositorioDAL>();
-            services.AddScoped<IDinkPDFBLL, DinkPDFDAL>();
-
-            services.AddControllers();
+            //Heartbeat
             services.AddHostedService<TimerHostedService>();
+
+            services.AddControllers();            
 
             services.AddCors(options =>
             {

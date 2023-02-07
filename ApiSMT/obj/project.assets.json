@@ -1250,6 +1250,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0"
         },
@@ -1258,6 +1259,21 @@
         },
         "runtime": {
           "bin/placeholder/ControleEPI.dll": {}
+        }
+      },
+      "RH/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/RH.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/RH.dll": {}
         }
       },
       "Utilitarios/1.0.0": {
@@ -1286,6 +1302,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0"
         },
         "compile": {
@@ -2964,6 +2981,11 @@
       "type": "project",
       "path": "../ControleEPI/ControleEPI.csproj",
       "msbuildProject": "../ControleEPI/ControleEPI.csproj"
+    },
+    "RH/1.0.0": {
+      "type": "project",
+      "path": "../RH/RH.csproj",
+      "msbuildProject": "../RH/RH.csproj"
     },
     "Utilitarios/1.0.0": {
       "type": "project",

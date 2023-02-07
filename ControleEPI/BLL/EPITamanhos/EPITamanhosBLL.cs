@@ -99,7 +99,28 @@ namespace ControleEPI.BLL.EPITamanhos
             }
         }
 
-        public async Task<TamanhosDTO> localizaTamanho(int Id)
+        public async Task<EPITamanhosDTO> localizaTamanho(int id)
+        {
+            try
+            {
+                var localizaTamanho = await _tamanho.localizaTamanho(id);
+
+                if (localizaTamanho != null )
+                {
+                    return localizaTamanho;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<TamanhosDTO> localizarTamanho(int Id)
         {
             try
             {
@@ -226,9 +247,25 @@ namespace ControleEPI.BLL.EPITamanhos
             }
         }
 
-        public Task<EPITamanhosDTO> verificaTamanho(string nome)
+        public async Task<EPITamanhosDTO> verificaTamanho(string nome)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var verificarTamanho = await _tamanho.verificaTamanho(nome);
+
+                if (verificarTamanho != null)
+                {
+                    return verificarTamanho;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

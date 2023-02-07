@@ -101,20 +101,29 @@ namespace ControleEPI.BLL.EPICategorias
             throw new NotImplementedException();
         }
 
-        public Task<EPICategoriasDTO> Insert(EPICategoriasDTO categoria)
+        public async Task<EPICategoriasDTO> Insert(EPICategoriasDTO categoria)
         {
             try
             {
-                var insereCategoria = _categoria.Insert(categoria);
-
-                if (insereCategoria != null)
-                {
-                    return insereCategoria;
-                }
-                else
+                var verificaNomeCategoria = await verificaCategoria(categoria.nome);
+                
+                if (verificaNomeCategoria.nome == categoria.nome)
                 {
                     return null;
                 }
+                else
+                {
+                    var insereCategoria = await _categoria.Insert(categoria);
+
+                    if (insereCategoria != null)
+                    {
+                        return insereCategoria;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }                
             }
             catch (Exception ex)
             {

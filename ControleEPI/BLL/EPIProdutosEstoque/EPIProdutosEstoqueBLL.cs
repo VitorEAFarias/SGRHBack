@@ -72,9 +72,11 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                 
                     gerenciaEstoque = new TodosProdutosEstoqueDTO
                     {
-                        idEstoque = localizaProdutoEstoque.id,
+                        id = localizaProdutoEstoque.id,
                         quantidade = localizaProdutoEstoque.quantidade,
+                        idTamanho = tamanho.id,
                         tamanho = tamanho.tamanho,
+                        idProduto = localizaProduto.id,
                         produto = localizaProduto.nome,
                         preco = localizaProduto.preco,
                         certificado = localizaCertificado.numero,
@@ -162,9 +164,11 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
 
                         gerenciaEstoque.Add(new TodosProdutosEstoqueDTO
                         {
-                            idEstoque = item.id,
+                            id = item.id,
                             quantidade = item.quantidade,
+                            idTamanho = tamanho.id,
                             tamanho = tamanho.tamanho,
+                            idProduto = nomeProduto.id,
                             produto = nomeProduto.nome,
                             preco = nomeProduto.preco,
                             certificado = localizaCertificado.numero,

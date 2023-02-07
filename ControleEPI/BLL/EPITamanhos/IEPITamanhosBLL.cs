@@ -7,7 +7,8 @@ namespace ControleEPI.BLL.EPITamanhos
     public interface IEPITamanhosBLL
     {
         Task<EPITamanhosDTO> insereTamanho(EPITamanhosDTO tamanho);
-        Task<TamanhosDTO> localizaTamanho(int Id);
+        Task<TamanhosDTO> localizarTamanho(int Id);
+        Task<EPITamanhosDTO> localizaTamanho(int Id);
         Task<EPITamanhosDTO> verificaTamanho(string nome);
         Task<IList<TamanhosDTO>> localizaTamanhos();
         Task<IList<EPITamanhosDTO>> tamanhosCategoria(int idCategoria);

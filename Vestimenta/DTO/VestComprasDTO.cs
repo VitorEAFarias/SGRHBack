@@ -45,4 +45,43 @@ namespace Vestimenta.DTO
         public double preco { get; set; }
         public int quantidade { get; set; }
     }
+
+    public class ComprasDTO
+    {
+        public int id { get; set; }
+        public string nome { get; set; }
+        public string status { get; set; }
+        public DateTime dataCompra { get; set; }
+        public IList<Repositorio> repositorio { get; set; }
+    }
+
+    public class RepositorioDTO : IEntityTypeConfiguration<RepositorioDTO>
+    {
+        public void Configure(EntityTypeBuilder<RepositorioDTO> builder)
+        {
+            builder.Property(e => e.idRepositorio).HasConversion(
+            v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+            v => JsonConvert.DeserializeObject<IList<int>>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+
+        [JsonField]
+        public IList<int> idRepositorio { get; set; }
+        public int idItem { get; set; }
+        public string tamanho { get; set; }
+        public int quantidade { get; set; }
+        public double preco { get; set; }
+        public double precoTotal { get; set; }
+        public string nome { get; set; }
+    }
+
+    public class RetornoCompraDTO
+    {
+        public int idUsuario { get; set; }
+        public int idCompra { get; set; }
+        public string nome { get; set; }
+        public int idStatus { get; set; }
+        public string status { get; set; }
+        public DateTime dataCompra { get; set; }
+        public IList<RepositorioDTO> itensRepositorio { get; set; }
+    }
 }

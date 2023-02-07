@@ -169,7 +169,7 @@ namespace ControleEPI.BLL.EPIProdutos
                             novoEstoque.idTamanho = item.id;
                             novoEstoque.ativo = "S";
 
-                            await _estoque.Update(novoEstoque);
+                            await _estoque.Insert(novoEstoque);
                         }
 
                         return insereProduto;

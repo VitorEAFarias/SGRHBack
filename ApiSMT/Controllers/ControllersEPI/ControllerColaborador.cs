@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using ControleEPI.BLL.RHUsuarios;
+using RH.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

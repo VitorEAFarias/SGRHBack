@@ -15,6 +15,7 @@ namespace ControleEPI.DAL.EPIProdutos
         public EPIProdutosDAL(AppDbContext context)
         {
             _context = context;
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public async Task<EPIProdutosDTO> localizaProduto(int id)
@@ -67,8 +68,6 @@ namespace ControleEPI.DAL.EPIProdutos
 
         public async Task<EPIProdutosDTO> Update(EPIProdutosDTO produto)
         {
-            _context.ChangeTracker.Clear();
-
             _context.Entry(produto).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 

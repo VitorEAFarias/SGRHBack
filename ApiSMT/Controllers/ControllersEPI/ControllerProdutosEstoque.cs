@@ -34,26 +34,19 @@ namespace ApiSMT.Controllers.ControllersEPI
         public async Task<IActionResult> insereEstoque([FromBody] EPIProdutosEstoqueDTO produto)
         {
             try
-            {
-                if (produto != null)
-                {                    
-                    var insereEstoque = await _produtosEstoque.Insert(produto);
+            {                   
+                var insereEstoque = await _produtosEstoque.Insert(produto);
 
-                    if (insereEstoque != null)
-                    {
-                        return Ok(new { message = "Cadastrado em estoque inserido com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao cadastrar produto no estoque", result = false });
-                    }
+                if (insereEstoque != null)
+                {
+                    return Ok(new { message = "Cadastrado em estoque inserido com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum produto enviado", result = false });
-                }                
+                    return BadRequest(new { message = "Erro ao cadastrar produto no estoque", result = false });
+                }               
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -77,7 +70,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualizar estoque", result = true });
+                    return BadRequest(new { message = "Erro ao atualizar estoque", result = false });
                 }
             }
             catch (Exception ex)

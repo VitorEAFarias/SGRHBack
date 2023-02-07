@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ControleEPI.DTO.FromBody;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using ApiSMT.Utilitários.JWT;
-using ControleEPI.BLL.RHUsuarios;
+using RH.BLL.RHUsuarios;
+using RH.DTO.DynamicObject;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {

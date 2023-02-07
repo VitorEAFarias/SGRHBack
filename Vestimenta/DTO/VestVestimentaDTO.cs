@@ -34,4 +34,21 @@ namespace Vestimenta.DTO
     {
         public string tamanho { get; set; }
     }
+
+    public class TamanhoTotalDTO
+    {
+        public IList<TamanhosRam> tRam { get; set; }
+    }
+
+    public class TamanhosRam
+    {
+        public string nome { get; set; }
+        public int idVestimenta { get; set; }
+        public IList<Tamanho> tamanho { get; set; }
+        public IList<VestEstoqueDTO> quantidade { get; set; }
+        public decimal preco { get; set; }
+        public byte[] foto { get; set; }
+        public int maximo { get; set; }
+        public int ativo { get; set; }
+    }
 }

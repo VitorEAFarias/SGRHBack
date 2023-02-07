@@ -16,4 +16,13 @@ namespace Vestimenta.DTO
         public int quantidadeUsado { get; set; }
         public string ativado { get; set; }
     }
+
+    public class EstoqueDTO
+    {
+        public int id { get; set; }
+        public int idItem { get; set; }
+        public string nome { get; set; }
+        public int quantidade { get; set; }
+        public int quantidadeUsado { get; set; }
+    }
 }

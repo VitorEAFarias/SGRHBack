@@ -13,6 +13,7 @@
           "Microsoft.EntityFrameworkCore.Design": "5.0.1",
           "Microsoft.EntityFrameworkCore.Tools": "5.0.1",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0",
           "Vestimenta": "1.0.0"
         },
@@ -355,6 +356,16 @@
         }
       },
       "System.Security.Cryptography.Cng/4.5.0": {},
+      "RH/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "5.0.11",
+          "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "Utilitarios": "1.0.0"
+        },
+        "runtime": {
+          "RH.dll": {}
+        }
+      },
       "Utilitarios/1.0.0": {
         "dependencies": {
           "DinkToPdf.Standard": "1.1.0",
@@ -374,6 +385,7 @@
           "Innofactor.EfCoreJsonValueConverter": "2.0.2",
           "Microsoft.EntityFrameworkCore": "5.0.11",
           "Pomelo.EntityFrameworkCore.MySql": "5.0.0",
+          "RH": "1.0.0",
           "Utilitarios": "1.0.0"
         },
         "runtime": {
@@ -625,6 +637,11 @@
       "sha512": "sha512-WG3r7EyjUe9CMPFSs6bty5doUqT+q9pbI80hlNzo2SkPkZ4VTuZkGWjpp77JB8+uaL4DFPRdBsAY+DX3dBK92A==",
       "path": "system.security.cryptography.cng/4.5.0",
       "hashPath": "system.security.cryptography.cng.4.5.0.nupkg.sha512"
+    },
+    "RH/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Utilitarios/1.0.0": {
       "type": "project",

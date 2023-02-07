@@ -1,22 +1,26 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Vestimenta.BLL;
 using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Vestimenta.DTO.FromBody;
-using ControleEPI.DTO;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using System.IO;
-using ControleEPI.BLL.RHCargos;
-using ControleEPI.BLL.RHUsuarios;
-using ControleEPI.BLL.RHDepartamentos;
-using ControleEPI.BLL.RHContratos;
 using Utilitarios.Utilitários.PDF;
 using Utilitarios.Utilitários.email;
+using Vestimenta.BLL.VestRepositorio;
+using Vestimenta.BLL.VestVestimenta;
+using Vestimenta.BLL.VestCompras;
+using Vestimenta.BLL.VestStatus;
+using RH.BLL.RHCargos;
+using RH.BLL.RHUsuarios;
+using Vestimenta.BLL.VestPedidos;
+using RH.BLL.RHContratos;
+using RH.BLL.RHDepartamentos;
+using RH.DTO;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -29,13 +33,13 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     {
         private IConverter _converter;
         private readonly IVestRepositorioBLL _repositorio;
-        private readonly IVestimentaBLL _vestimenta;
-        private readonly IComprasVestBLL _compras;
-        private readonly IStatusVestBLL _status;
+        private readonly IVestVestimentaBLL _vestimenta;
+        private readonly IVestComprasBLL _compras;
+        private readonly IVestStatusBLL _status;
         private readonly IMailService _mail;
         private readonly IRHCargosBLL _cargo;
         private readonly IRHConUserBLL _usuario;
-        private readonly IPedidosVestBLL _pedidos;
+        private readonly IVestPedidosBLL _pedidos;
         private readonly IRHEmpContratosBLL _contrato;
         private readonly IRHDepartamentosBLL _departamento;
 
@@ -53,8 +57,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <param name="pedidos"></param>
         /// <param name="converter"></param>
         /// <param name="cargo"></param>
-        public ControllerVestRepositorio(IConverter converter, IVestRepositorioBLL repositorio, IVestimentaBLL vestimenta, IComprasVestBLL compras, IStatusVestBLL status,
-            IMailService mail, IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IPedidosVestBLL pedidos, IRHCargosBLL cargo)
+        public ControllerVestRepositorio(IConverter converter, IVestRepositorioBLL repositorio, IVestVestimentaBLL vestimenta, IVestComprasBLL compras, IVestStatusBLL status,
+            IMailService mail, IRHConUserBLL usuario, IRHEmpContratosBLL contrato, IRHDepartamentosBLL departamento, IVestPedidosBLL pedidos, IRHCargosBLL cargo)
         {
             _converter = converter;
             _repositorio = repositorio;
@@ -75,14 +79,14 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("relatorio/{idCompra}")]
-        public async Task<ActionResult> relatorioPDF(int idCompra)
+        public async Task<IActionResult> relatorioPDF(int idCompra)
         {
             try
             {
-                VestComprasDTO localizaCompra = await _compras.getCompra(idCompra);
+                var localizaCompra = await _compras.getCompra(idCompra);
                 VestRepositorioDTO localizaRepositorio = new VestRepositorioDTO();
-                VestVestimentaDTO localizaVestimenta = new VestVestimentaDTO();
-                VestPedidosDTO localizaPedido = new VestPedidosDTO();
+                TamanhosRam localizaVestimenta = new TamanhosRam();
+                CompraDTO localizaPedido = new CompraDTO();
                 List<VestRelatorioVestimentasDTO> relatorio = new List<VestRelatorioVestimentasDTO>();
 
                 var globalSettings = new GlobalSettings
@@ -112,7 +116,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                             {
                                 localizaPedido = await _pedidos.getPedido(localizaRepositorio.idPedido);
 
-                                foreach (var item in localizaPedido.item)
+                                foreach (var item in localizaPedido.pedido)
                                 {
                                     localizaVestimenta = await _vestimenta.getVestimenta(item.id);
 
@@ -197,7 +201,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult> getRepositorio(int idRepositorio)
+        public async Task<IActionResult> getRepositorio(int idRepositorio)
         {
             try
             {
@@ -225,7 +229,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("repositorio/{status}")]
-        public async Task<ActionResult> getRepositorioStatus(string status)
+        public async Task<IActionResult> getRepositorioStatus(string status)
         {
             try
             {
@@ -305,7 +309,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> enviarParaCompra([FromBody] VestComprasDTO compras)
+        public async Task<IActionResult> enviarParaCompra([FromBody] VestComprasDTO compras)
         {
             try
             {

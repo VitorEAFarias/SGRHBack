@@ -44,7 +44,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao inserir motivo, verifique se ja nao existe algum cadastrado com o mesmo nome", result = false });
+                    return BadRequest(new { message = "Erro ao inserir motivo, verifique se já não existe algum cadastrado com o mesmo nome", result = false });
                 }
             }
             catch (Exception ex)
