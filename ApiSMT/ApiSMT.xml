@@ -4,6 +4,28 @@
         <name>ApiSMT</name>
     </assembly>
     <members>
+        <member name="T:ApiSMT.Controllers.ControllerDashboard">
+            <summary>
+            Classe que manipula as informações de produtos e seu estoque
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllerDashboard.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,Vestimenta.BLL.VestVinculo.IVestVinculoBLL)">
+            <summary>
+            Construtor DashboardController
+            </summary>
+            <param name="pedidosEPI"></param>
+            <param name="pedidosVest"></param>
+            <param name="EPIAprovados"></param>
+            <param name="vestAprovados"></param>
+            <param name="vinculoEPI"></param>
+            <param name="vinculoVest"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllerDashboard.contagemPedidos(System.Int32)">
+            <summary>
+            Pega todos os pedidos
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerCategorias">
             <summary>
             Classe de categorias
@@ -450,6 +472,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutos.localizaProdutoTamanhos(System.Int32)">
+            <summary>
+            Localizar tamanhos de um produto
+            </summary>
+            <param name="idProduto"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque">
             <summary>
             Classe que manipula as informações de produtos e seu estoque
@@ -561,6 +590,13 @@
             Construtor ControllerVinculo
             </summary>
             <param name="vinculo"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.adicionarHistorico(ControleEPI.DTO.EPIVinculoDTO)">
+            <summary>
+            Adicionar histórico de EPI's do colaborador
+            </summary>
+            <param name="historico"></param>
+            <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerVinculo.vincularItem(System.Collections.Generic.List{ControleEPI.DTO.EPIVinculoDTO},System.Int32,System.String)">
             <summary>
@@ -808,21 +844,11 @@
             Classe de pedidos de vestimenta
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.VestPedidos.IVestPedidosBLL,RH.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.VestStatus.IVestStatusBLL,Vestimenta.BLL.VestEstoque.IVestEstoqueBLL,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,Vestimenta.BLL.VestVinculo.IVestVinculoBLL,Vestimenta.BLL.VestLog.IVestLogBLL,Utilitarios.Utilitários.email.IMailService,Vestimenta.BLL.VestVestimenta.IVestVestimentaBLL,RH.BLL.RHDepartamentos.IRHDepartamentosBLL,RH.BLL.RHContratos.IRHEmpContratosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.#ctor(Vestimenta.BLL.VestPedidos.IVestPedidosBLL)">
             <summary>
             Construtor de Pedidos
             </summary>
-            <param name="pedidosVest"></param>
-            <param name="usuario"></param>
-            <param name="status"></param>
-            <param name="estoque"></param>
-            <param name="repositorio"></param>
-            <param name="itemVinculo"></param>
-            <param name="log"></param>
-            <param name="mail"></param>
-            <param name="vestimenta"></param>
-            <param name="departamento"></param>
-            <param name="contrato"></param>
+            <param name="pedidos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.postPedido(Vestimenta.DTO.VestPedidosDTO)">
             <summary>
@@ -881,21 +907,13 @@
             Controller VestRepositorioController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(DinkToPdf.Contracts.IConverter,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,Vestimenta.BLL.VestVestimenta.IVestVestimentaBLL,Vestimenta.BLL.VestCompras.IVestComprasBLL,Vestimenta.BLL.VestStatus.IVestStatusBLL,Utilitarios.Utilitários.email.IMailService,RH.BLL.RHUsuarios.IRHConUserBLL,RH.BLL.RHContratos.IRHEmpContratosBLL,RH.BLL.RHDepartamentos.IRHDepartamentosBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL,RH.BLL.RHCargos.IRHCargosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.#ctor(Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,Vestimenta.BLL.VestCompras.IVestComprasBLL,Vestimenta.BLL.VestPDF.IVestDinkPDFBLL)">
             <summary>
             Construtor VestRepositorioController
             </summary>
             <param name="repositorio"></param>
-            <param name="vestimenta"></param>
             <param name="compras"></param>
-            <param name="status"></param>
-            <param name="mail"></param>
-            <param name="usuario"></param>
-            <param name="contrato"></param>
-            <param name="departamento"></param>
-            <param name="pedidos"></param>
-            <param name="converter"></param>
-            <param name="cargo"></param>
+            <param name="relatorio"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.relatorioPDF(System.Int32)">
             <summary>
@@ -917,7 +935,7 @@
             <param name="status"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.avulso(System.Collections.Generic.IList{Vestimenta.DTO.VestRepositorioDTO})">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio.avulso(System.Collections.Generic.List{Vestimenta.DTO.VestRepositorioDTO})">
             <summary>
             Insere item avulso para compras
             </summary>
@@ -936,15 +954,11 @@
             Classe VestVinculoController
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.VestVinculo.IVestVinculoBLL,RH.BLL.RHUsuarios.IRHConUserBLL,Vestimenta.BLL.VestEstoque.IVestEstoqueBLL,Vestimenta.BLL.VestVestimenta.IVestVestimentaBLL,Vestimenta.BLL.VestLog.IVestLogBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.#ctor(Vestimenta.BLL.VestVinculo.IVestVinculoBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL)">
             <summary>
             Construtor VestVinculoController
             </summary>
             <param name="vinculo"></param>
-            <param name="usuario"></param>
-            <param name="estoque"></param>
-            <param name="vestimenta"></param>
-            <param name="log"></param>
             <param name="pedidos"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.vinculoHistorico(Vestimenta.DTO.FromBody.VestHistoricoVinculadoDTO)">
@@ -954,7 +968,7 @@
             <param name="historico"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.postVinculo(System.Int32,Vestimenta.DTO.VestVinculoDTO)">
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestVinculo.atualizaVinculo(System.Int32,Vestimenta.DTO.VestVinculoDTO)">
             <summary>
             Insere um novo status
             </summary>
@@ -998,20 +1012,6 @@
             </summary>
             <param name="idUsuario"></param>
             <returns></returns>
-        </member>
-        <member name="T:ApiSMT.Controllers.DashboardController">
-            <summary>
-            Classe que manipula as informações de produtos e seu estoque
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Controllers.DashboardController.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL)">
-            <summary>
-            Construtor DashboardController
-            </summary>
-            <param name="pedidosEPI"></param>
-            <param name="pedidosVest"></param>
-            <param name="EPIAprovados"></param>
-            <param name="vestAprovados"></param>
         </member>
         <member name="T:ApiSMT.Program">
             <summary>

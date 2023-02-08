@@ -45,11 +45,6 @@ namespace Vestimenta.BLL.VestStatus
             }
         }
 
-        public Task<VestStatusDTO> getNomeStatus(string nome)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<VestStatusDTO> getStatus(int Id)
         {
             try
@@ -122,9 +117,25 @@ namespace Vestimenta.BLL.VestStatus
             }
         }
 
-        public Task<VestStatusDTO> Update(VestStatusDTO status)
+        public async Task<VestStatusDTO> Update(VestStatusDTO status)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var atualizaStatusVestimenta = await _status.Update(status);
+
+                if (atualizaStatusVestimenta != null)
+                {
+                    return atualizaStatusVestimenta;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

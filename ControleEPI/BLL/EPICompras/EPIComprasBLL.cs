@@ -54,27 +54,6 @@ namespace ControleEPI.BLL.EPICompras
             _mail = mail;
         }
 
-        public async Task<EPIComprasDTO> Delete(int id)
-        {
-            try
-            {
-                var deletaCompra = await _compras.Delete(id);
-
-                if (deletaCompra != null)
-                {
-                    return deletaCompra;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<ComprasDTO> getCompra(int Id)
         {
             try
@@ -192,69 +171,6 @@ namespace ControleEPI.BLL.EPICompras
                     }
 
                     return compra;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<EPIComprasDTO>> getStatusCompras(int status)
-        {
-            try
-            {
-                var localizaStatusCompras = await _compras.getStatusCompras(status);
-
-                if (localizaStatusCompras != null)
-                {
-                    return localizaStatusCompras;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<EPIComprasDTO>> getTodasCompras()
-        {
-            try
-            {
-                var localizaTodasCompras = await _compras.getTodasCompras();
-
-                if (localizaTodasCompras != null)
-                {
-                    return localizaTodasCompras;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIComprasDTO> Insert(EPIComprasDTO compra)
-        {
-            try
-            {
-                var insereCompra = await _compras.Insert(compra);
-
-                if (insereCompra != null)
-                {
-                    return insereCompra;
                 }
                 else
                 {

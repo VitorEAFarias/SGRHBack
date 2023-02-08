@@ -4,17 +4,7 @@ using Vestimenta.DTO;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-using Utilitarios.Utilitários.email;
-using Vestimenta.BLL.VestRepositorio;
-using Vestimenta.BLL.VestVinculo;
 using Vestimenta.BLL.VestPedidos;
-using RH.BLL.RHUsuarios;
-using Vestimenta.BLL.VestStatus;
-using Vestimenta.BLL.VestEstoque;
-using Vestimenta.BLL.VestLog;
-using Vestimenta.BLL.VestVestimenta;
-using RH.BLL.RHDepartamentos;
-using RH.BLL.RHContratos;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -25,46 +15,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     [ApiController]
     public class ControllerVestPedidos : ControllerBase
     {
-        private readonly IVestPedidosBLL _pedidosVest;
-        private readonly IRHConUserBLL _usuario;
-        private readonly IVestStatusBLL _status;
-        private readonly IVestEstoqueBLL _estoque;
-        private readonly IVestRepositorioBLL _repositorio;
-        private readonly IVestVinculoBLL _itemVinculo;
-        private readonly IVestLogBLL _log;
-        private readonly IMailService _mail;
-        private readonly IVestVestimentaBLL _vestimenta;
-        private readonly IRHDepartamentosBLL _departamento;
-        private readonly IRHEmpContratosBLL _contrato;
+        private readonly IVestPedidosBLL _pedidos;
 
         /// <summary>
         /// Construtor de Pedidos
         /// </summary>
-        /// <param name="pedidosVest"></param>
-        /// <param name="usuario"></param>
-        /// <param name="status"></param>
-        /// <param name="estoque"></param>
-        /// <param name="repositorio"></param>
-        /// <param name="itemVinculo"></param>
-        /// <param name="log"></param>
-        /// <param name="mail"></param>
-        /// <param name="vestimenta"></param>
-        /// <param name="departamento"></param>
-        /// <param name="contrato"></param>
-        public ControllerVestPedidos(IVestPedidosBLL pedidosVest, IRHConUserBLL usuario, IVestStatusBLL status, IVestEstoqueBLL estoque, IVestRepositorioBLL repositorio,
-            IVestVinculoBLL itemVinculo, IVestLogBLL log, IMailService mail, IVestVestimentaBLL vestimenta, IRHDepartamentosBLL departamento, IRHEmpContratosBLL contrato)
+        /// <param name="pedidos"></param>
+        public ControllerVestPedidos(IVestPedidosBLL pedidos)
         {
-            _pedidosVest = pedidosVest;
-            _usuario = usuario;
-            _status = status;
-            _estoque = estoque;
-            _repositorio = repositorio;
-            _itemVinculo = itemVinculo;
-            _log = log;
-            _mail = mail;
-            _vestimenta = vestimenta;
-            _departamento = departamento;
-            _contrato = contrato;
+            _pedidos = pedidos;
         }
 
         /// <summary>
@@ -78,7 +37,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var novoPedido = await _pedidosVest.Insert(pedido);
+                var novoPedido = await _pedidos.Insert(pedido);
 
                 if (novoPedido != null)
                 {
@@ -106,7 +65,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var atualizaStatusPedido = await _pedidosVest.atualizaStatusPedidoItem(pedidoItem);
+                var atualizaStatusPedido = await _pedidos.atualizaStatusPedidoItem(pedidoItem);
 
                 if (atualizaStatusPedido != null)
                 {
@@ -134,7 +93,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var pedidosUsuario = await _pedidosVest.getPedidosUsuarios(idUsuario);
+                var pedidosUsuario = await _pedidos.getPedidosUsuarios(idUsuario);
 
                 if (pedidosUsuario != null)
                 {
@@ -161,7 +120,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var pedidos = await _pedidosVest.getPedidosStatus(idStatus);
+                var pedidos = await _pedidos.getPedidosStatus(idStatus);
 
                 if (pedidos != null)
                 {
@@ -188,7 +147,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var getPedidos = await _pedidosVest.getPedidoItens(idPedido);                
+                var getPedidos = await _pedidos.getPedidoItens(idPedido);                
 
                 if (getPedidos != null)
                 {
@@ -215,7 +174,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var atualizaStautsPedidos = await _pedidosVest.atualizaStatusTodosPedidos(pedidosItens);
+                var atualizaStautsPedidos = await _pedidos.atualizaStatusTodosPedidos(pedidosItens);
 
                 if (atualizaStautsPedidos != null)
                 {
@@ -242,7 +201,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var pedidos = await _pedidosVest.getPedidosPendentes();
+                var pedidos = await _pedidos.getPedidosPendentes();
 
                 if (pedidos != null)
                 {
@@ -270,7 +229,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {                
-                var compra = await _pedidosVest.getPedido(id);
+                var compra = await _pedidos.getPedido(id);
 
                 if (compra != null)
                 {

@@ -22,13 +22,10 @@ using ControleEPI.BLL.EPICertificados;
 using ControleEPI.DAL.EPICertificados;
 using ControleEPI.BLL.EPICompras;
 using ControleEPI.BLL.EPIFornecedores;
-using ControleEPI.BLL.EPILogCompras;
-using ControleEPI.BLL.EPILogEstoque;
 using ControleEPI.BLL.EPIMotivos;
 using ControleEPI.BLL.EPIPedidosAprovados;
 using ControleEPI.BLL.EPIPedidos;
 using ControleEPI.BLL.EPIProdutosEstoque;
-using ControleEPI.BLL.EPIStatus;
 using ControleEPI.BLL.EPITamanhos;
 using ControleEPI.BLL.EPIVinculos;
 using RH.BLL.RHCargos;
@@ -68,7 +65,6 @@ using Vestimenta.BLL.VestCompras;
 using Vestimenta.BLL.VestStatus;
 using Vestimenta.BLL.VestPedidos;
 using Vestimenta.BLL.VestEstoque;
-using Vestimenta.BLL.VestLog;
 using Vestimenta.BLL.VestPDF;
 
 namespace ApiSMT
@@ -140,10 +136,8 @@ namespace ApiSMT
             services.AddScoped<IEPIFornecedoresBLL, EPIFornecedoresBLL>();
 
             services.AddScoped<IEPILogComprasDAL, EPILogComprasDAL>();
-            services.AddScoped<IEPILogComprasBLL, EPILogComprasBLL>();
 
             services.AddScoped<IEPILogEstoqueDAL, EPILogEstoqueDAL>();
-            services.AddScoped<IEPILogEstoqueBLL, EPILogEstoqueBLL>();
 
             services.AddScoped<IEPIMotivosDAL, EPIMotivosDAL>();
             services.AddScoped<IEPIMotivosBLL, EPIMotivosBLL>();
@@ -161,7 +155,6 @@ namespace ApiSMT
             services.AddScoped<IEPIProdutosEstoqueBLL, EPIProdutosEstoqueBLL>();
 
             services.AddScoped<IEPIStatusDAL, EPIStatusDAL>();
-            services.AddScoped<IEPIStatusBLL, EPIStatusBLL>();
 
             services.AddScoped<IEPITamanhosDAL, EPITamanhosDAL>();
             services.AddScoped<IEPITamanhosBLL, EPITamanhosBLL>();
@@ -198,7 +191,6 @@ namespace ApiSMT
             services.AddScoped<IVestEstoqueBLL, VestEstoqueBLL>();
 
             services.AddScoped<IVestLogDAL, VestLogDAL>();
-            services.AddScoped<IVestLogBLL, VestLogBLL>();
 
             services.AddScoped<IVestVinculoDAL, VestVinculoDAL>();
             services.AddScoped<IVestVinculoBLL, VestVinculoBLL>();

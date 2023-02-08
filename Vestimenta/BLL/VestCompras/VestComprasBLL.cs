@@ -1,6 +1,7 @@
 ﻿using RH.DAL.RHContratos;
 using RH.DAL.RHDepartamentos;
 using RH.DAL.RHUsuarios;
+using RH.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -44,11 +45,6 @@ namespace Vestimenta.BLL.VestCompras
             _pedidos = pedidos;
             _estoque = estoque;
             _log = log;
-        }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<RetornoCompraDTO> getCompra(int Id)
@@ -532,14 +528,80 @@ namespace Vestimenta.BLL.VestCompras
             }
         }
 
-        public Task<IList<VestComprasDTO>> localizaProcessoCompra()
+        public async Task<VestComprasDTO> enviarParaCompra(VestComprasDTO compras)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                compras.dataCompra = DateTime.Now;
 
-        public Task Update(VestComprasDTO compra)
-        {
-            throw new NotImplementedException();
+                var insereCompra = await _compras.Insert(compras);
+
+                if (insereCompra != null)
+                {
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    EmailRequestDTO email = new EmailRequestDTO();
+                    RHEmpContatoDTO empContato = new RHEmpContatoDTO();
+                    var checkUsuario = await _usuario.GetEmp(compras.idUsuario);
+
+                    foreach (var item in compras.itensRepositorio)
+                    {
+                        foreach (var idRepositorio in item.idRepositorio)
+                        {
+                            VestRepositorioDTO repositorio = await _repositorio.getRepositorio(idRepositorio);
+
+                            if (repositorio != null)
+                            {
+                                repositorio.enviadoCompra = "S";
+                                repositorio.dataAtualizacao = DateTime.Now;
+
+                                await _repositorio.Update(repositorio);
+                            }
+                        }
+
+                        var getNomeItem = await _vestimenta.getVestimenta(item.idItem);
+                        var getStatusItem = await _status.getStatus(compras.status);
+                        var nomeEmp = await _usuario.GetEmp(insereCompra.idUsuario);
+                        var contrato = await _contrato.getEmpContrato(insereCompra.idUsuario);
+                        var departamento = await _departamento.getDepartamento(contrato.id_departamento);
+
+                        empContato = await _usuario.getEmail(compras.idUsuario);
+
+                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                        {
+                            idPedido = insereCompra.id.ToString(),
+                            nomeColaborador = nomeEmp.nome,
+                            departamento = departamento.titulo
+                        };
+
+                        conteudoEmails.Add(new ConteudoEmailDTO
+                        {
+                            nome = getNomeItem.nome,
+                            tamanho = item.tamanho,
+                            status = getStatusItem.nome,
+                            quantidade = item.quantidade
+                        });
+                    }
+
+                    email.EmailDe = empContato.valor;
+                    email.EmailPara = "simone.maciviero@reisoffice.com.br";
+                    email.ConteudoColaborador = conteudoEmailColaborador;
+                    email.Conteudo = conteudoEmails;
+                    email.Assunto = "Enviar itens para compras";
+
+                    await _mail.SendEmailAsync(email);
+
+                    return insereCompra;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

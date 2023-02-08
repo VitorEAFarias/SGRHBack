@@ -357,3 +357,15 @@ C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.runtimeconfig.dev.json
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.exe
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.dll
 C:\Projects\dotnet\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.pdb
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.deps.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.runtimeconfig.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.runtimeconfig.dev.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.deps.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.runtimeconfig.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.runtimeconfig.dev.json
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.exe
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.exe
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.dll
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.dll
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\Utilitarios.pdb
+C:\Projects\dotnet\Teste\ApiSMT\ApiSMT\bin\Debug\net5.0\RH.pdb

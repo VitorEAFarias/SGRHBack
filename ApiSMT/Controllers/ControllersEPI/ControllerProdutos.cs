@@ -216,5 +216,33 @@ namespace ApiSMT.Controllers.ControllersEPI
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Localizar tamanhos de um produto
+        /// </summary>
+        /// <param name="idProduto"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("produtosTamanhos/{idProduto}")]
+        public async Task<IActionResult> localizaProdutoTamanhos(int idProduto)
+        {
+            try
+            {
+                var localizarProdutoTamanhos = await _produtos.localizaProdutoTamanhos(idProduto);
+
+                if (localizarProdutoTamanhos != null)
+                {
+                    return Ok(new { message = "Tamanhos de produto encontrados!!!", result = true, data = localizarProdutoTamanhos });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum tamanho encontrado", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

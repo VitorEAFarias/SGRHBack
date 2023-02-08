@@ -115,27 +115,6 @@ namespace ControleEPI.BLL.EPIPedidos
             }
         }
 
-        public async Task<EPIPedidosDTO> getPedido(int id)
-        {
-            try
-            {
-                var localizaPedido = await _pedidos.getPedido(id);
-
-                if (localizaPedido != null)
-                {
-                    return localizaPedido;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<IList<PedidosUsuarioDTO>> getPedidos()
         {
             try
@@ -333,7 +312,7 @@ namespace ControleEPI.BLL.EPIPedidos
                                     var checkStatusItem = await _status.getStatus(produto.status);
                                     var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
 
-                                    if (localizaTamanho != null || !localizaTamanho.Equals(0))
+                                    if (localizaTamanho == null)
                                     {
                                         tamanho = "";
                                     }
@@ -387,27 +366,6 @@ namespace ControleEPI.BLL.EPIPedidos
                 {
                     return null;
                 }                
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIPedidosDTO> Update(EPIPedidosDTO pedido)
-        {
-            try
-            {
-                var atualizaPedidos = await _pedidos.Update(pedido);
-
-                if (atualizaPedidos != null)
-                {
-                    return atualizaPedidos;
-                }
-                else
-                {
-                    return null;    
-                }
             }
             catch (Exception ex)
             {
@@ -938,15 +896,15 @@ namespace ControleEPI.BLL.EPIPedidos
         {
             try
             {
-                List<Produtos> produtos = new List<Produtos>();
-                List<ConteudoEmailDTO> conteudoEmail = new List<ConteudoEmailDTO>();
-                ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
-                EmailRequestDTO email = new EmailRequestDTO();
-
                 var localizaPedido = await _pedidos.getPedido(idPedido);
 
                 if (localizaPedido != null)
                 {
+                    List<Produtos> produtos = new List<Produtos>();
+                    List<ConteudoEmailDTO> conteudoEmail = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    EmailRequestDTO email = new EmailRequestDTO();
+
                     var localizaColaborador = await _usuario.GetEmp(localizaPedido.idUsuario);
 
                     if (localizaColaborador != null)

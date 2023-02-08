@@ -67,10 +67,12 @@ namespace Vestimenta.DAL.VestVinculo
             return vinculo;
         }
 
-        public async Task Update(VestVinculoDTO vinculo)
+        public async Task<VestVinculoDTO> Update(VestVinculoDTO vinculo)
         {
             _context.Entry(vinculo).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return vinculo;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Vestimenta.DAL.VestVinculo
         Task<IList<VestVinculoDTO>> getItensUsuarios(int idUsuario);
         Task<IList<VestVinculoDTO>> getItensVinculados(int idUsuario);
         Task<IList<VestVinculoDTO>> getVinculos();
-        Task Update(VestVinculoDTO vinculo);
+        Task<VestVinculoDTO> Update(VestVinculoDTO vinculo);
         Task Delete(int id);
     }
 }

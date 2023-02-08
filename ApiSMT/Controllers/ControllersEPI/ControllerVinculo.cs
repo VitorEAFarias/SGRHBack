@@ -27,6 +27,34 @@ namespace ApiSMT.Controllers.ControllersEPI
         }
 
         /// <summary>
+        /// Adicionar histórico de EPI's do colaborador
+        /// </summary>
+        /// <param name="historico"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> adicionarHistorico([FromBody] EPIVinculoDTO historico)
+        {
+            try
+            {
+                var adicionaHistorico = await _vinculo.adicionarHistorico(historico);
+
+                if (adicionaHistorico != null)
+                {
+                    return Ok(new { message = "Histórico adicionado com sucesso!!!", result = true, data = adicionaHistorico});
+                }
+                else
+                {
+                    return BadRequest(new { message = "Erro ao adicionar histórico, verifique o perfil do colaborador no Portal do RH", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Vincular item(s) com colaborador
         /// </summary>
         /// <param name="vinculos"></param>

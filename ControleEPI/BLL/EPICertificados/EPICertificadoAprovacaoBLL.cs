@@ -1,7 +1,5 @@
 ﻿using ControleEPI.DAL.EPICertificados;
-using ControleEPI.DAL.EPIProdutos;
 using ControleEPI.DTO;
-using ControleEPI.DTO.FromBody;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +9,10 @@ namespace ControleEPI.BLL.EPICertificados
     public class EPICertificadoAprovacaoBLL : IEPICertificadoAprovacaoBLL
     {
         private readonly IEPICertificadoAprovacaoDAL _certificado;
-        private readonly IEPIProdutosDAL _produtos;
 
-        public EPICertificadoAprovacaoBLL(IEPICertificadoAprovacaoDAL certificado, IEPIProdutosDAL produtos)
+        public EPICertificadoAprovacaoBLL(IEPICertificadoAprovacaoDAL certificado)
         {
             _certificado = certificado;
-            _produtos = produtos;
         }
 
         public async Task<EPICertificadoAprovacaoDTO> ativaDesativaCertificado(string status, int id, string observacao)
@@ -44,21 +40,12 @@ namespace ControleEPI.BLL.EPICertificados
                         }
                     }
                     else
-                    {
-                        var verificaCertificado = await _produtos.getCertificadoProduto(localizaCertificado.id);
+                    {                        
+                        var desativaCertificado = await _certificado.Update(localizaCertificado);
 
-                        if (verificaCertificado == null)
+                        if (desativaCertificado != null)
                         {
-                            var desativaCertificado = await _certificado.Update(localizaCertificado);
-
-                            if (desativaCertificado != null)
-                            {
-                                return desativaCertificado;
-                            }
-                            else
-                            {
-                                return null;
-                            }
+                            return desativaCertificado;
                         }
                         else
                         {
@@ -96,48 +83,6 @@ namespace ControleEPI.BLL.EPICertificados
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public async Task<CertificadoProdutoDTO> getCertificadoProduto(int idCertificadoAprovacao)
-        {
-            try
-            {
-                var localizaCertificadoProduto = await _certificado.getCertificadoProduto(idCertificadoAprovacao);
-
-                if (localizaCertificadoProduto != null)
-                {
-                    return localizaCertificadoProduto;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<CertificadoProdutoDTO>> getCertificados()
-        {
-            try
-            {
-                var localizaCertificados = await _certificado.getCertificados();
-
-                if (localizaCertificados != null)
-                {
-                    return localizaCertificados;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }            
         }
 
         public async Task<IList<EPICertificadoAprovacaoDTO>> getCertificadosNumero()
@@ -186,19 +131,26 @@ namespace ControleEPI.BLL.EPICertificados
         {
             try
             {
-                certificado.ativo = "S";
-                certificado.observacao = "";
-
-                var insereCertificado = await _certificado.Insert(certificado);
-
-                if (insereCertificado != null)
+                if (certificado.validade >= DateTime.Now)
                 {
-                    return insereCertificado;
+                    certificado.ativo = "S";
+                    certificado.observacao = "";
+
+                    var insereCertificado = await _certificado.Insert(certificado);
+
+                    if (insereCertificado != null)
+                    {
+                        return insereCertificado;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
                     return null;
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -215,69 +167,6 @@ namespace ControleEPI.BLL.EPICertificados
                 if (listaCertificadoStatus != null)
                 {
                     return listaCertificadoStatus;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPICertificadoAprovacaoDTO> Update(EPICertificadoAprovacaoDTO certificado)
-        {
-            try
-            {
-                var atualizaCertificado = await _certificado.Update(certificado);
-
-                if (atualizaCertificado != null)
-                {
-                    return atualizaCertificado;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<CertificadoProdutoDTO> getProduto(int id)
-        {
-            try
-            {
-                var localizaProdutoCertificado = await _certificado.getProduto(id);
-
-                if (localizaProdutoCertificado != null)
-                {
-                    return localizaProdutoCertificado;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<CertificadoProdutoDTO>> getProdutos()
-        {
-            try
-            {
-                var localizaProdutos = await _certificado.getProdutos();
-
-                if (localizaProdutos != null)
-                {
-                    return localizaProdutos;
                 }
                 else
                 {

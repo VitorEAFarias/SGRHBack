@@ -21,11 +21,6 @@ namespace Vestimenta.BLL.VestEstoque
             _vestimenta = vestimenta;
         }
 
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IList<VestEstoqueDTO>> atualizaLogEstoque(int id, List<VestEstoqueDTO> estoque)
         {
             try
@@ -87,16 +82,6 @@ namespace Vestimenta.BLL.VestEstoque
             }
         }
 
-        public Task<VestEstoqueDTO> getDesativados(int idItem, string tamanho)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<VestEstoqueDTO>> getEstoque()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<VestEstoqueDTO> getItemEstoque(int Id)
         {
             try
@@ -116,11 +101,6 @@ namespace Vestimenta.BLL.VestEstoque
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public Task<VestEstoqueDTO> getItemExistente(int idItem, string tamanho)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<IList<EstoqueDTO>> getItensExistentes(int idItens)
@@ -158,16 +138,6 @@ namespace Vestimenta.BLL.VestEstoque
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public Task<VestEstoqueDTO> Insert(VestEstoqueDTO estoque)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Update(VestEstoqueDTO estoque)
-        {
-            throw new NotImplementedException();
         }
     }
 }

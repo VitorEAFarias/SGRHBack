@@ -6,11 +6,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Vestimenta.DTO.FromBody;
 using Vestimenta.BLL.VestVinculo;
-using Vestimenta.BLL.VestEstoque;
-using Vestimenta.BLL.VestVestimenta;
-using Vestimenta.BLL.VestLog;
 using Vestimenta.BLL.VestPedidos;
-using RH.BLL.RHUsuarios;
 
 namespace ApiSMT.Controllers.ControllersVestimenta
 {
@@ -22,28 +18,16 @@ namespace ApiSMT.Controllers.ControllersVestimenta
     public class ControllerVestVinculo : ControllerBase
     {
         private readonly IVestVinculoBLL _vinculo;
-        private readonly IRHConUserBLL _usuario;
-        private readonly IVestEstoqueBLL _estoque;
-        private readonly IVestVestimentaBLL _vestimenta;
-        private readonly IVestLogBLL _log;
         private readonly IVestPedidosBLL _pedidos;
 
         /// <summary>
         /// Construtor VestVinculoController
         /// </summary>
         /// <param name="vinculo"></param>
-        /// <param name="usuario"></param>
-        /// <param name="estoque"></param>
-        /// <param name="vestimenta"></param>
-        /// <param name="log"></param>
         /// <param name="pedidos"></param>
-        public ControllerVestVinculo(IVestVinculoBLL vinculo, IRHConUserBLL usuario, IVestEstoqueBLL estoque, IVestVestimentaBLL vestimenta, IVestLogBLL log, IVestPedidosBLL pedidos)
+        public ControllerVestVinculo(IVestVinculoBLL vinculo, IVestPedidosBLL pedidos)
         {
             _vinculo = vinculo;
-            _usuario = usuario;
-            _estoque = estoque;
-            _vestimenta = vestimenta;
-            _log = log;
             _pedidos = pedidos;
         }
 
@@ -58,59 +42,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                var localizaUsuario = await _usuario.GetEmp(historico.idUsuario);
+                var historicos = await _vinculo.vinculoHistorico(historico);
 
-                if (localizaUsuario != null)
+                if (historicos != null)
                 {
-                    var localizaVestimenta = await _vestimenta.getVestimenta(historico.idVestimenta);
-
-                    if (localizaVestimenta != null)
-                    {
-                        VestVinculoDTO vinculo = new VestVinculoDTO();
-
-                        vinculo.idUsuario = localizaUsuario.id;
-                        vinculo.idVestimenta = localizaVestimenta.idVestimenta;
-                        vinculo.dataVinculo = historico.dataVinculo;
-                        vinculo.status = 6;
-                        vinculo.tamanhoVestVinculo = historico.tamanho;
-                        vinculo.usado = historico.usado;
-                        vinculo.dataDesvinculo = DateTime.MinValue;
-                        vinculo.statusAtual = "Y";                        
-                        vinculo.idPedido = 0;
-                        vinculo.quantidade = historico.quantidade;
-
-                        var localizaEstoque = await _estoque.getItemExistente(localizaVestimenta.idVestimenta, historico.tamanho);
-
-                        if (localizaEstoque != null)
-                        {                            
-                            localizaEstoque.quantidadeVinculado = localizaEstoque.quantidadeVinculado + historico.quantidade;
-
-                            var insereVinculo = await _vinculo.Insert(vinculo);
-
-                            if (insereVinculo != null)
-                            {
-                                await _estoque.Update(localizaEstoque);
-
-                                return Ok(new { message = "Vestimenta de colaborador cadastrado com sucesso!!!", result = true });
-                            }
-                            else
-                            {
-                                return BadRequest(new { message = "Erro ao inserir vinculo", result = false });
-                            }
-                        }
-                        else
-                        {
-                            return BadRequest(new { message = "Vestimenta não cadastrada", result = false });
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Vestimenta não encontrada", result = false });
-                    }
+                    return Ok(new { message = "Histórico encontrado!!!", result = true, data = historicos });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Usuário não encontrado", result = false });
+                    return BadRequest(new { message = "Nenhum histórico encontrado", result = false });
                 }
             }
             catch (Exception ex)
@@ -127,62 +67,21 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpPut("{idUsuario}")]
-        public async Task<IActionResult> postVinculo(int idUsuario, [FromBody] VestVinculoDTO itemVinculo)
+        public async Task<IActionResult> atualizaVinculo(int idUsuario, [FromBody] VestVinculoDTO itemVinculo)
         {
             try
             {
-                var checkItemVinculo = await _vinculo.getVinculoPendente(itemVinculo.id, idUsuario);
+                var atualizarVinculo = await _vinculo.atualizaVinculo(idUsuario, itemVinculo);
 
-                if (checkItemVinculo != null)
+                if (atualizarVinculo != null)
                 {
-                    var usuario = await _usuario.GetEmp(idUsuario);
-
-                    if (usuario != null)
-                    {                        
-                        var checkEstoque = await _estoque.getItemExistente(itemVinculo.idVestimenta, itemVinculo.tamanhoVestVinculo);
-                        var nomeVest = await _vestimenta.getVestimenta(itemVinculo.idVestimenta);
-                        var checkPedido = await _pedidos.getPedido(itemVinculo.idPedido);
-
-                        foreach (var item in checkPedido.pedido)
-                        {
-                            for (int i = 0; i < item.quantidade; i++)
-                            {
-                                VestVinculoDTO vincular = new VestVinculoDTO();
-
-                                vincular.idUsuario = usuario.id;
-                                vincular.idVestimenta = itemVinculo.idVestimenta;
-                                vincular.dataVinculo = DateTime.Now;
-                                vincular.status = 6;
-                                vincular.tamanhoVestVinculo = itemVinculo.tamanhoVestVinculo;
-                                vincular.usado = itemVinculo.usado;
-                                vincular.dataDesvinculo = DateTime.MinValue;
-                                vincular.statusAtual = "Y";
-                                vincular.idPedido = itemVinculo.idPedido;
-
-                                var insereVinculo = await _vinculo.Insert(vincular);
-                            }
-
-                            VestLogDTO log = new VestLogDTO();
-
-                            log.data = DateTime.Now;
-                            log.idUsuario = usuario.id;
-                            log.idItem = nomeVest.idVestimenta;
-                            log.quantidadeAnt = checkEstoque.quantidade;
-                            log.quantidadeDep = checkEstoque.quantidade - item.quantidade;
-
-                            await _log.Insert(log);
-                        }
-                        return Ok(new { message = "Vinculo inserido com sucesso!!!", result = true });  
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Colaborador não encontrado", result = false });
-                    }
+                    return Ok(new { message = "Vinculo atualizado com sucesso!!!", result = true, data = atualizarVinculo });
                 }
                 else
                 {
-                    return BadRequest(new { messsage = "Nenhum vinculo selecionado", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar vinculo", result = false });
                 }
+                
             }
             catch (System.Exception ex)
             {
@@ -200,36 +99,15 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         {
             try
             {
-                VestVinculoDTO checkDesvinculo = await _vinculo.getVinculo(idVinculo);
-                string mensagem = string.Empty;
+                var retirarItemVinculo = await _vinculo.retiraItemVinculo(enviarEstoque, idVinculo);
 
-                if (checkDesvinculo.dataDesvinculo == DateTime.MinValue)
+                if (retirarItemVinculo != null)
                 {
-                    if (enviarEstoque == true)
-                    {
-                        VestEstoqueDTO checkEstoque = await _estoque.getItemExistente(checkDesvinculo.idVestimenta, checkDesvinculo.tamanhoVestVinculo);
-
-                        if (checkEstoque != null)
-                        {
-                            checkEstoque.quantidadeUsado = checkEstoque.quantidadeUsado + 1;
-
-                            await _estoque.Update(checkEstoque);
-                        }
-                        else
-                        {
-                            mensagem = "Item não encontrado em estoque";
-                        }                        
-                    }
-
-                    checkDesvinculo.dataDesvinculo = DateTime.Now;
-
-                    await _vinculo.Update(checkDesvinculo);
-
-                    return Ok(new { message = "Item devolvido com sucesso!!!", result = true, desvinculo = mensagem });
+                    return Ok(new { message = "Vinculo retirado com sucesso!!!", result = true, data = retirarItemVinculo });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Esse item ja foi devolvido", result = false});
+                    return BadRequest(new { message = "Erro ao retirar item do vinculo", result = false });
                 }
             }
             catch (Exception ex)

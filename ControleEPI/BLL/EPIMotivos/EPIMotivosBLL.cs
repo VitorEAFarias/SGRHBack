@@ -91,11 +91,13 @@ namespace ControleEPI.BLL.EPIMotivos
         {
             try
             {
-                var localizaMotivo = await _motivo.getMotivo(motivo.id);
+                var localizaMotivo = await _motivo.getMotivo(motivo.id);               
 
                 if (localizaMotivo != null)
                 {
-                    if (localizaMotivo.nome == motivo.nome)
+                    var verificaNome = await _motivo.verificaNome(motivo.nome);
+
+                    if (verificaNome == null)
                     {
                         var atualizaMotivo = await _motivo.atualizaMotivo(motivo);
 
@@ -109,24 +111,8 @@ namespace ControleEPI.BLL.EPIMotivos
                         }
                     }
                     else
-                    {
-                        if (localizaMotivo.nome != motivo.nome)
-                        {
-                            var atualizaMotivo = await _motivo.atualizaMotivo(motivo);
-
-                            if (atualizaMotivo != null)
-                            {
-                                return atualizaMotivo;
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                    {                        
+                        return null;                        
                     }
                 }
                 else

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários;
+using Vestimenta.DAL.VestEstoque;
+using Vestimenta.DAL.VestLog;
 using Vestimenta.DAL.VestPedidos;
 using Vestimenta.DAL.VestVestimenta;
 using Vestimenta.DAL.VestVinculo;
@@ -17,18 +19,17 @@ namespace Vestimenta.BLL.VestVinculo
         private readonly IVestVinculoDAL _vinculo;
         private readonly IRHConUserDAL _usuario;
         private readonly IVestVestimentaDAL _vestimenta;
+        private readonly IVestEstoqueDAL _estoque;
+        private readonly IVestLogDAL _log;
 
-        public VestVinculoBLL(IVestPedidosDAL pedidos, IVestVinculoDAL vinculo, IRHConUserDAL usuario, IVestVestimentaDAL vestimenta)
+        public VestVinculoBLL(IVestPedidosDAL pedidos, IVestVinculoDAL vinculo, IRHConUserDAL usuario, IVestVestimentaDAL vestimenta, IVestEstoqueDAL estoque, IVestLogDAL log)
         {
             _pedidos = pedidos;
             _vinculo = vinculo;
             _usuario = usuario;
             _vestimenta = vestimenta;
-        }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
+            _estoque = estoque;
+            _log = log;
         }
 
         public async Task<IList<VestVinculoDTO>> aceitaVinculo(int idUsuario, string senha, List<VestPedidoItensVinculoDTO> pedidosItens)
@@ -136,9 +137,25 @@ namespace Vestimenta.BLL.VestVinculo
             }
         }
 
-        public Task<IList<VestVinculoDTO>> getItensUsuarios(int idUsuario)
+        public async Task<IList<VestVinculoDTO>> getItensUsuarios(int idUsuario)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var localizaItens = await _vinculo.getItensUsuarios(idUsuario);
+
+                if (localizaItens != null)
+                {
+                    return localizaItens;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IList<VinculoUsuarioDTO>> getItensVinculados(int idUsuario)
@@ -189,14 +206,116 @@ namespace Vestimenta.BLL.VestVinculo
             }
         }
 
-        public Task<VestVinculoDTO> getUsuarioVinculo(int id)
+        public async Task<VestVinculoDTO> retiraItemVinculo(bool enviarEstoque, int idVinculo)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var checkDesvinculo = await _vinculo.getVinculo(idVinculo);
+
+                if (checkDesvinculo.dataDesvinculo == DateTime.MinValue)
+                {
+                    if (enviarEstoque == true)
+                    {
+                        VestEstoqueDTO checkEstoque = await _estoque.getItemExistente(checkDesvinculo.idVestimenta, checkDesvinculo.tamanhoVestVinculo);
+
+                        if (checkEstoque != null)
+                        {
+                            checkEstoque.quantidadeUsado = checkEstoque.quantidadeUsado + 1;
+
+                            await _estoque.Update(checkEstoque);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+
+                    checkDesvinculo.dataDesvinculo = DateTime.Now;
+
+                    var atualizaVinculo = await _vinculo.Update(checkDesvinculo);
+
+                    if (atualizaVinculo != null)
+                    {
+                        return atualizaVinculo;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public Task<VestVinculoDTO> getVinculo(int Id)
+        public async Task<VestVinculoDTO> atualizaVinculo(int idUsuario, VestVinculoDTO itemVinculo)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var checkItemVinculo = await _vinculo.getVinculoPendente(itemVinculo.id, idUsuario);
+
+                if (checkItemVinculo != null)
+                {
+                    var usuario = await _usuario.GetEmp(idUsuario);
+
+                    if (usuario != null)
+                    {
+                        var checkEstoque = await _estoque.getItemExistente(itemVinculo.idVestimenta, itemVinculo.tamanhoVestVinculo);
+                        var nomeVest = await _vestimenta.getVestimenta(itemVinculo.idVestimenta);
+                        var checkPedido = await _pedidos.getPedido(itemVinculo.idPedido);
+
+                        foreach (var item in checkPedido.item)
+                        {
+                            for (int i = 0; i < item.quantidade; i++)
+                            {
+                                VestVinculoDTO vincular = new VestVinculoDTO();
+
+                                vincular.idUsuario = usuario.id;
+                                vincular.idVestimenta = itemVinculo.idVestimenta;
+                                vincular.dataVinculo = DateTime.Now;
+                                vincular.status = 6;
+                                vincular.tamanhoVestVinculo = itemVinculo.tamanhoVestVinculo;
+                                vincular.usado = itemVinculo.usado;
+                                vincular.dataDesvinculo = DateTime.MinValue;
+                                vincular.statusAtual = "Y";
+                                vincular.idPedido = itemVinculo.idPedido;
+
+                                var insereVinculo = await _vinculo.Insert(vincular);
+                            }
+
+                            VestLogDTO log = new VestLogDTO();
+
+                            log.data = DateTime.Now;
+                            log.idUsuario = usuario.id;
+                            log.idItem = nomeVest.id;
+                            log.quantidadeAnt = checkEstoque.quantidade;
+                            log.quantidadeDep = checkEstoque.quantidade - item.quantidade;
+
+                            await _log.Insert(log);
+                        }
+
+                        return itemVinculo;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IList<VinculoDTO>> getVinculoPendente(int idStatus, int idUsuario)
@@ -246,24 +365,76 @@ namespace Vestimenta.BLL.VestVinculo
             }
         }
 
-        public Task<IList<VestVinculoDTO>> getVinculos()
+        public async Task<VestEstoqueDTO> vinculoHistorico(VestHistoricoVinculadoDTO historico)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var localizaUsuario = await _usuario.GetEmp(historico.idUsuario);
 
-        public Task<VestVinculoDTO> getVinculoTamanho(int idPedidos, string tamanho)
-        {
-            throw new NotImplementedException();
-        }
+                if (localizaUsuario != null)
+                {
+                    var localizaVestimenta = await _vestimenta.getVestimenta(historico.idVestimenta);
 
-        public Task<VestVinculoDTO> Insert(VestVinculoDTO vinculo)
-        {
-            throw new NotImplementedException();
-        }
+                    if (localizaVestimenta != null)
+                    {
+                        VestVinculoDTO vinculo = new VestVinculoDTO();
 
-        public Task Update(VestVinculoDTO vinculo)
-        {
-            throw new NotImplementedException();
+                        vinculo.idUsuario = localizaUsuario.id;
+                        vinculo.idVestimenta = localizaVestimenta.id;
+                        vinculo.dataVinculo = historico.dataVinculo;
+                        vinculo.status = 6;
+                        vinculo.tamanhoVestVinculo = historico.tamanho;
+                        vinculo.usado = historico.usado;
+                        vinculo.dataDesvinculo = DateTime.MinValue;
+                        vinculo.statusAtual = "Y";
+                        vinculo.idPedido = 0;
+                        vinculo.quantidade = historico.quantidade;
+
+                        var localizaEstoque = await _estoque.getItemExistente(localizaVestimenta.id, historico.tamanho);
+
+                        if (localizaEstoque != null)
+                        {
+                            localizaEstoque.quantidadeVinculado = localizaEstoque.quantidadeVinculado + historico.quantidade;
+
+                            var insereVinculo = await _vinculo.Insert(vinculo);
+
+                            if (insereVinculo != null)
+                            {
+                                var atualizaEstoque = await _estoque.Update(localizaEstoque);
+
+                                if (atualizaEstoque != null)
+                                {
+                                    return atualizaEstoque;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

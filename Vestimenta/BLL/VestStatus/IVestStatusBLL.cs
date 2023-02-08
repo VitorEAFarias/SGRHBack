@@ -8,7 +8,6 @@ namespace Vestimenta.BLL.VestStatus
     {
         Task<VestStatusDTO> Insert(VestStatusDTO status);
         Task<VestStatusDTO> getStatus(int Id);
-        Task<VestStatusDTO> getNomeStatus(string nome);
         Task<IList<VestStatusDTO>> getTodosStatus();
         Task<VestStatusDTO> Update(VestStatusDTO status);
         Task<VestStatusDTO> Delete(int id);

@@ -2,6 +2,7 @@
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -55,7 +56,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Ja existe um certificado com esse valor", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -82,7 +83,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Nenhum certificado enconrtado com os status enviado", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -106,10 +107,10 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualizar status do certificado", result = false });
+                    return BadRequest(new { message = "Erro ao desativar status do certificado, verifique se há produtos vinculados", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -136,7 +137,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Nenhum produto com certificado encontrado", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -164,7 +165,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Certificado não encontrado", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

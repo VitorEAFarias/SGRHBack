@@ -12,7 +12,7 @@ namespace Vestimenta.DAL.VestEstoque
         Task<VestEstoqueDTO> getDesativados(int idItem, string tamanho);
         Task<IList<VestEstoqueDTO>> getItensExistentes(int idItens);
         Task<IList<VestEstoqueDTO>> getEstoque();
-        Task Update(VestEstoqueDTO estoque);
+        Task<VestEstoqueDTO> Update(VestEstoqueDTO estoque);
         Task Delete(int id);
     }
 }

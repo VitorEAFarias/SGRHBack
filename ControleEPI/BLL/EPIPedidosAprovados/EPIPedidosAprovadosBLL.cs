@@ -43,27 +43,6 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             _vinculo = vinculo;
         }
 
-        public async Task<EPIPedidosAprovadosDTO> getProdutoAprovado(int Id, string status)
-        {
-            try
-            {
-                var localizaProdutoAprovado = await _pedidosAprovados.getProdutoAprovado(Id, status);
-
-                if (localizaProdutoAprovado != null)
-                {
-                    return localizaProdutoAprovado;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<IList<PedidosAprovadosDTO>> getProdutosAprovados(string statusCompra, string statusVinculo)
         {
             try
@@ -126,27 +105,6 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                 if (produtos != null)
                 {
                     return produtos;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIPedidosAprovadosDTO> Insert(EPIPedidosAprovadosDTO produtoAprovado)
-        {
-            try
-            {
-                var insereProdutoAprovado = await _pedidosAprovados.Insert(produtoAprovado);
-
-                if (insereProdutoAprovado != null)
-                {
-                    return insereProdutoAprovado;
                 }
                 else
                 {
@@ -302,27 +260,6 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             }
         }
 
-        public async Task<EPIPedidosAprovadosDTO> Update(EPIPedidosAprovadosDTO produtoAprovado)
-        {
-            try
-            {
-                var atualizaProduto = await _pedidosAprovados.Update(produtoAprovado);
-
-                if (atualizaProduto != null)
-                {
-                    return atualizaProduto;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<IList<EPIPedidosAprovadosDTO>> atualizaVinculos(List<EPIPedidosAprovadosDTO> produtosAprovados)
         {
             try
@@ -356,27 +293,6 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                 {
                     return null;
                 }                
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIPedidosAprovadosDTO> verificaProdutoAprovado(int idProduto, int idPedido, int idTamanho)
-        {
-            try
-            {
-                var verificaProdutoAprovado = await _pedidosAprovados.verificaProdutoAprovado(idProduto, idPedido, idTamanho);
-
-                if (verificaProdutoAprovado != null)
-                {
-                    return verificaProdutoAprovado;
-                }
-                else
-                {
-                    return null;
-                }
             }
             catch (Exception ex)
             {

@@ -105,25 +105,16 @@ namespace ControleEPI.BLL.EPICategorias
         {
             try
             {
-                var verificaNomeCategoria = await verificaCategoria(categoria.nome);
-                
-                if (verificaNomeCategoria.nome == categoria.nome)
+                var insereCategoria = await _categoria.Insert(categoria);
+
+                if (insereCategoria != null)
                 {
-                    return null;
+                    return insereCategoria;
                 }
                 else
                 {
-                    var insereCategoria = await _categoria.Insert(categoria);
-
-                    if (insereCategoria != null)
-                    {
-                        return insereCategoria;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }                
+                    return null;
+                }                               
             }
             catch (Exception ex)
             {

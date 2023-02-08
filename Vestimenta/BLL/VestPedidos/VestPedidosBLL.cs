@@ -47,16 +47,6 @@ namespace Vestimenta.BLL.VestPedidos
             _itemVinculo = itemVinculo;
         }
 
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<VestPedidosDTO>> getLiberadoVinculo()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IList<ItemDTO>> getPedidoItens(int idPedido)
         {
             try
@@ -175,11 +165,6 @@ namespace Vestimenta.BLL.VestPedidos
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public Task<IList<VestPedidosDTO>> getPedidos()
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<IList<VestPedidosDTO>> atualizaStatusTodosPedidos(List<VestPedidosDTO> pedidosItens)
@@ -585,7 +570,7 @@ namespace Vestimenta.BLL.VestPedidos
                         lista.Add(new ItemUsuarioDTO
                         {
                             id = item.id,
-                            nome = emp.nome,
+                            nome = string.Empty,
                             pedido = item.item,
                             status = status.nome,
                             dataPedido = item.dataPedido
@@ -963,11 +948,6 @@ namespace Vestimenta.BLL.VestPedidos
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        public Task Update(VestPedidosDTO pedido)
-        {
-            throw new NotImplementedException();
         }
     }
 }

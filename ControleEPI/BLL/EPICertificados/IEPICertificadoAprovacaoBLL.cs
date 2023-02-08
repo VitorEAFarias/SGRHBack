@@ -9,14 +9,9 @@ namespace ControleEPI.BLL.EPICertificados
     {
         Task<EPICertificadoAprovacaoDTO> Insert(EPICertificadoAprovacaoDTO certificado);
         Task<EPICertificadoAprovacaoDTO> getCertificado(int id);
-        Task<EPICertificadoAprovacaoDTO> ativaDesativaCertificado(string status, int id, string observacao);        
-        Task<CertificadoProdutoDTO> getCertificadoProduto(int idCertificadoAprovacao);
+        Task<EPICertificadoAprovacaoDTO> ativaDesativaCertificado(string status, int id, string observacao);   
         Task<IList<EPICertificadoAprovacaoDTO>> listaStatus(string status);
         Task<EPICertificadoAprovacaoDTO> getValorCertificado(string valor);
         Task<IList<EPICertificadoAprovacaoDTO>> getCertificadosNumero();
-        Task<IList<CertificadoProdutoDTO>> getCertificados();
-        Task<EPICertificadoAprovacaoDTO> Update(EPICertificadoAprovacaoDTO certificado);
-        Task<CertificadoProdutoDTO> getProduto(int id);
-        Task<IList<CertificadoProdutoDTO>> getProdutos();
     }
 }

@@ -35,6 +35,29 @@ namespace ControleEPI.BLL.EPIVinculos
             _tamanho = tamanho;
         }
 
+        public async Task<EPIVinculoDTO> adicionarHistorico(EPIVinculoDTO historico)
+        {
+            try
+            {
+                historico.dataDevolucao = DateTime.MinValue;
+
+                var insereHistorico = await _vinculo.insereVinculo(historico);
+
+                if (insereHistorico != null)
+                {
+                    return insereHistorico;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<IList<EPIVinculoDTO>> vincularItem(List<EPIVinculoDTO> vinculos, int idUsuario, string senha)
         {
             try
@@ -112,48 +135,6 @@ namespace ControleEPI.BLL.EPIVinculos
             }
         }
 
-        public async Task<EPIVinculoDTO> insereVinculo(EPIVinculoDTO vinculo)
-        {
-            try
-            {
-                var insereVinculo = await _vinculo.insereVinculo(vinculo);
-
-                if (insereVinculo != null)
-                {
-                    return insereVinculo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIVinculoDTO> localizaVinculo(int Id)
-        {
-            try
-            {
-                var localizaVinculo = await _vinculo.localizaVinculo(Id);
-
-                if (localizaVinculo != null)
-                {
-                    return localizaVinculo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<IList<VinculoDTO>> vinculoUsuarioStatus(int idUsuario, int idStatus)
         {
             try
@@ -204,27 +185,6 @@ namespace ControleEPI.BLL.EPIVinculos
                 else
                 {
                     return null;    
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<EPIVinculoDTO>> localizaVinculos()
-        {
-            try
-            {
-                var localizaVinculos = await _vinculo.localizaVinculos();
-
-                if (localizaVinculos != null)
-                {
-                    return localizaVinculos;
-                }
-                else
-                {
-                    return null;
                 }
             }
             catch (Exception ex)
@@ -337,27 +297,6 @@ namespace ControleEPI.BLL.EPIVinculos
                     {
                         return null;
                     }                    
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIVinculoDTO> Update(EPIVinculoDTO vinculo)
-        {
-            try
-            {
-                var atualizaVinculo = await _vinculo.Update(vinculo);
-
-                if (atualizaVinculo != null)
-                {
-                    return atualizaVinculo;
                 }
                 else
                 {

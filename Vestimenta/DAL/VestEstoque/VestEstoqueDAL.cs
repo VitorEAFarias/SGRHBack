@@ -57,12 +57,14 @@ namespace Vestimenta.DAL.VestEstoque
             return estoque;
         }
 
-        public async Task Update(VestEstoqueDTO estoque)
+        public async Task<VestEstoqueDTO> Update(VestEstoqueDTO estoque)
         {
             _context.ChangeTracker.Clear();
 
             _context.Entry(estoque).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return estoque;
         }
     }
 }

@@ -104,48 +104,6 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
             }
         }
 
-        public async Task<EPIProdutosEstoqueDTO> getProdutoEstoqueTamanho(int id, int idTamanho)
-        {
-            try
-            {
-                var localizaProdutoEstoqueTamanho = await _produtosEstoque.getProdutoEstoqueTamanho(id, idTamanho);
-
-                if (localizaProdutoEstoqueTamanho != null)
-                {
-                    return localizaProdutoEstoqueTamanho;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIProdutosEstoqueDTO> getProdutoExistente(int idProduto)
-        {
-            try
-            {
-                var localizaProdutoEstoque = await _produtosEstoque.getProdutoExistente(idProduto);
-
-                if (localizaProdutoEstoque != null)
-                {
-                    return localizaProdutoEstoque;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<IList<TodosProdutosEstoqueDTO>> getProdutosEstoque()
         {
             try
@@ -178,27 +136,6 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                     }
 
                     return gerenciaEstoque;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IList<EPIProdutosEstoqueDTO>> getProdutosExistentes(int idProdutos)
-        {
-            try
-            {
-                var localizaProdutosEstoque = await _produtosEstoque.getProdutosExistentes(idProdutos);
-
-                if (localizaProdutosEstoque != null)
-                {
-                    return localizaProdutosEstoque;
                 }
                 else
                 {

@@ -7,16 +7,12 @@ namespace Vestimenta.BLL.VestVinculo
 {
     public interface IVestVinculoBLL
     {
-        Task<VestVinculoDTO> Insert(VestVinculoDTO vinculo);
-        Task<VestVinculoDTO> getVinculo(int Id);
-        Task<VestVinculoDTO> getVinculoTamanho(int idPedidos, string tamanho);
-        Task<VestVinculoDTO> getUsuarioVinculo(int id);
+        Task<VestEstoqueDTO> vinculoHistorico(VestHistoricoVinculadoDTO historico);
         Task<IList<VestVinculoDTO>> aceitaVinculo(int idUsuario, string senha, List<VestPedidoItensVinculoDTO> pedidosItens);
         Task<IList<VinculoDTO>> getVinculoPendente(int idStatus, int idUsuario);
+        Task<VestVinculoDTO> atualizaVinculo(int idUsuario, VestVinculoDTO itemVinculo);
+        Task<VestVinculoDTO> retiraItemVinculo(bool enviarEstoque, int idVinculo);
         Task<IList<VestVinculoDTO>> getItensUsuarios(int idUsuario);
         Task<IList<VinculoUsuarioDTO>> getItensVinculados(int idUsuario);
-        Task<IList<VestVinculoDTO>> getVinculos();
-        Task Update(VestVinculoDTO vinculo);
-        Task Delete(int id);
     }
 }

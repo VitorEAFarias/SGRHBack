@@ -27,48 +27,6 @@ namespace ControleEPI.BLL.EPIProdutos
             _certificado = certificado;
         }
 
-        public async Task<EPIProdutosDTO> getCertificadoProduto(int idCertificado)
-        {
-            try
-            {
-                var localizaCertificado = await _produto.getCertificadoProduto(idCertificado);
-
-                if (localizaCertificado != null)
-                {
-                    return localizaCertificado;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<EPIProdutosDTO> getNomeProduto(string nome)
-        {
-            try
-            {
-                var verificaNomeProduto = await _produto.getNomeProduto(nome);
-
-                if (verificaNomeProduto != null)
-                {
-                    return verificaNomeProduto;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public async Task<EPIProdutosDTO> ativaDesativaProduto(string status, int id)
         {
             try
@@ -148,31 +106,38 @@ namespace ControleEPI.BLL.EPIProdutos
         {
             try
             {
-                var localizaProduto = await _produto.getNomeProduto(produto.nome);
-
-                if (localizaProduto == null)
+                if (produto.validadeEmUso >= 0 && produto.validadeEmUso <= 5)
                 {
-                    produto.ativo = "S";
+                    var localizaProduto = await _produto.getNomeProduto(produto.nome);
 
-                    var insereProduto = await _produto.Insert(produto);
-
-                    if (insereProduto != null)
+                    if (localizaProduto == null)
                     {
-                        EPIProdutosEstoqueDTO novoEstoque = new EPIProdutosEstoqueDTO();
+                        produto.ativo = "S";
 
-                        var localizaTamanhosProduto = await _tamanhos.tamanhosCategoria(insereProduto.idCategoria);
+                        var insereProduto = await _produto.Insert(produto);
 
-                        foreach (var item in localizaTamanhosProduto)
+                        if (insereProduto != null)
                         {
-                            novoEstoque.idProduto = insereProduto.id;
-                            novoEstoque.quantidade = 0;
-                            novoEstoque.idTamanho = item.id;
-                            novoEstoque.ativo = "S";
+                            EPIProdutosEstoqueDTO novoEstoque = new EPIProdutosEstoqueDTO();
 
-                            await _estoque.Insert(novoEstoque);
+                            var localizaTamanhosProduto = await _tamanhos.tamanhosCategoria(insereProduto.idCategoria);
+
+                            foreach (var item in localizaTamanhosProduto)
+                            {
+                                novoEstoque.idProduto = insereProduto.id;
+                                novoEstoque.quantidade = 0;
+                                novoEstoque.idTamanho = item.id;
+                                novoEstoque.ativo = "S";
+
+                                await _estoque.Insert(novoEstoque);
+                            }
+
+                            return insereProduto;
                         }
-
-                        return insereProduto;
+                        else
+                        {
+                            return null;
+                        }
                     }
                     else
                     {
@@ -182,7 +147,7 @@ namespace ControleEPI.BLL.EPIProdutos
                 else
                 {
                     return null;
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -315,6 +280,61 @@ namespace ControleEPI.BLL.EPIProdutos
                             return null;
                         }
                     }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProdutosTamanhosDTO> localizaProdutoTamanhos(int idProduto)
+        {
+            try
+            {
+                var localizaProduto = await _produto.localizaProduto(idProduto);
+
+                if (localizaProduto != null)
+                {
+                    var localizaTamanhos = await _tamanhos.tamanhosCategoria(localizaProduto.idCategoria);
+
+                    if (localizaTamanhos != null)
+                    {
+                        ProdutosTamanhosDTO produtos = new ProdutosTamanhosDTO();
+                        List<Tamanho> tamanhos = new List<Tamanho>();
+
+                        foreach (var item in localizaTamanhos)
+                        {
+                            tamanhos.Add(new Tamanho { 
+                                idTamanho = item.id,
+                                tamanho = item.tamanho
+                            });
+                        }
+
+                        produtos = new ProdutosTamanhosDTO
+                        {
+                            id = localizaProduto.id,
+                            nome = localizaProduto.nome,
+                            tamanhos = tamanhos
+                        };
+
+                        if (produtos != null)
+                        {
+                            return produtos;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }                    
                 }
                 else
                 {
