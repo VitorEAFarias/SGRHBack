@@ -234,7 +234,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                     }
                 }
 
-                return Ok(new { message = "Numeros encontrados!!!", result = true, vinculado = vinculados.Count, pendente = pendentes.Count, pedidosFinalizados = pedidosFinalizados.Count,
+                return Ok(new { message = "Números encontrados!!!", result = true, vinculado = vinculados.Count, pendente = pendentes.Count, pedidosFinalizados = pedidosFinalizados.Count,
                     pedidosPendentes = pedidosPendentes.Count, pedidosReprovados = pedidosReprovados.Count });
                 
             }

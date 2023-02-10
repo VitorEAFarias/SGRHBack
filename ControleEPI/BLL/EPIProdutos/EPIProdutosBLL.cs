@@ -78,14 +78,15 @@ namespace ControleEPI.BLL.EPIProdutos
                         {
                             idProduto = item.id,
                             idCategoria = verificaCategoria.id,
-                            idCertificado = verificaCertificado.id,
+                            idCertificadoAprovacao = verificaCertificado.id,
                             produto = item.nome,
                             categoria = verificaCategoria.nome,
                             certificado = verificaCertificado.numero,
                             ativo = item.ativo,
                             foto = item.foto,
                             validadeEmUso = item.validadeEmUso,
-                            preco = item.preco
+                            preco = item.preco,
+                            maximo = item.maximo
                         });
                     }
 
@@ -172,14 +173,15 @@ namespace ControleEPI.BLL.EPIProdutos
                     {
                         idProduto = localizaProduto.id,
                         idCategoria = verificaCategoria.id,
-                        idCertificado = verificaCertificado.id,
+                        idCertificadoAprovacao = verificaCertificado.id,
                         produto = localizaProduto.nome,
                         categoria = verificaCategoria.nome,
                         certificado = verificaCertificado.numero,
                         ativo = localizaProduto.ativo,
                         foto = localizaProduto.foto,
                         validadeEmUso = localizaProduto.validadeEmUso,
-                        preco = localizaProduto.preco
+                        preco = localizaProduto.preco,
+                        maximo = localizaProduto.maximo
                     };
 
                     return produtoRetorno;

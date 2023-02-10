@@ -53,7 +53,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Ja existe um fornecedor cadastrado com esses dados", result = false });
+                    return BadRequest(new { message = "Já existe um fornecedor cadastrado com esses dados", result = false });
                 }
             }
             catch (System.Exception ex)

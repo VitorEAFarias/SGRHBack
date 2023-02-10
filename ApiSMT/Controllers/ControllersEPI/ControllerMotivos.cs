@@ -127,7 +127,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualizar motivo, verifique se ja nao existem valores iguais cadastrados", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar motivo, verifique se já não existem valores iguais cadastrados", result = false });
                 }
             }
             catch (Exception ex)

@@ -15,5 +15,6 @@ namespace Vestimenta.DAL.VestPedidos
         Task<IList<VestPedidosDTO>> getLiberadoVinculo();
         Task Update(VestPedidosDTO pedido);
         Task Delete(int id);
+        Task<IList<VestPedidosDTO>> getPedidosPendentesUsuario(int idUsuario);
     }
 }

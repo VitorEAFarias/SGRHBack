@@ -22,7 +22,7 @@ namespace ControleEPI.DTO
     {
         public int idProduto { get; set; }
         public int idCategoria { get; set; }
-        public int idCertificado { get; set; }
+        public int idCertificadoAprovacao { get; set; }
         public string produto { get; set; }
         public string categoria { get; set; }
         public string certificado { get; set; }
@@ -30,6 +30,7 @@ namespace ControleEPI.DTO
         public byte[] foto { get; set; }
         public int validadeEmUso { get; set; }
         public decimal preco { get; set; }
+        public int maximo { get; set; }
     }
 
     public class ProdutosTamanhosDTO : IEntityTypeConfiguration<ProdutosTamanhosDTO>

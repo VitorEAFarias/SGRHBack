@@ -152,7 +152,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum produto em estoque encontrad", result = false });
+                    return BadRequest(new { message = "Nenhum produto em estoque encontrado", result = false });
                 }
             }
             catch (System.Exception ex)

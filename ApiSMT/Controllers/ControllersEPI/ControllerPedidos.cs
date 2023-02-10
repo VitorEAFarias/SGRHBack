@@ -46,7 +46,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     }
                     else
                     {
-                        return BadRequest(new { message = "Erro ao inserir novo pedido, verifique no RH se as informações do seu usuário esta correto", result = false });
+                        return BadRequest(new { message = "Erro ao inserir novo pedido, verifique no RH se as informações do seu usuário está correto", result = false });
                     }
                 }
                 else
@@ -331,7 +331,7 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (liberarVinculo != null)
                 {
-                    return Ok(new { message = "Produtos liberados para vinculo", result = true, data = liberarVinculo });
+                    return Ok(new { message = "Produtos liberados para vínculo", result = true, data = liberarVinculo });
                 }
                 else
                 {

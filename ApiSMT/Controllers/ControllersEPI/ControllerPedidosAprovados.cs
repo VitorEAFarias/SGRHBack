@@ -96,11 +96,11 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (atualizaPedidosAprovados != null)
                 {
-                    return Ok(new { message = "Produtos liberados para vinculo com sucesso!!!", result = true });
+                    return Ok(new { message = "Produtos liberados para vínculo com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao liberar produtos para vinculo", result = false });
+                    return BadRequest(new { message = "Erro ao liberar produtos para vínculo", result = false });
                 }
             }
             catch (Exception ex)

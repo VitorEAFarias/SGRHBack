@@ -3,6 +3,7 @@ using Vestimenta.DTO;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Vestimenta.DAL.VestPedidos
 {
@@ -67,6 +68,11 @@ namespace Vestimenta.DAL.VestPedidos
 
             _context.Entry(pedido).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IList<VestPedidosDTO>> getPedidosPendentesUsuario(int idUsuario)
+        {
+            return await _context.VestPedidos.FromSqlRaw("SELECT * FROM VestPedidos WHERE idUsuario = '" + idUsuario + "' AND status = 1").OrderBy(i => i.id).ToListAsync();
         }
     }
 }

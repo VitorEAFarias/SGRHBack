@@ -71,7 +71,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualiza produto", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar produto", result = false });
                 }
             }
             catch (System.Exception ex)

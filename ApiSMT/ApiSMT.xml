@@ -9,7 +9,7 @@
             Classe que manipula as informações de produtos e seu estoque
             </summary>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllerDashboard.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,Vestimenta.BLL.VestVinculo.IVestVinculoBLL)">
+        <member name="M:ApiSMT.Controllers.ControllerDashboard.#ctor(ControleEPI.BLL.EPIPedidos.IEPIPedidosBLL,Vestimenta.BLL.VestPedidos.IVestPedidosBLL,ControleEPI.BLL.EPIPedidosAprovados.IEPIPedidosAprovadosBLL,Vestimenta.BLL.VestRepositorio.IVestRepositorioBLL,ControleEPI.BLL.EPIVinculos.IEPIVinculoBLL,Vestimenta.BLL.VestVinculo.IVestVinculoBLL,Vestimenta.BLL.VestVestimenta.IVestVestimentaBLL,ControleEPI.BLL.EPIProdutos.IEPIProdutosBLL,ControleEPI.BLL.EPITamanhos.IEPITamanhosBLL)">
             <summary>
             Construtor DashboardController
             </summary>
@@ -19,11 +19,21 @@
             <param name="vestAprovados"></param>
             <param name="vinculoEPI"></param>
             <param name="vinculoVest"></param>
+            <param name="vestimenta"></param>
+            <param name="produto"></param>
+            <param name="tamanho"></param>
         </member>
         <member name="M:ApiSMT.Controllers.ControllerDashboard.contagemPedidos(System.Int32)">
             <summary>
             Pega todos os pedidos
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllerDashboard.preencherTabelasDashboard(System.Int32)">
+            <summary>
+            teste dashboard
+            </summary>
+            <param name="idUsuario"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerCategorias">
@@ -900,6 +910,13 @@
             Seleciona um pedido
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerVestPedidos.getPedidosPendentesUsuario(System.Int32)">
+            <summary>
+            Lista pedidos pendentes por usuario
+            </summary>
+            <param name="idUsuario"></param>
             <returns></returns>
         </member>
         <member name="T:ApiSMT.Controllers.ControllersVestimenta.ControllerVestRepositorio">

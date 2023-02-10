@@ -48,12 +48,12 @@ namespace ApiSMT.Controllers.ControllersEPI
                     }
                     else
                     {
-                        return BadRequest(new { message = "Erro ao inserir certifocado", result = false });
+                        return BadRequest(new { message = "Erro ao inserir certificado", result = false });
                     }
                 }
                 else
                 {
-                    return BadRequest(new { message = "Ja existe um certificado com esse valor", result = false });
+                    return BadRequest(new { message = "Já existe um certificado com esse valor", result = false });
                 }
             }
             catch (Exception ex)
@@ -80,7 +80,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum certificado enconrtado com os status enviado", result = false });
+                    return BadRequest(new { message = "Nenhum certificado encontrado com os status enviado", result = false });
                 }
             }
             catch (Exception ex)

@@ -60,7 +60,7 @@ namespace Vestimenta.DTO
         public DateTime dataPedido { get; set; }
     }
 
-    public class PedidosPententesDTO
+    public class PedidosPendentesDTO
     {
         public VestPedidosDTO pedido { get; set; }
         public int idItem { get; set; }

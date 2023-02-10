@@ -90,7 +90,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             }
             else
             {
-                return BadRequest(new { message = "Usuario não encontrado", result = false });
+                return BadRequest(new { message = "Usuário não encontrado", result = false });
             }            
         }
     }

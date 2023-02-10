@@ -47,7 +47,7 @@ namespace RH.DAL.RHUsuarios
         public async Task<RHDocumentoDTO> GetDoc(string numero)
         {
             return await _context.rh_empregados_documentos.FromSqlRaw("SELECT id, id_empregado, tipo_documento, numero FROM rh_empregados_documentos WHERE tipo_documento = 2 AND " +
-                "numero = '" + numero + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
+                "numero = '" + numero + "'").OrderBy(x => x.id).LastOrDefaultAsync();
         }
 
         public async Task<IList<RHEmpregadoDTO>> GetColaboradores()

@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
+using RH.DAL.RHDepartamentos;
+using RH.DAL.RHContratos;
+using System.Linq;
 
 namespace ControleEPI.BLL.EPIPedidosAprovados
 {
@@ -27,9 +30,11 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
         private readonly IMailService _mail;
         private readonly IEPIComprasDAL _compras;
         private readonly IEPIVinculoDAL _vinculo;
+        private readonly IRHDepartamentosDAL _departamento;
+        private readonly IRHEmpContratosDAL _contratos;
 
         public EPIPedidosAprovadosBLL(IEPIPedidosAprovadosDAL pedidosAprovados, IRHConUserDAL usuario, IEPITamanhosDAL tamanho, IEPIPedidosDAL pedidos, IEPIProdutosDAL produtos,
-            IEPIStatusDAL status, IEPIProdutosEstoqueDAL estoque, IMailService mail, IEPIComprasDAL compras, IEPIVinculoDAL vinculo)
+            IEPIStatusDAL status, IEPIProdutosEstoqueDAL estoque, IMailService mail, IEPIComprasDAL compras, IEPIVinculoDAL vinculo, IRHDepartamentosDAL departamento, IRHEmpContratosDAL contratos)
         {
             _pedidosAprovados = pedidosAprovados;
             _usuario = usuario;
@@ -41,6 +46,8 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             _mail = mail;
             _compras = compras;
             _vinculo = vinculo;
+            _departamento = departamento;
+            _contratos = contratos;
         }
 
         public async Task<IList<PedidosAprovadosDTO>> getProdutosAprovados(string statusCompra, string statusVinculo)
@@ -154,13 +161,18 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
 
                         decimal valorTotalCompra = 0;
                         string tamanho = string.Empty;
+                        List<object> idPedidosAProvados = new List<object>();
 
                         foreach (var produto in enviaCompras)
                         {
                             pedidosAprovados.Add(new PedidosAprovados
                             {
-                                idPedidosAprovados = produto.id
+                                idPedidosAprovados = produto.id                               
                             });
+
+                            idPedidosAProvados.AddRange(pedidosAprovados);
+
+                            idPedidosAProvados.Concat(pedidosAprovados);                            
 
                             var localizaPedido = await _pedidos.getPedido(produto.idPedido);
                             var localizaProduto = await _produtos.localizaProduto(produto.idProduto);
@@ -182,19 +194,10 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     }
                                 }
 
-                                if (localizaTamanho != null || !localizaTamanho.Equals(0))
-                                {
-                                    tamanho = "";
-                                }
-                                else
-                                {
-                                    tamanho = localizaTamanho.tamanho;
-                                }
-
                                 conteudoEmails.Add(new ConteudoEmailDTO
                                 {
                                     nome = localizaProduto.nome,
-                                    tamanho = tamanho,
+                                    tamanho = localizaTamanho.tamanho,
                                     status = checkStatusItem.nome,
                                     quantidade = produto.quantidade
                                 });
@@ -217,6 +220,10 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                             await _pedidosAprovados.Update(produto);
                         }
 
+                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO {
+                            idPedido = idPedidosAProvados.ToString()
+                        };
+
                         compras.idPedidosAprovados = pedidosAprovados;
                         compras.dataCadastroCompra = DateTime.Now;
 
@@ -232,6 +239,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                         compras.status = 1;
                         compras.idUsuario = idUsuario;
                         compras.dataFinalizacaoCompra = DateTime.MinValue;
+                        compras.idFornecedor = 9;
 
                         var insereCompra = await _compras.Insert(compras);
 
@@ -266,6 +274,12 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             {
                 if (produtosAprovados != null)
                 {
+                    List<ConteudoEmailDTO> conteudoEmail = new List<ConteudoEmailDTO>();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    EmailRequestDTO email = new EmailRequestDTO();
+
+                    List<Produtos> produtos = new List<Produtos>();
+
                     foreach (var item in produtosAprovados)
                     {
                         var localizaPedido = await _pedidos.getPedido(item.idPedido);
@@ -280,11 +294,40 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                         novoVinculo.dataDevolucao = DateTime.MinValue;
                         novoVinculo.validade = DateTime.Now.AddYears(localizaProduto.validadeEmUso);
 
-                        await _vinculo.insereVinculo(novoVinculo);
+                        var insereVinculo = await _vinculo.insereVinculo(novoVinculo);
+                        var localizaTamanho = await _tamanho.localizaTamanho(item.idTamanho);
+
+                        conteudoEmail.Add(new ConteudoEmailDTO
+                        {
+                            nome = localizaProduto.nome,
+                            tamanho = localizaTamanho.tamanho,
+                            status = localizaProduto.nome,
+                            quantidade = item.quantidade
+                        });
+
+                        var localizaUsuario = await _usuario.GetEmp(localizaPedido.idUsuario);
+                        var localizaContrato = await _contratos.getEmpContrato(localizaUsuario.id);
+                        var localizaDepartamento = await _departamento.getDepartamento(localizaContrato.id_departamento);
+                        var localizaEmail = await _usuario.getEmail(localizaUsuario.id);
+
+                        conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                        {
+                            idPedido = localizaPedido.id.ToString(),
+                            nomeColaborador = localizaUsuario.nome,
+                            departamento = localizaDepartamento.titulo
+                        };
 
                         item.liberadoVinculo = "S";
 
                         await _pedidosAprovados.Update(item);
+
+                        email.EmailDe = localizaEmail.valor;
+                        email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                        email.ConteudoColaborador = conteudoEmailColaborador;
+                        email.Conteudo = conteudoEmail;
+                        email.Assunto = "Pedido de EPI liberado para retirada";
+
+                        await _mail.SendEmailAsync(email);
                     }
 
                     return produtosAprovados;

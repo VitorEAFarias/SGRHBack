@@ -3,7 +3,6 @@ using RH.DAL.RHDepartamentos;
 using RH.DAL.RHUsuarios;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
 using Vestimenta.DAL.VestEstoque;
@@ -99,67 +98,74 @@ namespace Vestimenta.BLL.VestPedidos
             {
                 var compra = await _pedidos.getPedido(idPedido);
 
-                List<ItensCompraDTO> listaItens = new List<ItensCompraDTO>();
-
-                foreach (var item in compra.item)
+                if (compra != null)
                 {
-                    string enviadoCompra = string.Empty;
-                    var checkEstoque = await _estoque.getItemExistente(item.id, item.tamanho);
-                    var checkStatus = await _status.getStatus(item.status);
-                    var checkRepositorio = await _repositorio.getRepositorioItensPedidos(item.id, compra.id);
+                    List<ItensCompraDTO> listaItens = new List<ItensCompraDTO>();
 
-                    if (checkRepositorio != null)
+                    foreach (var item in compra.item)
                     {
-                        enviadoCompra = checkRepositorio.enviadoCompra;
+                        string enviadoCompra = string.Empty;
+                        var checkEstoque = await _estoque.getItemExistente(item.id, item.tamanho);
+                        var checkStatus = await _status.getStatus(item.status);
+                        var checkRepositorio = await _repositorio.getRepositorioItensPedidos(item.id, compra.id);
+
+                        if (checkRepositorio != null)
+                        {
+                            enviadoCompra = checkRepositorio.enviadoCompra;
+                        }
+                        else
+                        {
+                            enviadoCompra = "S";
+                        }
+
+                        listaItens.Add(new ItensCompraDTO
+                        {
+                            id = item.id,
+                            dataAlteracao = item.dataAlteracao,
+                            nome = item.nome,
+                            quantidade = item.quantidade,
+                            status = item.status,
+                            tamanho = item.tamanho,
+                            usado = item.usado,
+                            enviadoCompra = enviadoCompra,
+                            statusNome = checkStatus.nome,
+                            estoque = checkEstoque.quantidade,
+                            estoqueUsado = checkEstoque.quantidadeUsado
+                        });
+                    }
+
+                    var emp = await _usuario.GetEmp(compra.idUsuario);
+                    var status = await _status.getStatus(compra.status);
+
+                    CompraDTO list = new CompraDTO();
+
+                    list = new CompraDTO
+                    {
+                        id = compra.id,
+                        nome = emp.nome,
+                        pedido = listaItens,
+                        idStatus = compra.status,
+                        status = status.nome,
+                        idUsuario = compra.idUsuario,
+                        idUsuarioAlteracao = compra.idUsuarioAlteracao,
+                        dataAlteracao = compra.dataAlteracao,
+                        observacoes = compra.observacoes,
+                        dataPedido = compra.dataPedido
+                    };
+
+                    if (list != null)
+                    {
+                        return list;
                     }
                     else
                     {
-                        enviadoCompra = "S";
+                        return null;
                     }
-
-                    listaItens.Add(new ItensCompraDTO
-                    {
-                        id = item.id,
-                        dataAlteracao =  item.dataAlteracao,
-                        nome = item.nome,
-                        quantidade = item.quantidade,
-                        status = item.status,
-                        tamanho = item.tamanho,
-                        usado = item.usado,
-                        enviadoCompra = enviadoCompra,
-                        statusNome = checkStatus.nome,
-                        estoque = checkEstoque.quantidade,
-                        estoqueUsado = checkEstoque.quantidadeUsado
-                    });
-                }
-
-                var emp = await _usuario.GetEmp(compra.idUsuario);
-                var status = await _status.getStatus(compra.status);
-
-                CompraDTO list = new CompraDTO();
-
-                list = new CompraDTO
-                {
-                    id = compra.id,
-                    nome = emp.nome,
-                    pedido = listaItens,
-                    idStatus = compra.status,
-                    status = status.nome,
-                    idUsuario = compra.idUsuario,
-                    idUsuarioAlteracao = compra.idUsuarioAlteracao,
-                    dataAlteracao = compra.dataAlteracao,
-                    observacoes = compra.observacoes,
-                    dataPedido = compra.dataPedido
-                };
-
-                if (list != null)
-                {
-                    return list;
                 }
                 else
                 {
                     return null;
-                }
+                }               
             }
             catch (Exception ex)
             {
@@ -372,7 +378,7 @@ namespace Vestimenta.BLL.VestPedidos
             }
         }
 
-        public async Task<IList<PedidosPententesDTO>> getPedidosPendentes()
+        public async Task<IList<PedidosPendentesDTO>> getPedidosPendentes()
         {
             try
             {
@@ -380,7 +386,7 @@ namespace Vestimenta.BLL.VestPedidos
 
                 if (pedidos != null)
                 {
-                    List<PedidosPententesDTO> pedidoItens = new List<PedidosPententesDTO>();
+                    List<PedidosPendentesDTO> pedidoItens = new List<PedidosPendentesDTO>();
 
                     foreach (var pedido in pedidos)
                     {
@@ -395,7 +401,7 @@ namespace Vestimenta.BLL.VestPedidos
                             {
                                 if (item.status == 1)
                                 {
-                                    pedidoItens.Add(new PedidosPententesDTO
+                                    pedidoItens.Add(new PedidosPendentesDTO
                                     {
                                         pedido = getPedido,
                                         idItem = item.id,
@@ -413,7 +419,7 @@ namespace Vestimenta.BLL.VestPedidos
                             {
                                 if (item.status == 1)
                                 {
-                                    pedidoItens.Add(new PedidosPententesDTO
+                                    pedidoItens.Add(new PedidosPendentesDTO
                                     {
                                         pedido = getPedido,
                                         idItem = item.id,
@@ -938,6 +944,27 @@ namespace Vestimenta.BLL.VestPedidos
                     }
 
                     return pedidoItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IList<VestPedidosDTO>> getPedidosPendentesUsuario(int idUsuario)
+        {
+            try
+            {
+                var pedidos = await _pedidos.getPedidosPendentesUsuario(idUsuario);
+
+                if (pedidos != null)
+                {                    
+                    return pedidos;                    
                 }
                 else
                 {

@@ -126,11 +126,11 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (listaVinculos != null)
                 {
-                    return Ok(new { message = "Vinculos encontrados", result = true, data = listaVinculos });
+                    return Ok(new { message = "Vínculos encontrados", result = true, data = listaVinculos });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum vinculo encontrado!!!", result = false });
+                    return BadRequest(new { message = "Nenhum vínculo encontrado!!!", result = false });
                 }
             }
             catch (Exception ex)
@@ -158,7 +158,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum vinculo encontrado com esse status", result = false });
+                    return BadRequest(new { message = "Nenhum vínculo encontrado com esse status", result = false });
                 }
             }
             catch (Exception ex)
@@ -186,7 +186,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Nenhum vinculo encontrado com esse usuário", result = false });
+                    return BadRequest(new { message = "Nenhum vínculo encontrado com esse usuário", result = false });
                 }
             }
             catch (Exception ex)

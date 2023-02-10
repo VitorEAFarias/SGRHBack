@@ -245,5 +245,33 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Lista pedidos pendentes por usuario
+        /// </summary>
+        /// <param name="idUsuario"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("pendentes/{idUsuario}")]
+        public async Task<IActionResult> getPedidosPendentesUsuario(int idUsuario)
+        {
+            try
+            {
+                var localizaPedidos = await _pedidos.getPedidosPendentesUsuario(idUsuario);
+
+                if (localizaPedidos != null)
+                {
+                    return Ok(new { message = "Pedidos encontrados!!!", result = true, data = localizaPedidos });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhum pedido pendenten encontrado para esse usuário", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

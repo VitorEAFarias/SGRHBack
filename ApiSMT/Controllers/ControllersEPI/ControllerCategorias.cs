@@ -170,7 +170,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao deletar categoria, verifique se nao esta vinculado a algum produto", result = false });
+                    return BadRequest(new { message = "Erro ao deletar categoria, verifique se há produtos vinculados a esta categoria", result = false });
                 }
             }
             catch (System.Exception ex)

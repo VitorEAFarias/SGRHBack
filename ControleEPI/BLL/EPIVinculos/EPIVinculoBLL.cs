@@ -169,7 +169,7 @@ namespace ControleEPI.BLL.EPIVinculos
                             dataDevolucao = item.dataDevolucao,
                             idStatus = localizaStatus.id,
                             status = localizaStatus.nome,
-                            validade = DateTime.MinValue
+                            validade = item.validade
                         });
                     }
 

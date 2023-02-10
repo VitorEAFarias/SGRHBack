@@ -1,12 +1,11 @@
 ﻿using ControleEPI.DAL.EPICategorias;
-using ControleEPI.DAL.EPIPedidos;
 using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Vestimenta.DTO;
 
 namespace ControleEPI.BLL.EPITamanhos
 {
@@ -15,12 +14,14 @@ namespace ControleEPI.BLL.EPITamanhos
         private readonly IEPITamanhosDAL _tamanho;
         private readonly IEPICategoriasDAL _categoria;
         private readonly IEPIProdutosDAL _produtos;
+        private readonly IEPIProdutosEstoqueDAL _estoque;
 
-        public EPITamanhosBLL(IEPITamanhosDAL tamanho, IEPICategoriasDAL categoria, IEPIProdutosDAL produtos)
+        public EPITamanhosBLL(IEPITamanhosDAL tamanho, IEPICategoriasDAL categoria, IEPIProdutosDAL produtos, IEPIProdutosEstoqueDAL estoque)
         {
             _tamanho = tamanho;
             _categoria = categoria;
             _produtos = produtos;
+            _estoque = estoque;
         }
 
         public async Task<EPITamanhosDTO> Delete(int id)
@@ -80,7 +81,37 @@ namespace ControleEPI.BLL.EPITamanhos
 
                         if (insereTamanho != null)
                         {
-                            return insereTamanho;
+                            var localizaCategoria = await _categoria.getCategoria(insereTamanho.idCategoriaProduto);
+
+                            if (localizaCategoria != null)
+                            {
+                                var verificaCategoriaProduto = await _produtos.verificaCategorias(localizaCategoria.id);
+
+                                if (verificaCategoriaProduto != null)
+                                {
+                                    foreach (var item in verificaCategoriaProduto)
+                                    {
+                                        EPIProdutosEstoqueDTO adicionaEstoque = new EPIProdutosEstoqueDTO();
+
+                                        adicionaEstoque.idProduto = item.id;
+                                        adicionaEstoque.quantidade = 0;
+                                        adicionaEstoque.idTamanho = insereTamanho.id;
+                                        adicionaEstoque.ativo = "S";
+
+                                        await _estoque.Insert(adicionaEstoque);
+                                    }
+
+                                    return insereTamanho;
+                                }
+                                else
+                                {
+                                    return insereTamanho;
+                                }
+                            }
+                            else
+                            {
+                                return null;
+                            }
                         }
                         else
                         {

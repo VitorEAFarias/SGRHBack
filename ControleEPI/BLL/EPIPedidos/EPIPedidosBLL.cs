@@ -287,6 +287,8 @@ namespace ControleEPI.BLL.EPIPedidos
 
                 if (checkUsuario != null)
                 {
+                    pedido.dataPedido = DateTime.Now;
+
                     var novoPedido = await _pedidos.Insert(pedido);
 
                     if (novoPedido != null)
@@ -552,19 +554,10 @@ namespace ControleEPI.BLL.EPIPedidos
                                         var checkStatusItem = await _status.getStatus(produto.status);
                                         var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
 
-                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
-                                        {
-                                            tamanho = "";
-                                        }
-                                        else
-                                        {
-                                            tamanho = localizaTamanho.tamanho;
-                                        }
-
                                         conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
-                                            tamanho = tamanho,
+                                            tamanho = localizaTamanho.tamanho,
                                             status = checkStatusItem.nome,
                                             quantidade = produto.quantidade
                                         });
@@ -575,7 +568,7 @@ namespace ControleEPI.BLL.EPIPedidos
                                             nome = produto.nome,
                                             quantidade = produto.quantidade,
                                             status = 2,
-                                            tamanho = produto.tamanho
+                                            tamanho = localizaTamanho.id
                                         });
 
                                         aprovados.idProduto = produto.id;
