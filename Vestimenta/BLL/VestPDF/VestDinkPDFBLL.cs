@@ -1,5 +1,4 @@
-﻿using ApiSMT.Utilitários.PDF;
-using DinkToPdf;
+﻿using DinkToPdf;
 using DinkToPdf.Contracts;
 using RH.DAL.RHCargos;
 using RH.DAL.RHContratos;

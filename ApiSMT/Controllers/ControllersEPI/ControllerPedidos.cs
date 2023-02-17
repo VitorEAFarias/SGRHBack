@@ -4,6 +4,7 @@ using ControleEPI.DTO;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using ControleEPI.BLL.EPIPedidos;
+using Vestimenta.DTO;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -92,16 +93,17 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <summary>
         /// Aprova um produto do pedido
         /// </summary>
-        /// <param name="idProduto"></param>
         /// <param name="pedido"></param>
+        /// <param name="idProduto"></param>
+        /// <param name="idTamanho"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("aprovaProdutoPedido/{idProduto}")]
-        public async Task<IActionResult> aprovaProdutoPedido(int idProduto, [FromBody] EPIPedidosDTO pedido)
+        [HttpPut("aprovaProdutoPedido/{idProduto}/{idTamanho}")]
+        public async Task<IActionResult> aprovaProdutoPedido([FromBody] EPIPedidosDTO pedido, int idProduto, int idTamanho)
         {
             try
             {
-                var aprovaProdutoPedido = await _pedidos.aprovaProdutoPedido(idProduto, pedido);
+                var aprovaProdutoPedido = await _pedidos.aprovaProdutoPedido(pedido, idProduto, idTamanho);
 
                 if (aprovaProdutoPedido != null)
                 {
@@ -121,16 +123,17 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <summary>
         /// Reprovar produto do pedido
         /// </summary>
-        /// <param name="idProduto"></param>
         /// <param name="pedido"></param>
+        /// <param name="idProduto"></param>
+        /// <param name="idTamanho"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("reprovarProdutoPedido/{idProduto}")]
-        public async Task<IActionResult> reprovaProdutoPedido(int idProduto, [FromBody] EPIPedidosDTO pedido)
+        [HttpPut("reprovarProdutoPedido/{idProduto}/{idTamanho}")]
+        public async Task<IActionResult> reprovaProdutoPedido([FromBody] EPIPedidosDTO pedido, int idProduto, int idTamanho)
         {
             try
             {
-                var reprovaProdutoPedido = await _pedidos.reprovaProdutoPedido(idProduto, pedido);
+                var reprovaProdutoPedido = await _pedidos.reprovaProdutoPedido(pedido, idProduto, idTamanho);
 
                 if (reprovaProdutoPedido != null)
                 {
@@ -138,7 +141,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao reprovar produto '" + idProduto + "' do pedido '" + pedido.id + "'", result = false });
+                    return BadRequest(new { message = "Erro ao reprovar produto do pedido '" + pedido.id + "'", result = false });
                 }
             }
             catch (Exception ex)

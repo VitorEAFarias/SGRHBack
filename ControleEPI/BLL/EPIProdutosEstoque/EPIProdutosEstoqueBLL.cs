@@ -69,20 +69,40 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                     var tamanho = await _tamanhos.localizaTamanho(localizaProdutoEstoque.idTamanho);
 
                     TodosProdutosEstoqueDTO gerenciaEstoque = new TodosProdutosEstoqueDTO();
-                
-                    gerenciaEstoque = new TodosProdutosEstoqueDTO
+
+                    if (tamanho != null)
                     {
-                        id = localizaProdutoEstoque.id,
-                        quantidade = localizaProdutoEstoque.quantidade,
-                        idTamanho = tamanho.id,
-                        tamanho = tamanho.tamanho,
-                        idProduto = localizaProduto.id,
-                        produto = localizaProduto.nome,
-                        preco = localizaProduto.preco,
-                        certificado = localizaCertificado.numero,
-                        validadeCertificado = localizaCertificado.validade,
-                        ativo = localizaProduto.ativo
-                    };
+                        gerenciaEstoque = new TodosProdutosEstoqueDTO
+                        {
+                            id = localizaProdutoEstoque.id,
+                            quantidade = localizaProdutoEstoque.quantidade,
+                            idTamanho = tamanho.id,
+                            tamanho = tamanho.tamanho,
+                            idProduto = localizaProduto.id,
+                            produto = localizaProduto.nome,
+                            preco = localizaProduto.preco,
+                            certificado = localizaCertificado.numero,
+                            validadeCertificado = localizaCertificado.validade,
+                            ativo = localizaProduto.ativo
+                        };
+                    }
+                    else
+                    {
+                        gerenciaEstoque = new TodosProdutosEstoqueDTO
+                        {
+                            id = localizaProdutoEstoque.id,
+                            quantidade = localizaProdutoEstoque.quantidade,
+                            idTamanho = 0,
+                            tamanho = "Tamanho Único",
+                            idProduto = localizaProduto.id,
+                            produto = localizaProduto.nome,
+                            preco = localizaProduto.preco,
+                            certificado = localizaCertificado.numero,
+                            validadeCertificado = localizaCertificado.validade,
+                            ativo = localizaProduto.ativo
+                        };
+                    }
+                    
 
                     if (gerenciaEstoque != null)
                     {
@@ -120,19 +140,39 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                         var localizaCertificado = await _certificado.getCertificado(nomeProduto.idCertificadoAprovacao);
                         var tamanho = await _tamanhos.localizaTamanho(item.idTamanho);
 
-                        gerenciaEstoque.Add(new TodosProdutosEstoqueDTO
+                        if (tamanho != null)
                         {
-                            id = item.id,
-                            quantidade = item.quantidade,
-                            idTamanho = tamanho.id,
-                            tamanho = tamanho.tamanho,
-                            idProduto = nomeProduto.id,
-                            produto = nomeProduto.nome,
-                            preco = nomeProduto.preco,
-                            certificado = localizaCertificado.numero,
-                            validadeCertificado = localizaCertificado.validade,
-                            ativo = item.ativo
-                        });
+                            gerenciaEstoque.Add(new TodosProdutosEstoqueDTO
+                            {
+                                id = item.id,
+                                quantidade = item.quantidade,
+                                idTamanho = tamanho.id,
+                                tamanho = tamanho.tamanho,
+                                idProduto = nomeProduto.id,
+                                produto = nomeProduto.nome,
+                                preco = nomeProduto.preco,
+                                certificado = localizaCertificado.numero,
+                                validadeCertificado = localizaCertificado.validade,
+                                ativo = item.ativo
+                            });
+                        }
+                        else
+                        {
+                            gerenciaEstoque.Add(new TodosProdutosEstoqueDTO
+                            {
+                                id = item.id,
+                                quantidade = item.quantidade,
+                                idTamanho = 0,
+                                tamanho = "Tamanho Único",
+                                idProduto = nomeProduto.id,
+                                produto = nomeProduto.nome,
+                                preco = nomeProduto.preco,
+                                certificado = localizaCertificado.numero,
+                                validadeCertificado = localizaCertificado.validade,
+                                ativo = item.ativo
+                            });
+                        }
+                        
                     }
 
                     return gerenciaEstoque;

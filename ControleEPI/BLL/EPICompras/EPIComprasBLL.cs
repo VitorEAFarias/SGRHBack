@@ -195,14 +195,14 @@ namespace ControleEPI.BLL.EPICompras
                     ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
                     List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
-                    EPIPedidosDTO localizaPedido = new EPIPedidosDTO();
+                    var idPedido = string.Empty;
 
                     var getEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
                     var getEmail = await _usuario.getEmail(getEmp.id);
 
                     if (getEmail != null || !getEmail.Equals(0))
                     {
-                        var localizaContrato = await _contrato.getContrato(localizaCompra.idUsuario);
+                        var localizaContrato = await _contrato.getEmpContrato(localizaCompra.idUsuario);
 
                         if (localizaContrato != null || !localizaContrato.Equals(0))
                         {
@@ -220,12 +220,18 @@ namespace ControleEPI.BLL.EPICompras
 
                                 localizaEstoque.quantidade += localizaPedidoAprovado.quantidade;
 
-                                localizaPedido = await _pedidos.getPedido(localizaPedidoAprovado.idPedido);
+                                var localizaPedido = await _pedidos.getPedido(localizaPedidoAprovado.idPedido);
 
                                 List<Produtos> atualizarStatusProdutos = new List<Produtos>();
 
-                                if (localizaPedido != null)
+                                if (localizaPedido == null)
                                 {
+                                    idPedido = "0";
+                                }
+                                else 
+                                {
+                                    idPedido = localizaPedido.id.ToString();
+
                                     foreach (var item in localizaPedido.produtos)
                                     {
                                         if (localizaEstoque.idProduto == item.id && localizaEstoque.idTamanho == item.tamanho)
@@ -244,6 +250,7 @@ namespace ControleEPI.BLL.EPICompras
                                             liberarVinculo.idUsuario = localizaPedido.idUsuario;
                                             liberarVinculo.idItem = item.id;
                                             liberarVinculo.idTamanho = item.tamanho;
+                                            liberarVinculo.idPedido = localizaPedido.id;
                                             liberarVinculo.dataVinculo = DateTime.MinValue;
                                             liberarVinculo.status = 7;
                                             liberarVinculo.dataDevolucao = DateTime.MinValue;
@@ -268,7 +275,7 @@ namespace ControleEPI.BLL.EPICompras
 
                                     foreach (var item in atualizarStatusProdutos)
                                     {
-                                        if (item.status == 7 || item.status == 3 || item.status == 10)
+                                        if (item.status == 3 || item.status == 10)
                                         {
                                             contador++;
                                         }
@@ -285,7 +292,7 @@ namespace ControleEPI.BLL.EPICompras
                                     localizaPedido.produtos = atualizarStatusProdutos;
 
                                     await _pedidos.Update(localizaPedido);
-                                }
+                                }                                
 
                                 localizaPedidoAprovado.liberadoVinculo = "S";
 
@@ -304,7 +311,7 @@ namespace ControleEPI.BLL.EPICompras
                                 numeroPedidos += localizaPedidoAprovado.id;
                             }
 
-                            localizaCompra.status = 7;
+                            localizaCompra.status = 10;
 
                             var atualizaCompra = await _compras.Update(localizaCompra);
 
@@ -312,7 +319,7 @@ namespace ControleEPI.BLL.EPICompras
                             {
                                 conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
                                 {
-                                    idPedido = localizaPedido.id.ToString(),
+                                    idPedido = idPedido,
                                     nomeColaborador = getEmp.nome,
                                     departamento = localizaDepartamento.titulo
                                 };
@@ -384,6 +391,16 @@ namespace ControleEPI.BLL.EPICompras
 
                                     var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(produto.idPedidosAprovados, "S");
                                     var localizaPedido = await _pedidos.getPedido(localizaProdutoAprovado.idPedido);
+
+                                    localizaProdutoAprovado.enviadoCompra = "R";
+
+                                    await _pedidoAprovado.Update(localizaProdutoAprovado);
+
+                                    if (localizaPedido == null)
+                                    {
+                                        continue;
+                                    }
+
                                     var usuarioPedido = await _usuario.GetEmp(localizaPedido.idUsuario);
                                     usuarioPedidoEmail = await _usuario.getEmail(localizaPedido.idUsuario);
                                     var usuarioPedidoContrato = await _contrato.getEmpContrato(localizaPedido.idUsuario);

@@ -69,9 +69,9 @@ namespace ControleEPI.BLL.EPITamanhos
             {
                 try
                 {
-                    var verificaTamanho = await _tamanho.verificaTamanho(tamanho.tamanho);
+                    var verificaTamanho = await _tamanho.verificaTamanho(tamanho.tamanho);                    
 
-                    if (verificaTamanho != null)
+                    if (verificaTamanho != null && verificaTamanho.idCategoriaProduto == tamanho.idCategoriaProduto)
                     {
                         return null;
                     }
@@ -241,7 +241,16 @@ namespace ControleEPI.BLL.EPITamanhos
                 }
                 else
                 {
-                    return null;
+                    var localizaCategoria = await _categoria.getCategoria(idCategoria);
+
+                    if (localizaCategoria != null)
+                    {
+                        return (IList<EPITamanhosDTO>)localizaCategoria;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
             catch (Exception ex)

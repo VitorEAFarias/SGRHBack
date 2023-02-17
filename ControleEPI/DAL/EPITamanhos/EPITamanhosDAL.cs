@@ -34,7 +34,7 @@ namespace ControleEPI.DAL.EPITamanhos
 
         public async Task<IList<EPITamanhosDTO>> localizaTamanhos()
         {
-            return await _context.EPITamanhos.FromSqlRaw("SELECT * FROM EPITamanhos WHERE ativo = 'S'").OrderBy(t => t.id).ToListAsync();
+            return await _context.EPITamanhos.ToListAsync();
         }
 
         public async Task<EPITamanhosDTO> Update(EPITamanhosDTO tamanho)

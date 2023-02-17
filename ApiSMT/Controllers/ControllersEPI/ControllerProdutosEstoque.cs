@@ -91,13 +91,20 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 var ativaDesativaProdutoEstoque = await _produtosEstoque.ativaDesativaProdutoEstoque(idEstoque, status);
 
-                if (ativaDesativaProdutoEstoque != null)
+                if (status == "N" && ativaDesativaProdutoEstoque.quantidade > 0)
                 {
-                    return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
+                    return BadRequest(new { message = "Não é possivel desativar um produto do estoque com quantidades maiores do que zero", result = false });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualizar produtos", result = false });
+                    if (ativaDesativaProdutoEstoque != null)
+                    {
+                        return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "Erro ao atualizar produtos", result = false });
+                    }
                 }
             }
             catch (Exception ex)

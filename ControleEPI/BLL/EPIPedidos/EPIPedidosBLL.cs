@@ -70,21 +70,38 @@ namespace ControleEPI.BLL.EPIPedidos
 
                         if (query != null)
                         {
-                            var localizaProduto = await _produtos.localizaProduto(query.idProduto);
-                            var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+                            var localizaProduto = await _produtos.localizaProduto(query.idProduto);                            
                             var nomeStatus = await _status.getStatus(produto.status);
+                            var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
 
-                            lista.Add(new ProdutosEstoqueDTO
+                            if (localizaTamanho != null)
                             {
-                                id = localizaProduto.id,
-                                quantidade = produto.quantidade,
-                                nome = produto.nome,                                
-                                idTamanho = localizaTamanho.id,
-                                tamanho = localizaTamanho.tamanho,
-                                idStatus = produto.status,
-                                nomeStatus = nomeStatus.nome,
-                                estoque = query.quantidade
-                            });
+                                lista.Add(new ProdutosEstoqueDTO
+                                {
+                                    id = localizaProduto.id,
+                                    quantidade = produto.quantidade,
+                                    nome = produto.nome,
+                                    idTamanho = localizaTamanho.id,
+                                    tamanho = localizaTamanho.tamanho,
+                                    idStatus = produto.status,
+                                    nomeStatus = nomeStatus.nome,
+                                    estoque = query.quantidade
+                                });
+                            }
+                            else
+                            {
+                                lista.Add(new ProdutosEstoqueDTO
+                                {
+                                    id = localizaProduto.id,
+                                    quantidade = produto.quantidade,
+                                    nome = produto.nome,
+                                    idTamanho = 0,
+                                    tamanho = "Tamanho Único",
+                                    idStatus = produto.status,
+                                    nomeStatus = nomeStatus.nome,
+                                    estoque = query.quantidade
+                                });
+                            }                            
                         }
                     }
 
@@ -316,7 +333,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                                     if (localizaTamanho == null)
                                     {
-                                        tamanho = "";
+                                        tamanho = "Tamanho Único";
                                     }
                                     else
                                     {
@@ -375,7 +392,7 @@ namespace ControleEPI.BLL.EPIPedidos
             }
         }
 
-        public async Task<EPIPedidosDTO> reprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido)
+        public async Task<EPIPedidosDTO> reprovaProdutoPedido(EPIPedidosDTO pedido, int idProduto, int idTamanho)
         {
             try
             {
@@ -383,117 +400,108 @@ namespace ControleEPI.BLL.EPIPedidos
 
                 if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    var localizaPedido = await _pedidos.getPedido(pedido.id);
+                    string tamanho = string.Empty;
 
-                    if (localizaPedido != null)
+                    List<Produtos> produtos = new List<Produtos>();
+                    EmailRequestDTO email = new EmailRequestDTO();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+
+                    var getEmail = await _usuario.getEmail(checkUsuario.id);
+
+                    if (getEmail != null || !getEmail.Equals(0))
                     {
-                        string tamanho = string.Empty;
+                        var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
 
-                        List<Produtos> produtos = new List<Produtos>();
-                        EmailRequestDTO email = new EmailRequestDTO();
-                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
-                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
-
-                        var getEmail = await _usuario.getEmail(checkUsuario.id);
-
-                        if (getEmail != null || !getEmail.Equals(0))
+                        if (getContrato != null || !getContrato.Equals(0))
                         {
-                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+                            var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
 
-                            if (getContrato != null || !getContrato.Equals(0))
+                            foreach (var produto in pedido.produtos)
                             {
-                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
-
-                                foreach (var produto in localizaPedido.produtos)
+                                if (produto.id == idProduto && produto.tamanho == idTamanho)
                                 {
-                                    if (produto.id == idProduto)
+                                    var checkStatusItem = await _status.getStatus(produto.status);
+                                    var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                    if (localizaTamanho == null || localizaTamanho.Equals(0))
                                     {
-                                        var checkStatusItem = await _status.getStatus(produto.status);
-                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
-
-                                        if (localizaTamanho != null || !localizaTamanho.Equals(0))
-                                        {
-                                            tamanho = "";
-                                        }
-                                        else
-                                        {
-                                            tamanho = localizaTamanho.tamanho;
-                                        }
-
-                                        conteudoEmails.Add(new ConteudoEmailDTO
-                                        {
-                                            nome = produto.nome,
-                                            tamanho = tamanho,
-                                            status = checkStatusItem.nome,
-                                            quantidade = produto.quantidade
-                                        });
-
-                                        produtos.Add(new Produtos
-                                        {
-                                            id = produto.id,
-                                            nome = produto.nome,
-                                            quantidade = produto.quantidade,
-                                            status = 3,
-                                            tamanho = produto.tamanho
-                                        });
+                                        tamanho = "Tamanho Único";
                                     }
                                     else
                                     {
-                                        produtos.Add(new Produtos
-                                        {
-                                            id = produto.id,
-                                            nome = produto.nome,
-                                            quantidade = produto.quantidade,
-                                            status = produto.status,
-                                            tamanho = produto.tamanho
-                                        });
+                                        tamanho = localizaTamanho.tamanho;
                                     }
-                                }
 
-                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
-                                {
-                                    idPedido = localizaPedido.id.ToString(),
-                                    nomeColaborador = checkUsuario.nome,
-                                    departamento = getDepartamento.titulo
-                                };
-
-                                int contador = 0;
-
-                                foreach (var item in produtos)
-                                {
-                                    if (item.status == 3 || item.status == 13)
+                                    conteudoEmails.Add(new ConteudoEmailDTO
                                     {
-                                        contador++;
-                                    }
-                                }
+                                        nome = produto.nome,
+                                        tamanho = tamanho,
+                                        status = checkStatusItem.nome,
+                                        quantidade = produto.quantidade
+                                    });
 
-                                localizaPedido.produtos = produtos;
-
-                                if (contador == produtos.Count)
-                                {
-                                    localizaPedido.status = 10;
+                                    produtos.Add(new Produtos
+                                    {
+                                        id = produto.id,
+                                        nome = produto.nome,
+                                        quantidade = produto.quantidade,
+                                        status = 3,
+                                        tamanho = produto.tamanho
+                                    });
                                 }
                                 else
                                 {
-                                    localizaPedido.status = pedido.status;
+                                    produtos.Add(new Produtos
+                                    {
+                                        id = produto.id,
+                                        nome = produto.nome,
+                                        quantidade = produto.quantidade,
+                                        status = produto.status,
+                                        tamanho = produto.tamanho
+                                    });
                                 }
+                            }
 
-                                await _pedidos.Update(localizaPedido);
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                            {
+                                idPedido = pedido.id.ToString(),
+                                nomeColaborador = checkUsuario.nome,
+                                departamento = getDepartamento.titulo
+                            };
 
-                                email.EmailDe = getEmail.valor;
-                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
-                                email.ConteudoColaborador = conteudoEmailColaborador;
-                                email.Conteudo = conteudoEmails;
-                                email.Assunto = "Produto de pedido de EPI reprovado";
+                            int contador = 0;
 
-                                await _mail.SendEmailAsync(email);
+                            foreach (var item in produtos)
+                            {
+                                if (item.status == 3 || item.status == 13)
+                                {
+                                    contador++;
+                                }
+                            }
 
-                                return pedido;
+                            pedido.produtos = produtos;
+
+                            if (contador == produtos.Count)
+                            {
+                                pedido.status = 10;
                             }
                             else
                             {
-                                return null;
+                                pedido.status = pedido.status;
                             }
+
+                            await _pedidos.Update(pedido);
+
+                            email.EmailDe = getEmail.valor;
+                            email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                            email.ConteudoColaborador = conteudoEmailColaborador;
+                            email.Conteudo = conteudoEmails;
+                            email.Assunto = "Produto de pedido de EPI reprovado";
+
+                            await _mail.SendEmailAsync(email);
+
+                            return pedido;
                         }
                         else
                         {
@@ -516,7 +524,7 @@ namespace ControleEPI.BLL.EPIPedidos
             }
         }
 
-        public async Task<EPIPedidosDTO> aprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido)
+        public async Task<EPIPedidosDTO> aprovaProdutoPedido(EPIPedidosDTO pedido, int idProduto, int idTamanho)
         {
             try
             {
@@ -524,36 +532,34 @@ namespace ControleEPI.BLL.EPIPedidos
 
                 if (checkUsuario != null || !checkUsuario.Equals(0))
                 {
-                    var localizaPedido = await _pedidos.getPedido(pedido.id);
-
-                    if (localizaPedido != null)
-                    {
-                        string tamanho = string.Empty;
+                    string tamanho = string.Empty;
                                                 
-                        List<Produtos> produtos = new List<Produtos>();
-                        EmailRequestDTO email = new EmailRequestDTO();
-                        ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
-                        List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
+                    List<Produtos> produtos = new List<Produtos>();
+                    EmailRequestDTO email = new EmailRequestDTO();
+                    ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
+                    List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
 
-                        var getEmail = await _usuario.getEmail(checkUsuario.id);
+                    var getEmail = await _usuario.getEmail(checkUsuario.id);
 
-                        if (getEmail != null || !getEmail.Equals(0))
+                    if (getEmail != null || !getEmail.Equals(0))
+                    {
+                        var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+
+                        if (getContrato != null || !getContrato.Equals(0))
                         {
-                            var getContrato = await _contrato.getEmpContrato(pedido.idUsuario);
+                            var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
 
-                            if (getContrato != null || !getContrato.Equals(0))
+                            foreach (var produto in pedido.produtos)
                             {
-                                var getDepartamento = await _departamento.getDepartamento(getContrato.id_departamento);
-
-                                foreach (var produto in localizaPedido.produtos)
+                                if (produto.id == idProduto && produto.tamanho == idTamanho)
                                 {
-                                    if (produto.id == idProduto)
+                                    EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
+
+                                    var checkStatusItem = await _status.getStatus(produto.status);
+                                    var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+
+                                    if (localizaTamanho != null)
                                     {
-                                        EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
-
-                                        var checkStatusItem = await _status.getStatus(produto.status);
-                                        var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
-
                                         conteudoEmails.Add(new ConteudoEmailDTO
                                         {
                                             nome = produto.nome,
@@ -572,7 +578,7 @@ namespace ControleEPI.BLL.EPIPedidos
                                         });
 
                                         aprovados.idProduto = produto.id;
-                                        aprovados.idPedido = localizaPedido.id;
+                                        aprovados.idPedido = pedido.id;
                                         aprovados.idTamanho = produto.tamanho;
                                         aprovados.quantidade = produto.quantidade;
                                         aprovados.enviadoCompra = "A";
@@ -582,63 +588,87 @@ namespace ControleEPI.BLL.EPIPedidos
                                     }
                                     else
                                     {
+                                        conteudoEmails.Add(new ConteudoEmailDTO
+                                        {
+                                            nome = produto.nome,
+                                            tamanho = "Tamanho Único",
+                                            status = checkStatusItem.nome,
+                                            quantidade = produto.quantidade
+                                        });
+
                                         produtos.Add(new Produtos
                                         {
                                             id = produto.id,
                                             nome = produto.nome,
                                             quantidade = produto.quantidade,
-                                            status = produto.status,
-                                            tamanho = produto.tamanho
+                                            status = 2,
+                                            tamanho = 0
                                         });
-                                    }
+
+                                        aprovados.idProduto = produto.id;
+                                        aprovados.idPedido = pedido.id;
+                                        aprovados.idTamanho = 0;
+                                        aprovados.quantidade = produto.quantidade;
+                                        aprovados.enviadoCompra = "A";
+                                        aprovados.liberadoVinculo = "N";
+
+                                        await _pedidosAprovados.Insert(aprovados);
+                                    }                                        
                                 }
-
-                                conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                                else
                                 {
-                                    idPedido = localizaPedido.id.ToString(),
-                                    nomeColaborador = checkUsuario.nome,
-                                    departamento = getDepartamento.titulo
-                                };
-
-                                int contador = 0;
-
-                                foreach (var item in produtos)
-                                {
-                                    if (item.status == 3 || item.status == 13)
+                                    produtos.Add(new Produtos
                                     {
-                                        contador++;
-                                    }
+                                        id = produto.id,
+                                        nome = produto.nome,
+                                        quantidade = produto.quantidade,
+                                        status = produto.status,
+                                        tamanho = produto.tamanho
+                                    });
                                 }
+                            }
 
-                                localizaPedido.produtos = produtos;
+                            conteudoEmailColaborador = new ConteudoEmailColaboradorDTO
+                            {
+                                idPedido = pedido.id.ToString(),
+                                nomeColaborador = checkUsuario.nome,
+                                departamento = getDepartamento.titulo
+                            };
 
-                                if (contador == produtos.Count)
+                            int contador = 0;
+
+                            foreach (var item in produtos)
+                            {
+                                if (item.status == 3 || item.status == 13)
                                 {
-                                    localizaPedido.status = 10;
+                                    contador++;
                                 }
-                                else
-                                {
-                                    localizaPedido.status = pedido.status;
-                                }
+                            }
 
-                                email.EmailDe = getEmail.valor;
-                                email.EmailPara = "fabiana.lie@reisoffice.com.br";
-                                email.ConteudoColaborador = conteudoEmailColaborador;
-                                email.Conteudo = conteudoEmails;
-                                email.Assunto = "Produto de pedido de EPI aprovado";
+                            pedido.produtos = produtos;
 
-                                await _mail.SendEmailAsync(email);
+                            if (contador == produtos.Count)
+                            {
+                                pedido.status = 10;
+                            }
+                            else
+                            {
+                                pedido.status = pedido.status;
+                            }
 
-                                var atualizaPedido = await _pedidos.Update(localizaPedido);
+                            email.EmailDe = getEmail.valor;
+                            email.EmailPara = "fabiana.lie@reisoffice.com.br";
+                            email.ConteudoColaborador = conteudoEmailColaborador;
+                            email.Conteudo = conteudoEmails;
+                            email.Assunto = "Produto de pedido de EPI aprovado";
 
-                                if (atualizaPedido != null)
-                                {
-                                    return atualizaPedido;
-                                }
-                                else
-                                {
-                                    return null;
-                                }
+                            await _mail.SendEmailAsync(email);
+
+                            var atualizaPedido = await _pedidos.Update(pedido);
+
+                            if (atualizaPedido != null)
+                            {
+                                return atualizaPedido;
                             }
                             else
                             {
@@ -706,7 +736,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                                     if (localizaTamanho != null || !localizaTamanho.Equals(0))
                                     {
-                                        tamanho = "";
+                                        tamanho = "Tamanho Único";
                                     }
                                     else
                                     {
@@ -816,7 +846,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                                         if (localizaTamanho != null || !localizaTamanho.Equals(0))
                                         {
-                                            tamanho = "";
+                                            tamanho = "Tamanho Único";
                                         }
                                         else
                                         {
@@ -949,13 +979,26 @@ namespace ControleEPI.BLL.EPIPedidos
                                         var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
                                         var nomeStatus = await _status.getStatus(13);
 
-                                        conteudoEmail.Add(new ConteudoEmailDTO
-                                        { 
-                                            nome = produto.nome,
-                                            tamanho = localizaTamanho.tamanho,
-                                            status = nomeStatus.nome,
-                                            quantidade = produto.quantidade
-                                        });
+                                        if (localizaTamanho != null)
+                                        {
+                                            conteudoEmail.Add(new ConteudoEmailDTO
+                                            {
+                                                nome = produto.nome,
+                                                tamanho = localizaTamanho.tamanho,
+                                                status = nomeStatus.nome,
+                                                quantidade = produto.quantidade
+                                            });
+                                        }
+                                        else
+                                        {
+                                            conteudoEmail.Add(new ConteudoEmailDTO
+                                            {
+                                                nome = produto.nome,
+                                                tamanho = "Tamanho Único",
+                                                status = nomeStatus.nome,
+                                                quantidade = produto.quantidade
+                                            });
+                                        }                                        
                                     }
                                 }
 

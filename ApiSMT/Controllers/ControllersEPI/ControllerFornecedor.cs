@@ -2,6 +2,7 @@
 using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace ApiSMT.Controllers.ControllersEPI
@@ -56,7 +57,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Já existe um fornecedor cadastrado com esses dados", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -73,27 +74,18 @@ namespace ApiSMT.Controllers.ControllersEPI
         {
             try
             {
-                var localizaFornecedor = await _fornecedor.getFornecedor(fornecedor.id);
+                var atualizaFornecedor = await _fornecedor.Update(fornecedor);
 
-                if (localizaFornecedor != null)
+                if (atualizaFornecedor != null)
                 {
-                    var atualizaFornecedor = await _fornecedor.Update(fornecedor);
-
-                    if (atualizaFornecedor != null)
-                    {
-                        return Ok(new { message = "Dados do fornecedor '" + localizaFornecedor.nome + "' atualizado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao atualizar fornecedor", result = false });
-                    }                    
+                    return Ok(new { message = "Dados do fornecedor atualizado com sucesso!!!", result = true });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Fornecedor não encontrado", result = false });
-                }
+                    return BadRequest(new { message = "Erro ao atualizar fornecedor", result = false });
+                } 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -131,7 +123,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Fornecedor não encontrado", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -159,7 +151,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Fornecedor não encontrada", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -186,7 +178,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Nenhum fornecedor encontrado", result = false });
                 }                
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

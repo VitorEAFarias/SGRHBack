@@ -66,6 +66,8 @@ using Vestimenta.BLL.VestStatus;
 using Vestimenta.BLL.VestPedidos;
 using Vestimenta.BLL.VestEstoque;
 using Vestimenta.BLL.VestPDF;
+using ControleEPI.DAL.EPIHistorico;
+using ControleEPI.BLL.EPIHistorico;
 
 namespace ApiSMT
 {
@@ -141,6 +143,9 @@ namespace ApiSMT
 
             services.AddScoped<IEPIMotivosDAL, EPIMotivosDAL>();
             services.AddScoped<IEPIMotivosBLL, EPIMotivosBLL>();
+
+            services.AddScoped<IEPIHistoricoDAL, EPIHistoricoDAL>();
+            services.AddScoped<IEPIHistoricoBLL, EPIHistoricoBLL>();
 
             services.AddScoped<IEPIPedidosAprovadosDAL, EPIPedidosAprovadosDAL>();
             services.AddScoped<IEPIPedidosAprovadosBLL, EPIPedidosAprovadosBLL>();

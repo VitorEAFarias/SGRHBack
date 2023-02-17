@@ -1,10 +1,9 @@
 ﻿using System.Text;
-using Utilitarios.Utilitários.PDF;
 
-namespace ApiSMT.Utilitários.PDF
+namespace Utilitarios.Utilitários.PDF
 {
     /// <summary>
-    /// CLasse template html
+    /// Classe template html
     /// </summary>
     public class TemplatePDF
     {

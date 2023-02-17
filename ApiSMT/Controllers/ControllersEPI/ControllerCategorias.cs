@@ -3,6 +3,7 @@ using ControleEPI.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System;
 
 namespace ApiSMT.Controllers.ControllersEPI
 {
@@ -39,14 +40,14 @@ namespace ApiSMT.Controllers.ControllersEPI
 
                 if (insereCategoria != null)
                 {
-                    return Ok(new { message = "Categoria inserida com sucesso!!!", result = true });                    
+                    return Ok(new { message = "Categoria inserida com sucesso!!!", result = true });
                 }
                 else
                 {
                     return BadRequest(new { message = "Erro ao inserir categoria", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -91,7 +92,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Categoria não encontrada", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -118,7 +119,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Nenhuma categoria encontrada", result = false});
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -146,7 +147,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Categoria não encontrada", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -173,7 +174,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Erro ao deletar categoria, verifique se há produtos vinculados a esta categoria", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

@@ -3,6 +3,7 @@ using ControleEPI.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ControleEPI.BLL.EPIMotivos
 {
@@ -74,7 +75,7 @@ namespace ControleEPI.BLL.EPIMotivos
 
                 if (localizaMotivos != null)
                 {
-                    return localizaMotivos;
+                    return localizaMotivos.OrderBy(x => x.nome);
                 }
                 else
                 {

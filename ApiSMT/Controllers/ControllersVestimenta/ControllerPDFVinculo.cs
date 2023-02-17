@@ -30,7 +30,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("{idUsuario}")]
-        public async Task<ActionResult> getTodosStatus(int idUsuario)
+        public async Task<IActionResult> getTodosStatus(int idUsuario)
         {
             try
             {     

@@ -1,6 +1,8 @@
 ﻿using ControleEPI.DAL.EPICategorias;
 using ControleEPI.DAL.EPICertificados;
+using ControleEPI.DAL.EPIPedidos;
 using ControleEPI.DAL.EPIProdutos;
+using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIStatus;
 using ControleEPI.DAL.EPITamanhos;
 using ControleEPI.DAL.EPIVinculos;
@@ -22,9 +24,11 @@ namespace ControleEPI.BLL.EPIVinculos
         private readonly IEPICertificadoAprovacaoDAL _certificado;
         private readonly IEPICategoriasDAL _categoria;
         private readonly IEPITamanhosDAL _tamanho;
+        private readonly IEPIProdutosEstoqueDAL _estoque;
+        private readonly IEPIPedidosDAL _pedidos;
 
         public EPIVinculoBLL(IEPIVinculoDAL vinculo, IRHConUserDAL usuario, IEPIProdutosDAL produtos, IEPIStatusDAL status, IEPICertificadoAprovacaoDAL certificado,
-            IEPICategoriasDAL categoria, IEPITamanhosDAL tamanho)
+            IEPICategoriasDAL categoria, IEPITamanhosDAL tamanho, IEPIProdutosEstoqueDAL estoque, IEPIPedidosDAL pedidos)
         {
             _vinculo = vinculo;
             _usuario = usuario;
@@ -33,6 +37,8 @@ namespace ControleEPI.BLL.EPIVinculos
             _certificado = certificado;
             _categoria = categoria;
             _tamanho = tamanho;
+            _estoque = estoque;
+            _pedidos = pedidos;
         }
 
         public async Task<EPIVinculoDTO> adicionarHistorico(EPIVinculoDTO historico)
@@ -76,6 +82,18 @@ namespace ControleEPI.BLL.EPIVinculos
                         {
                             var localizaUsuarioVinculo = await _vinculo.localizaVinculo(item.id);
                             var localizaProduto = await _produtos.localizaProduto(item.idItem);
+                            var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(localizaProduto.id, item.idTamanho);
+                            var localizaPedido = await _pedidos.getPedido(item.idPedido);
+
+                            foreach(var item2 in localizaPedido.produtos)
+                            {
+                                if(item2.id == item.idItem && item2.tamanho == item.idTamanho)
+                                {
+                                    localizaProdutoEstoque.quantidade = localizaProdutoEstoque.quantidade - item2.quantidade;
+                                }
+                            }
+
+                            await _estoque.Update(localizaProdutoEstoque);
 
                             localizaUsuarioVinculo.dataVinculo = DateTime.Now;
                             localizaUsuarioVinculo.status = 13;
@@ -160,6 +178,7 @@ namespace ControleEPI.BLL.EPIVinculos
                             certificado = localizaCertificado.numero,
                             categoria = localizaCategoria.nome,
                             idUsuario = localizaEmp.id,
+                            idPedido = item.idPedido,
                             nomeUsuario = localizaEmp.nome,
                             idItem = localizaProduto.id,
                             nomeItem = localizaProduto.nome,
@@ -218,6 +237,7 @@ namespace ControleEPI.BLL.EPIVinculos
                             certificado = localizaCertificado.numero,
                             categoria = localizaCategoria.nome,
                             idUsuario = localizaEmp.id,
+                            idPedido = item.idPedido,
                             nomeUsuario = localizaEmp.nome,
                             idItem = localizaProduto.id,
                             nomeItem = localizaProduto.nome,
@@ -270,23 +290,48 @@ namespace ControleEPI.BLL.EPIVinculos
                         var localizaStatus = await _status.getStatus(item.status);
                         var localizaTamanho = await _tamanho.localizaTamanho(item.idTamanho);
 
-                        listaVinculos.Add(new VinculoDTO
+                        if (localizaTamanho != null)
                         {
-                            idVinculo = item.id,
-                            certificado = localizaCertificado.numero,
-                            categoria = localizaCategoria.nome,
-                            idUsuario = localizaEmp.id,
-                            nomeUsuario = localizaEmp.nome,
-                            idItem = localizaProduto.id,
-                            nomeItem = localizaProduto.nome,
-                            idTamanho = localizaTamanho.id,
-                            tamanho = localizaTamanho.tamanho,
-                            dataVinculo = item.dataVinculo,
-                            dataDevolucao = item.dataDevolucao,
-                            idStatus = localizaStatus.id,
-                            status = localizaStatus.nome,
-                            validade = item.validade
-                        });
+                            listaVinculos.Add(new VinculoDTO
+                            {
+                                idVinculo = item.id,
+                                certificado = localizaCertificado.numero,
+                                categoria = localizaCategoria.nome,
+                                idUsuario = localizaEmp.id,
+                                idPedido = item.idPedido,
+                                nomeUsuario = localizaEmp.nome,
+                                idItem = localizaProduto.id,
+                                nomeItem = localizaProduto.nome,
+                                idTamanho = localizaTamanho.id,
+                                tamanho = localizaTamanho.tamanho,
+                                dataVinculo = item.dataVinculo,
+                                dataDevolucao = item.dataDevolucao,
+                                idStatus = localizaStatus.id,
+                                status = localizaStatus.nome,
+                                validade = item.validade
+                            });
+                        }
+                        else
+                        {
+                            listaVinculos.Add(new VinculoDTO
+                            {
+                                idVinculo = item.id,
+                                certificado = localizaCertificado.numero,
+                                categoria = localizaCategoria.nome,
+                                idUsuario = localizaEmp.id,
+                                idPedido = item.idPedido,
+                                nomeUsuario = localizaEmp.nome,
+                                idItem = localizaProduto.id,
+                                nomeItem = localizaProduto.nome,
+                                idTamanho = 0,
+                                tamanho = "Tamanho Único",
+                                dataVinculo = item.dataVinculo,
+                                dataDevolucao = item.dataDevolucao,
+                                idStatus = localizaStatus.id,
+                                status = localizaStatus.nome,
+                                validade = item.validade
+                            });
+                        }
                     }
 
                     if (listaVinculos != null)

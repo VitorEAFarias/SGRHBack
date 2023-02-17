@@ -123,17 +123,31 @@ namespace ControleEPI.BLL.EPIProdutos
 
                             var localizaTamanhosProduto = await _tamanhos.tamanhosCategoria(insereProduto.idCategoria);
 
-                            foreach (var item in localizaTamanhosProduto)
+                            if (localizaTamanhosProduto.Count != 0)
+                            {
+                                foreach (var item in localizaTamanhosProduto)
+                                {
+                                    novoEstoque.idProduto = insereProduto.id;
+                                    novoEstoque.quantidade = 0;
+                                    novoEstoque.idTamanho = item.id;
+                                    novoEstoque.ativo = "S";
+
+                                    await _estoque.Insert(novoEstoque);
+                                }
+
+                                return insereProduto;
+                            }
+                            else
                             {
                                 novoEstoque.idProduto = insereProduto.id;
                                 novoEstoque.quantidade = 0;
-                                novoEstoque.idTamanho = item.id;
+                                novoEstoque.idTamanho = 0;
                                 novoEstoque.ativo = "S";
 
                                 await _estoque.Insert(novoEstoque);
-                            }
 
-                            return insereProduto;
+                                return insereProduto;
+                            }                            
                         }
                         else
                         {
@@ -212,7 +226,7 @@ namespace ControleEPI.BLL.EPIProdutos
 
                     foreach (var tamanho in localizaTamanhosCategoria)
                     {
-                        if (produto.idCategoria == tamanho.idCategoriaProduto)
+                        if (produto.idCategoria == tamanho.idCategoriaProduto && tamanho.ativo != "N")
                         {
                             tamanhos.Add(new Tamanho
                             {
@@ -220,6 +234,15 @@ namespace ControleEPI.BLL.EPIProdutos
                                 tamanho = tamanho.tamanho
                             });                            
                         }
+                    }
+
+                    if (tamanhos.Count == 0)
+                    {
+                        tamanhos.Add(new Tamanho
+                        {
+                            idTamanho = 0,
+                            tamanho = "Tamanho Único"
+                        }); 
                     }
 
                     produtos.Add(new ProdutosTamanhosDTO

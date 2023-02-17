@@ -20,7 +20,7 @@ namespace ControleEPI.DTO
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        public DateTime? dataPedido { get; set; }
+        public DateTime dataPedido { get; set; }
         public int idUsuario { get; set; }
         public string descricao { get; set; }
         public int motivo { get; set; }

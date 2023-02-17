@@ -230,6 +230,29 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerHistorico">
+            <summary>
+            Classe de PDF
+            </summary>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerHistorico.#ctor(ControleEPI.BLL.EPIHistorico.IEPIHistoricoBLL)">
+            <summary>
+            Construtor VestimentaController
+            </summary>
+            <param name="dadosPDF"></param>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerHistorico.getTodosStatus(System.Int32)">
+            <summary>
+            Lista historico de itens com colaborador e monta PDF
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerHistorico.relatorioPDF(System.Int32)">
+            <summary>
+            Relatório de itens a serem entregues
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerLogin">
             <summary>
             Classe de login do sistema
@@ -320,20 +343,22 @@
             <param name="pedido"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.aprovaProdutoPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.aprovaProdutoPedido(ControleEPI.DTO.EPIPedidosDTO,System.Int32,System.Int32)">
             <summary>
             Aprova um produto do pedido
             </summary>
-            <param name="idProduto"></param>
             <param name="pedido"></param>
+            <param name="idProduto"></param>
+            <param name="idTamanho"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.reprovaProdutoPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.reprovaProdutoPedido(ControleEPI.DTO.EPIPedidosDTO,System.Int32,System.Int32)">
             <summary>
             Reprovar produto do pedido
             </summary>
-            <param name="idProduto"></param>
             <param name="pedido"></param>
+            <param name="idProduto"></param>
+            <param name="idTamanho"></param>
             <returns></returns>
         </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerPedidos.reprovaPedido(System.Int32,ControleEPI.DTO.EPIPedidosDTO)">

@@ -14,8 +14,8 @@ namespace ControleEPI.BLL.EPIPedidos
         Task<IList<PedidosUsuarioDTO>> getPedidosUsuario(int Id);
         Task<EPIPedidosDTO> aprovaPedido(EPIPedidosDTO aprovaPedido);
         Task<EPIPedidosDTO> reprovaPedido(int status, EPIPedidosDTO pedido);
-        Task<EPIPedidosDTO> aprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido);
-        Task<EPIPedidosDTO> reprovaProdutoPedido(int idProduto, EPIPedidosDTO pedido);
+        Task<EPIPedidosDTO> aprovaProdutoPedido(EPIPedidosDTO pedido, int idProduto, int idTamanho);
+        Task<EPIPedidosDTO> reprovaProdutoPedido(EPIPedidosDTO pedido, int idProduto, int idTamanho);
         Task<IList<Produtos>> liberarParaVinculo(int idPedido);
     }
 }

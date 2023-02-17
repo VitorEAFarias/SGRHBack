@@ -82,11 +82,49 @@ namespace ControleEPI.BLL.EPIFornecedores
         {
             try
             {
-                var atualizaFornecedor = await _fornecedor.Update(fornecedor);
+                var localizaFornecedor = await getFornecedor(fornecedor.id);
 
-                if (atualizaFornecedor != null)
+                if (localizaFornecedor != null)
                 {
-                    return atualizaFornecedor;
+                    if (localizaFornecedor.nome != fornecedor.nome || localizaFornecedor.cnpj != fornecedor.cnpj)
+                    {
+                        var verificaCnpj = await verificaFornecedor(fornecedor.nome, fornecedor.cnpj);
+
+                        if (verificaCnpj != null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            var atualizaFornecedor = await _fornecedor.Update(fornecedor);
+
+                            if (atualizaFornecedor != null)
+                            {
+                                return atualizaFornecedor;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                    else if (localizaFornecedor.cnpj == fornecedor.cnpj)
+                    {
+                        var atualizaforn = await _fornecedor.Update(fornecedor);
+
+                        if (atualizaforn != null)
+                        {
+                            return atualizaforn;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
