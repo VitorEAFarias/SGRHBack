@@ -172,24 +172,48 @@ namespace ControleEPI.BLL.EPIVinculos
                         var localizaStatus = await _status.getStatus(item.status);
                         var localizaTamanho = await _tamanho.localizaTamanho(item.idTamanho);
 
-                        listaVinculos.Add(new VinculoDTO
+                        if (localizaTamanho != null)
                         {
-                            idVinculo = item.id,
-                            certificado = localizaCertificado.numero,
-                            categoria = localizaCategoria.nome,
-                            idUsuario = localizaEmp.id,
-                            idPedido = item.idPedido,
-                            nomeUsuario = localizaEmp.nome,
-                            idItem = localizaProduto.id,
-                            nomeItem = localizaProduto.nome,
-                            idTamanho = localizaTamanho.id,
-                            tamanho = localizaTamanho.tamanho,
-                            dataVinculo = item.dataVinculo,
-                            dataDevolucao = item.dataDevolucao,
-                            idStatus = localizaStatus.id,
-                            status = localizaStatus.nome,
-                            validade = item.validade
-                        });
+                            listaVinculos.Add(new VinculoDTO
+                            {
+                                idVinculo = item.id,
+                                certificado = localizaCertificado.numero,
+                                categoria = localizaCategoria.nome,
+                                idUsuario = localizaEmp.id,
+                                idPedido = item.idPedido,
+                                nomeUsuario = localizaEmp.nome,
+                                idItem = localizaProduto.id,
+                                nomeItem = localizaProduto.nome,
+                                idTamanho = localizaTamanho.id,
+                                tamanho = localizaTamanho.tamanho,
+                                dataVinculo = item.dataVinculo,
+                                dataDevolucao = item.dataDevolucao,
+                                idStatus = localizaStatus.id,
+                                status = localizaStatus.nome,
+                                validade = item.validade
+                            });
+                        }
+                        else
+                        {
+                            listaVinculos.Add(new VinculoDTO
+                            {
+                                idVinculo = item.id,
+                                certificado = localizaCertificado.numero,
+                                categoria = localizaCategoria.nome,
+                                idUsuario = localizaEmp.id,
+                                idPedido = item.idPedido,
+                                nomeUsuario = localizaEmp.nome,
+                                idItem = localizaProduto.id,
+                                nomeItem = localizaProduto.nome,
+                                idTamanho = 0,
+                                tamanho = "Tamanho Único",
+                                dataVinculo = item.dataVinculo,
+                                dataDevolucao = item.dataDevolucao,
+                                idStatus = localizaStatus.id,
+                                status = localizaStatus.nome,
+                                validade = item.validade
+                            });
+                        }
                     }
 
                     if (listaVinculos != null)

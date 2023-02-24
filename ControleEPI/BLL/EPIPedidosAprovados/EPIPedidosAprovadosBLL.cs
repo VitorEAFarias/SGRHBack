@@ -15,7 +15,6 @@ using Utilitarios.Utilitários.email;
 using RH.DAL.RHDepartamentos;
 using RH.DAL.RHContratos;
 using RH.DTO;
-using System.Linq;
 
 namespace ControleEPI.BLL.EPIPedidosAprovados
 {
@@ -228,14 +227,17 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                         List<ConteudoEmailDTO> conteudoEmails = new List<ConteudoEmailDTO>();
                         List<PedidosAprovados> pedidosAprovados = new List<PedidosAprovados>();
 
-                        char delim = ',';
                         string str = string.Empty;
                         decimal valorTotalCompra = 0;
                         string tamanho = string.Empty;
 
                         foreach (var produto in enviaCompras)
                         {
-                            str = String.Join(delim, produto.id);
+                            str = str + "," +produto.id.ToString();
+
+                            pedidosAprovados.Add(new PedidosAprovados {
+                                idPedidosAprovados = produto.id
+                            });
 
                             var localizaPedido = await _pedidos.getPedido(produto.idPedido);
                             var localizaProduto = await _produtos.localizaProduto(produto.idProduto);
@@ -248,12 +250,10 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                             {
                                 foreach (var item in localizaPedido.produtos)
                                 {
-                                    var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(item.id, item.tamanho);
-
-                                    if (localizaProdutoEstoque != null || !localizaProdutoEstoque.Equals(0))
+                                    if (item.id == produto.idProduto && item.tamanho == produto.idTamanho)
                                     {
                                         localizaTamanho = await _tamanho.localizaTamanho(item.tamanho);
-                                    }
+                                    }                                    
                                 }
 
                                 if (localizaTamanho != null)

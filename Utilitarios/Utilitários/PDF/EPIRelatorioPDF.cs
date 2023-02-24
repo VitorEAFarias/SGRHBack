@@ -62,7 +62,7 @@ namespace Utilitarios.Utilitários.PDF
                             </head>
                             <body>
                                 <div class='row'><img src='https://www.reisoffice.com.br/images/logo-reisoffice-novo.png'/></div>
-                                <div class='header'><h1>Relatório de entrega de uniforme</h1></div>
+                                <div class='header'><h1>Relatório de compra de EPI</h1></div>
                                 <div style='overflow-x: auto;'>
                                     <table align='center'>
                                         <tr>

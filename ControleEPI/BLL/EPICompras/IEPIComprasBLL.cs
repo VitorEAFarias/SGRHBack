@@ -8,6 +8,7 @@ namespace ControleEPI.BLL.EPICompras
     {
         Task<ComprasDTO> getCompra(int Id);
         Task<IList<ComprasDTO>> getCompras(string status);
+        Task<IList<ComprasDTO>> getTodasCompras();
         Task<EPIComprasDTO> efetuarCompra(EPIComprasDTO compra);
         Task<EPIComprasDTO> reprovaCompra(EPIComprasDTO compra);
     }

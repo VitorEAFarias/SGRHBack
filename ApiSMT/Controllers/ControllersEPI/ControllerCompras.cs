@@ -28,6 +28,33 @@ namespace ApiSMT.Controllers.ControllersEPI
         /// <summary>
         /// Lista todas as compras
         /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("localizaTodasCompras")]
+        public async Task<IActionResult> getTodasCompras()
+        {
+            try
+            {
+                var compras = await _compras.getTodasCompras();
+
+                if (compras != null)
+                {
+                    return Ok(new { message = "Compras encontradas", result = true, data = compras });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Nenhuma compra encontrada", result = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lista todas as compras
+        /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
         [Authorize]
@@ -47,7 +74,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                     return BadRequest(new { message = "Nenhuma compra encontrada", result = false });
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

@@ -86,16 +86,32 @@ namespace ControleEPI.BLL.EPIHistorico
                         var localizaTamanho = await _tamanho.localizaTamanho(item.idTamanho);
                         var localizaStatus = await _status.getStatus(item.status);
 
-                        dadosProdutoPDF.Add(new HistoricoEPI
+                        if (localizaTamanho != null)
                         {
-                            nomeProduto = prodNome.nome,
-                            tamanho = localizaTamanho.tamanho,
-                            dataVinculo = item.dataVinculo,
-                            dataDesvinculo = item.dataDevolucao,
-                            statusAtual = localizaStatus.nome,
-                            validade = item.validade,
-                            quantidade = 1
-                        });
+                            dadosProdutoPDF.Add(new HistoricoEPI
+                            {
+                                nomeProduto = prodNome.nome,
+                                tamanho = localizaTamanho.tamanho,
+                                dataVinculo = item.dataVinculo,
+                                dataDesvinculo = item.dataDevolucao,
+                                statusAtual = localizaStatus.nome,
+                                validade = item.validade,
+                                quantidade = 1
+                            });
+                        }
+                        else
+                        {
+                            dadosProdutoPDF.Add(new HistoricoEPI
+                            {
+                                nomeProduto = prodNome.nome,
+                                tamanho = "Tamanho Único",
+                                dataVinculo = item.dataVinculo,
+                                dataDesvinculo = item.dataDevolucao,
+                                statusAtual = localizaStatus.nome,
+                                validade = item.validade,
+                                quantidade = 1
+                            });
+                        }                        
                     }
 
                     dadosPDF = new EPIDadosPDFDTO
@@ -205,7 +221,7 @@ namespace ControleEPI.BLL.EPIHistorico
                                     departamento = localizaDepartamento.titulo,
                                     produto = localizaProduto.nome,
                                     tamanho = tamanho,
-                                    quantidade = item.quantidade - localizaRepositorio.quantidade
+                                    quantidade = localizaRepositorio.quantidade
                                 });
                             }
                         }

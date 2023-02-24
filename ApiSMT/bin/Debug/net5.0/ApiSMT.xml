@@ -158,6 +158,12 @@
             </summary>
             <param name="compras"></param>
         </member>
+        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getTodasCompras">
+            <summary>
+            Lista todas as compras
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerCompras.getCompras(System.String)">
             <summary>
             Lista todas as compras

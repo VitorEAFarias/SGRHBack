@@ -64,7 +64,7 @@ namespace Utilitarios.Utilitários.PDF
                             </head>
                             <body>
                                 <div class='row'><img src='https://www.reisoffice.com.br/images/logo-reisoffice-novo.png'/></div>
-                                <div class='header'><h1>Histórico de Vestimentas</h1></div>
+                                <div class='header'><h1>Histórico de EPI's</h1></div>
                                 <div style='overflow-x: auto;'>
                                     <table align='center'>
                                         <tr>

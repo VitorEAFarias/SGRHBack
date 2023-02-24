@@ -71,17 +71,34 @@ namespace ControleEPI.BLL.EPICompras
                         var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
                         var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
-                        compraProdutos.Add(new ComprasProdutosDTO
+                        if (tamanho != null)
                         {
-                            idPedido = localizaProdutoAprovado.idPedido,
-                            idProduto = localizaProdutoAprovado.idProduto,
-                            nomeProduto = localizaProduto.nome,
-                            idProdutoAprovado = localizaProdutoAprovado.id,
-                            quantidade = localizaProdutoAprovado.quantidade,
-                            preco = localizaProduto.preco,
-                            idTamanho = tamanho.id,
-                            tamanho = tamanho.tamanho
-                        });
+                            compraProdutos.Add(new ComprasProdutosDTO
+                            {
+                                idPedido = localizaProdutoAprovado.idPedido,
+                                idProduto = localizaProdutoAprovado.idProduto,
+                                nomeProduto = localizaProduto.nome,
+                                idProdutoAprovado = localizaProdutoAprovado.id,
+                                quantidade = localizaProdutoAprovado.quantidade,
+                                preco = localizaProduto.preco,
+                                idTamanho = tamanho.id,
+                                tamanho = tamanho.tamanho
+                            });
+                        }
+                        else 
+                        {
+                            compraProdutos.Add(new ComprasProdutosDTO
+                            {
+                                idPedido = localizaProdutoAprovado.idPedido,
+                                idProduto = localizaProdutoAprovado.idProduto,
+                                nomeProduto = localizaProduto.nome,
+                                idProdutoAprovado = localizaProdutoAprovado.id,
+                                quantidade = localizaProdutoAprovado.quantidade,
+                                preco = localizaProduto.preco,
+                                idTamanho = 0,
+                                tamanho = "Tamanho Único"
+                            });
+                        }                        
                     }
 
                     var nomeStatus = await _status.getStatus(localizaCompra.status);
@@ -102,6 +119,90 @@ namespace ControleEPI.BLL.EPICompras
                         idFornecedor = localizaFornecedor.id,
                         fornecedor = localizaFornecedor.razaoSocial
                     };
+
+                    return compra;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IList<ComprasDTO>> getTodasCompras()
+        {
+            try
+            {
+                var localizaCompras = await _compras.getTodasCompras();
+
+                if (localizaCompras != null)
+                {
+                    List<ComprasDTO> compra = new List<ComprasDTO>();
+                    EPIStatusDTO nomeStatus = new EPIStatusDTO();
+
+                    foreach (var item in localizaCompras)
+                    {
+                        List<ComprasProdutosDTO> compraProdutos = new List<ComprasProdutosDTO>();
+
+                        foreach (var pedidosAprovados in item.idPedidosAprovados)
+                        {
+                            var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
+                            var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                            var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
+
+                            if (tamanho != null)
+                            {
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = tamanho.id,
+                                    tamanho = tamanho.tamanho
+                                });
+                            }
+                            else
+                            {
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = 0,
+                                    tamanho = "Tamanho Único"
+                                });
+                            }
+                        }
+
+                        nomeStatus = await _status.getStatus(item.status);
+                        var nomeEmp = await _usuario.GetEmp(item.idUsuario);
+                        var localizaFornecedor = await _fornecedor.getFornecedor(item.idFornecedor);
+
+                        compra.Add(new ComprasDTO
+                        {
+                            idCompra = item.id,
+                            produtosAprovados = compraProdutos,
+                            dataCadastraCompra = item.dataCadastroCompra,
+                            dataFinalizacaoCompra = item.dataFinalizacaoCompra,
+                            valorTotalCompra = item.valorTotalCompra,
+                            idStatus = nomeStatus.id,
+                            status = nomeStatus.nome,
+                            idUsuario = nomeEmp.id,
+                            usuario = nomeEmp.nome,
+                            idFornecedor = localizaFornecedor.id,
+                            fornecedor = localizaFornecedor.razaoSocial
+                        });
+                    }
 
                     return compra;
                 }
@@ -137,17 +238,34 @@ namespace ControleEPI.BLL.EPICompras
                             var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
                             var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
-                            compraProdutos.Add(new ComprasProdutosDTO
+                            if (tamanho != null)
                             {
-                                idPedido = localizaProdutoAprovado.idPedido,
-                                idProduto = localizaProdutoAprovado.idProduto,
-                                nomeProduto = localizaProduto.nome,
-                                idProdutoAprovado = localizaProdutoAprovado.id,
-                                quantidade = localizaProdutoAprovado.quantidade,
-                                preco = localizaProduto.preco,
-                                idTamanho = tamanho.id,
-                                tamanho = tamanho.tamanho
-                            });
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = tamanho.id,
+                                    tamanho = tamanho.tamanho
+                                });
+                            }
+                            else
+                            {
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = 0,
+                                    tamanho = "Tamanho Único"
+                                });
+                            }                            
                         }
 
                         nomeStatus = await _status.getStatus(item.status);
@@ -216,7 +334,14 @@ namespace ControleEPI.BLL.EPICompras
                                 var verificaTamanho = await _tamanhos.localizaTamanho(localizaPedidoAprovado.idTamanho);
                                 var nomeStatus = await _status.getStatus(14);
 
-                                var localizaEstoque = await _produtosEstoque.getProdutoEstoqueTamanho(localizaProduto.id, verificaTamanho.id);
+                                string tamanho = "0";
+
+                                if (verificaTamanho != null)
+                                {
+                                    tamanho = localizaPedidoAprovado.idTamanho.ToString();
+                                }
+
+                                var localizaEstoque = await _produtosEstoque.getProdutoEstoqueTamanho(localizaProduto.id, Int32.Parse(tamanho));
 
                                 localizaEstoque.quantidade += localizaPedidoAprovado.quantidade;
 
@@ -300,18 +425,31 @@ namespace ControleEPI.BLL.EPICompras
 
                                 var insereEstoque = await _produtosEstoque.Update(localizaEstoque);
 
-                                conteudoEmails.Add(new ConteudoEmailDTO
+                                if (tamanho.Equals(0))
                                 {
-                                    nome = localizaProduto.nome,
-                                    tamanho = verificaTamanho.tamanho,
-                                    status = nomeStatus.nome,
-                                    quantidade = localizaPedidoAprovado.quantidade
-                                });
+                                    conteudoEmails.Add(new ConteudoEmailDTO
+                                    {
+                                        nome = localizaProduto.nome,
+                                        tamanho = "Tamanho Único",
+                                        status = nomeStatus.nome,
+                                        quantidade = localizaPedidoAprovado.quantidade
+                                    });
+                                }
+                                else
+                                {
+                                    conteudoEmails.Add(new ConteudoEmailDTO
+                                    {
+                                        nome = localizaProduto.nome,
+                                        tamanho = tamanho.ToString(),
+                                        status = nomeStatus.nome,
+                                        quantidade = localizaPedidoAprovado.quantidade
+                                    });
+                                }
 
-                                numeroPedidos += localizaPedidoAprovado.id;
+                                numeroPedidos += numeroPedidos + "," +localizaPedidoAprovado.id;
                             }
 
-                            localizaCompra.status = 10;
+                            localizaCompra.status = 7;
 
                             var atualizaCompra = await _compras.Update(localizaCompra);
 
