@@ -192,50 +192,6 @@
             <param name="reprovarCompra"></param>
             <returns></returns>
         </member>
-        <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor">
-            <summary>
-            Classe que manipula os dados de fornecedores
-            </summary>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.#ctor(ControleEPI.BLL.EPIFornecedores.IEPIFornecedoresBLL)">
-            <summary>
-            Construtos de FornecedorController
-            </summary>
-            <param name="fornecedor"></param>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.insereFornecedor(ControleEPI.DTO.EPIFornecedoresDTO)">
-            <summary>
-            Insere um novo fornecedor
-            </summary>
-            <param name="fornecedor"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.atualizaFornecedor(ControleEPI.DTO.EPIFornecedoresDTO)">
-            <summary>
-            Atualiza dados do fornecedor
-            </summary>
-            <param name="fornecedor"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.ativaDesativaFornecedor(System.String,System.Int32)">
-            <summary>
-            Ativa ou desativa fornecedor
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.localizaFornecedor(System.Int32)">
-            <summary>
-            Localiza uma fornecedor
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerFornecedor.getFornecedores">
-            <summary>
-            Lista fornecedores ativos e desativos
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:ApiSMT.Controllers.ControllersEPI.ControllerHistorico">
             <summary>
             Classe de PDF
@@ -541,12 +497,6 @@
         <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.atualizaEstoque(ControleEPI.DTO.EPIProdutosEstoqueDTO)">
             <summary>
             Aatualiza quantidade disponivel em estoque
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ApiSMT.Controllers.ControllersEPI.ControllerProdutosEstoque.ativaDesativaProdutoEstoque(System.Int32,System.String)">
-            <summary>
-            Ativa/Desativa Produto do estoque
             </summary>
             <returns></returns>
         </member>

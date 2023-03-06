@@ -21,7 +21,6 @@ using ControleEPI.BLL.EPIProdutos;
 using ControleEPI.BLL.EPICertificados;
 using ControleEPI.DAL.EPICertificados;
 using ControleEPI.BLL.EPICompras;
-using ControleEPI.BLL.EPIFornecedores;
 using ControleEPI.BLL.EPIMotivos;
 using ControleEPI.BLL.EPIPedidosAprovados;
 using ControleEPI.BLL.EPIPedidos;
@@ -33,7 +32,6 @@ using RH.BLL.RHUsuarios;
 using RH.BLL.RHDepartamentos;
 using RH.BLL.RHContratos;
 using ControleEPI.DAL.EPICompras;
-using ControleEPI.DAL.EPIFornecedores;
 using ControleEPI.DAL.EPILogCompras;
 using ControleEPI.DAL.EPILogEstoque;
 using ControleEPI.DAL.EPIMotivos;
@@ -133,9 +131,6 @@ namespace ApiSMT
 
             services.AddScoped<IEPIComprasDAL, EPIComprasDAL>();
             services.AddScoped<IEPIComprasBLL, EPIComprasBLL>();
-
-            services.AddScoped<IEPIFornecedoresDAL, EPIFornecedoresDAL>();
-            services.AddScoped<IEPIFornecedoresBLL, EPIFornecedoresBLL>();
 
             services.AddScoped<IEPILogComprasDAL, EPILogComprasDAL>();
 

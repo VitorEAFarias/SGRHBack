@@ -81,7 +81,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Fornecedor não encontrado", result = false });
+                    return BadRequest(new { message = "Tamanho não encontrado", result = false });
                 }
             }
             catch (System.Exception ex)

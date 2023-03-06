@@ -27,7 +27,6 @@ namespace ControleEPI.DTO
         public int status { get; set; }
         public int idUsuario { get; set; }
         public DateTime dataFinalizacaoCompra { get; set; }
-        public int idFornecedor { get; set; }
     }
 
     public class PedidosAprovados
@@ -45,6 +44,8 @@ namespace ControleEPI.DTO
         public decimal preco { get; set; }
         public int idTamanho { get; set; }
         public string tamanho { get; set; }
+        public int idCertificado { get; set; }
+        public string numeroCertificado { get; set; }
     }
 
     public class ComprasDTO
@@ -58,7 +59,5 @@ namespace ControleEPI.DTO
         public string status { get; set; }
         public int idUsuario { get; set; }
         public string usuario { get; set; }
-        public int idFornecedor { get; set; }
-        public string fornecedor { get; set; }
     }
 }

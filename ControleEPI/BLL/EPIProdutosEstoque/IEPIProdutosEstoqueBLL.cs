@@ -8,7 +8,7 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
     {
         Task<EPIProdutosEstoqueDTO> Insert(EPIProdutosEstoqueDTO produto);
         Task<TodosProdutosEstoqueDTO> getProdutoEstoque(int id);
-        Task<EPIProdutosEstoqueDTO> ativaDesativaProdutoEstoque(int idEstoque, string status);
+        Task<EPIProdutosEstoqueDTO> ativaDesativaProdutoEstoque(int idEstoque);
         Task<IList<TodosProdutosEstoqueDTO>> getProdutosEstoque();
         Task<EPIProdutosEstoqueDTO> Update(EPIProdutosEstoqueDTO produto);
     }

@@ -24,16 +24,14 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
             _certificado = certificado;
         }
 
-        public async Task<EPIProdutosEstoqueDTO> ativaDesativaProdutoEstoque(int idEstoque, string status)
+        public async Task<EPIProdutosEstoqueDTO> ativaDesativaProdutoEstoque(int idEstoque)
         {
             try
             {
                 var localizaProduto = await _produtosEstoque.getProdutoEstoque(idEstoque);
 
-                if (localizaProduto != null)
+                if (localizaProduto != null || localizaProduto.quantidade > 0)
                 {
-                    localizaProduto.ativo = status;
-
                     var atualizaEstoque = await _produtosEstoque.Update(localizaProduto);
 
                     if (atualizaEstoque != null)
@@ -152,8 +150,7 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                                 produto = nomeProduto.nome,
                                 preco = nomeProduto.preco,
                                 certificado = localizaCertificado.numero,
-                                validadeCertificado = localizaCertificado.validade,
-                                ativo = item.ativo
+                                validadeCertificado = localizaCertificado.validade
                             });
                         }
                         else
@@ -168,8 +165,7 @@ namespace ControleEPI.BLL.EPIProdutosEstoque
                                 produto = nomeProduto.nome,
                                 preco = nomeProduto.preco,
                                 certificado = localizaCertificado.numero,
-                                validadeCertificado = localizaCertificado.validade,
-                                ativo = item.ativo
+                                validadeCertificado = localizaCertificado.validade
                             });
                         }
                         

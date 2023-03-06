@@ -77,41 +77,7 @@ namespace ApiSMT.Controllers.ControllersEPI
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        /// <summary>
-        /// Ativa/Desativa Produto do estoque
-        /// </summary>
-        /// <returns></returns>
-        [Authorize]
-        [HttpPut("status/{idEstoque}/{status}")]
-        public async Task<IActionResult> ativaDesativaProdutoEstoque(int idEstoque, string status)
-        {
-            try
-            {
-                var ativaDesativaProdutoEstoque = await _produtosEstoque.ativaDesativaProdutoEstoque(idEstoque, status);
-
-                if (status == "N" && ativaDesativaProdutoEstoque.quantidade > 0)
-                {
-                    return BadRequest(new { message = "Não é possivel desativar um produto do estoque com quantidades maiores do que zero", result = false });
-                }
-                else
-                {
-                    if (ativaDesativaProdutoEstoque != null)
-                    {
-                        return Ok(new { message = "Produto atualizado com sucesso!!!", result = true });
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Erro ao atualizar produtos", result = false });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        }        
 
         /// <summary>
         /// Lista todos os produtos cadastrados no estoque

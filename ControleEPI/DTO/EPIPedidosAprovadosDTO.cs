@@ -28,5 +28,7 @@ namespace ControleEPI.DTO
         public DateTime? dataPedido { get; set; }
         public int estoque { get; set; }
         public string liberadoVinculo { get; set; }
+        public int idCertificado { get; set; }
+        public string numeroCertificado { get; set; }
     }
 }

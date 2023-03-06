@@ -15,6 +15,7 @@ using Utilitarios.Utilitários.email;
 using RH.DAL.RHDepartamentos;
 using RH.DAL.RHContratos;
 using RH.DTO;
+using ControleEPI.DAL.EPICertificados;
 
 namespace ControleEPI.BLL.EPIPedidosAprovados
 {
@@ -32,9 +33,11 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
         private readonly IEPIVinculoDAL _vinculo;
         private readonly IRHDepartamentosDAL _departamento;
         private readonly IRHEmpContratosDAL _contratos;
+        private readonly IEPICertificadoAprovacaoDAL _certificado;
 
         public EPIPedidosAprovadosBLL(IEPIPedidosAprovadosDAL pedidosAprovados, IRHConUserDAL usuario, IEPITamanhosDAL tamanho, IEPIPedidosDAL pedidos, IEPIProdutosDAL produtos,
-            IEPIStatusDAL status, IEPIProdutosEstoqueDAL estoque, IMailService mail, IEPIComprasDAL compras, IEPIVinculoDAL vinculo, IRHDepartamentosDAL departamento, IRHEmpContratosDAL contratos)
+            IEPIStatusDAL status, IEPIProdutosEstoqueDAL estoque, IMailService mail, IEPIComprasDAL compras, IEPIVinculoDAL vinculo, IRHDepartamentosDAL departamento, 
+            IRHEmpContratosDAL contratos, IEPICertificadoAprovacaoDAL certificado)
         {
             _pedidosAprovados = pedidosAprovados;
             _usuario = usuario;
@@ -48,6 +51,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
             _vinculo = vinculo;
             _departamento = departamento;
             _contratos = contratos;
+            _certificado = certificado;
         }
 
         public async Task<IList<PedidosAprovadosDTO>> getProdutosAprovados(string statusCompra, string statusVinculo)
@@ -64,6 +68,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                     var localizaPedido = await _pedidos.getPedido(item.idPedido);
                     var localizaProdutoEstoque = await _estoque.getProdutoEstoqueTamanho(item.idProduto, item.idTamanho);
                     var localizaTamanho = await _tamanho.localizaTamanho(localizaProdutoEstoque.idTamanho);
+                    var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
 
                     if (localizaPedido != null)
                     {
@@ -87,7 +92,9 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     usuario = localizaUsuario.nome,
                                     dataPedido = localizaPedido.dataPedido,
                                     estoque = localizaProdutoEstoque.quantidade,
-                                    liberadoVinculo = item.liberadoVinculo
+                                    liberadoVinculo = item.liberadoVinculo,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }
                             else
@@ -106,7 +113,9 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     usuario = string.Empty,
                                     dataPedido = DateTime.MinValue,
                                     estoque = localizaProdutoEstoque.quantidade,
-                                    liberadoVinculo = item.liberadoVinculo
+                                    liberadoVinculo = item.liberadoVinculo,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }
                         }
@@ -128,7 +137,9 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     usuario = localizaUsuario.nome,
                                     dataPedido = localizaPedido.dataPedido,
                                     estoque = localizaProdutoEstoque.quantidade,
-                                    liberadoVinculo = item.liberadoVinculo
+                                    liberadoVinculo = item.liberadoVinculo,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }
                             else
@@ -147,7 +158,9 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     usuario = string.Empty,
                                     dataPedido = DateTime.MinValue,
                                     estoque = localizaProdutoEstoque.quantidade,
-                                    liberadoVinculo = item.liberadoVinculo
+                                    liberadoVinculo = item.liberadoVinculo,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }
                         }
@@ -168,7 +181,9 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                             usuario = string.Empty,
                             dataPedido = DateTime.MinValue,
                             estoque = localizaProdutoEstoque.quantidade,
-                            liberadoVinculo = item.liberadoVinculo
+                            liberadoVinculo = item.liberadoVinculo,
+                            idCertificado = localizaCertificado.id,
+                            numeroCertificado = localizaCertificado.numero
                         });
                     }                                       
                 }
@@ -233,28 +248,79 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
 
                         foreach (var produto in enviaCompras)
                         {
+                            List<Produtos> produtosCompras = new List<Produtos>();
+
                             str = str + "," +produto.id.ToString();
 
                             pedidosAprovados.Add(new PedidosAprovados {
                                 idPedidosAprovados = produto.id
                             });
 
-                            var localizaPedido = await _pedidos.getPedido(produto.idPedido);
-                            var localizaProduto = await _produtos.localizaProduto(produto.idProduto);
-                            var checkStatusItem = await _status.getStatus(4);
-                            getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
+                            var localizaPedido = await _pedidos.getPedido(produto.idPedido);                            
+                            var checkStatusItem = await _status.getStatus(4);                            
 
                             EPITamanhosDTO localizaTamanho = new EPITamanhosDTO();
+                            EPIProdutosDTO localizaProduto = new EPIProdutosDTO();
 
                             if (localizaPedido != null)
                             {
+                                getEmail = await _usuario.getEmail(localizaPedido.idUsuario);
+
                                 foreach (var item in localizaPedido.produtos)
                                 {
+                                    localizaProduto = await _produtos.localizaProduto(item.id);
+
                                     if (item.id == produto.idProduto && item.tamanho == produto.idTamanho)
                                     {
                                         localizaTamanho = await _tamanho.localizaTamanho(item.tamanho);
-                                    }                                    
+                                    }
+
+                                    if (item.id == produto.idProduto && produto.enviadoCompra == "A")
+                                    {
+                                        produtosCompras.Add(new Produtos
+                                        {
+                                            id = localizaProduto.id,
+                                            nome = localizaProduto.nome,
+                                            quantidade = item.quantidade,
+                                            status = 4,
+                                            tamanho = item.tamanho
+                                        });
+                                    }
+                                    else
+                                    {
+                                        produtosCompras.Add(new Produtos
+                                        {
+                                            id = localizaProduto.id,
+                                            nome = localizaProduto.nome,
+                                            quantidade = item.quantidade,
+                                            status = item.status,
+                                            tamanho = item.tamanho
+                                        });
+                                    }
                                 }
+
+                                int cont = 0;
+
+                                foreach (var produtos in produtosCompras)
+                                {
+                                    if (produtos.status == 2 || produtos.status == 15 || produtos.status == 3 || produtos.status == 7)
+                                    {
+                                        cont++;
+                                    }
+                                }
+
+                                if (cont == produtosCompras.Count)
+                                {
+                                    localizaPedido.status = 10;
+                                }
+                                else
+                                {
+                                    localizaPedido.status = localizaPedido.status;
+                                }
+
+                                localizaPedido.produtos = produtosCompras;
+
+                                await _pedidos.Update(localizaPedido);
 
                                 if (localizaTamanho != null)
                                 {
@@ -281,6 +347,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                             }
                             else
                             {
+                                getEmail = await _usuario.getEmail(localizaUsuario.id);
                                 localizaTamanho = await _tamanho.localizaTamanho(produto.idTamanho);
 
                                 if (localizaTamanho != null)
@@ -308,7 +375,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                             }
 
                             await _pedidosAprovados.Update(produto);
-                        }
+                        }                        
 
                         conteudoEmailColaborador = new ConteudoEmailColaboradorDTO {
                             idPedido = str,
@@ -339,7 +406,6 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                         compras.status = 1;
                         compras.idUsuario = idUsuario;
                         compras.dataFinalizacaoCompra = DateTime.MinValue;
-                        compras.idFornecedor = 9;
 
                         var insereCompra = await _compras.Insert(compras);
 
@@ -376,11 +442,12 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                 {
                     List<ConteudoEmailDTO> conteudoEmail = new List<ConteudoEmailDTO>();
                     ConteudoEmailColaboradorDTO conteudoEmailColaborador = new ConteudoEmailColaboradorDTO();
-                    EmailRequestDTO email = new EmailRequestDTO();
-                    List<Produtos> produtosPedido = new List<Produtos>();
+                    EmailRequestDTO email = new EmailRequestDTO();                    
 
                     foreach (var item in produtosAprovados)
                     {
+                        List<Produtos> produtosPedido = new List<Produtos>();
+
                         var localizaPedido = await _pedidos.getPedido(item.idPedido);
 
                         if (localizaPedido == null)
@@ -390,7 +457,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
 
                         foreach (var item2 in localizaPedido.produtos)
                         {
-                            if (item2.status == 2 || item2.status == 13 || item2.status == 15)
+                            if (item2.status == 2)
                             {
                                 produtosPedido.Add(new Produtos
                                 {
@@ -400,15 +467,36 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                                     status = 15,
                                     tamanho = item2.tamanho
                                 });
-
-                                item2.status = 15;
-                            }                            
+                            }
+                            else
+                            {
+                                produtosPedido.Add(new Produtos
+                                {
+                                    id = item2.id,
+                                    nome = item2.nome,
+                                    quantidade = item2.quantidade,
+                                    status = item2.status,
+                                    tamanho = item2.tamanho
+                                });
+                            }
                         }
 
-                        if (localizaPedido.produtos.Count == produtosPedido.Count)
+                        int cont = 0;
+
+                        foreach (var produtos in produtosPedido)
+                        {
+                            if (produtos.status == 2 || produtos.status == 15 || produtos.status == 3 || produtos.status == 7)
+                            {
+                                cont++;
+                            }
+                        }
+
+                        if (cont == produtosPedido.Count)
                         {
                             localizaPedido.status = 10;
                         }
+
+                        localizaPedido.produtos = produtosPedido;
 
                         await _pedidos.Update(localizaPedido);
 
@@ -427,9 +515,7 @@ namespace ControleEPI.BLL.EPIPedidosAprovados
                         novoVinculo.dataDevolucao = DateTime.MinValue;
                         novoVinculo.validade = DateTime.Now.AddYears(localizaProduto.validadeEmUso);                        
 
-                        var insereVinculo = await _vinculo.insereVinculo(novoVinculo);                        
-
-
+                        var insereVinculo = await _vinculo.insereVinculo(novoVinculo);
 
                         if (localizaTamanho != null)
                         {

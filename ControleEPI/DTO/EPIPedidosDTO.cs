@@ -69,6 +69,8 @@ namespace ControleEPI.DTO
         public int idStatus { get; set; }
         public string nomeStatus { get; set; }
         public int estoque { get; set; }
+        public int idCertificado { get; set; }
+        public string numeroCertificado { get; set; }
     }
 
     public class PedidosUsuarioDTO

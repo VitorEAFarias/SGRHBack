@@ -79,6 +79,7 @@ namespace ControleEPI.BLL.EPIProdutos
                             idProduto = item.id,
                             idCategoria = verificaCategoria.id,
                             idCertificadoAprovacao = verificaCertificado.id,
+                            numeroCertificado = verificaCertificado.numero,
                             produto = item.nome,
                             categoria = verificaCategoria.nome,
                             certificado = verificaCertificado.numero,
@@ -130,7 +131,6 @@ namespace ControleEPI.BLL.EPIProdutos
                                     novoEstoque.idProduto = insereProduto.id;
                                     novoEstoque.quantidade = 0;
                                     novoEstoque.idTamanho = item.id;
-                                    novoEstoque.ativo = "S";
 
                                     await _estoque.Insert(novoEstoque);
                                 }
@@ -142,7 +142,6 @@ namespace ControleEPI.BLL.EPIProdutos
                                 novoEstoque.idProduto = insereProduto.id;
                                 novoEstoque.quantidade = 0;
                                 novoEstoque.idTamanho = 0;
-                                novoEstoque.ativo = "S";
 
                                 await _estoque.Insert(novoEstoque);
 
@@ -188,6 +187,7 @@ namespace ControleEPI.BLL.EPIProdutos
                         idProduto = localizaProduto.id,
                         idCategoria = verificaCategoria.id,
                         idCertificadoAprovacao = verificaCertificado.id,
+                        numeroCertificado = verificaCertificado.numero,
                         produto = localizaProduto.nome,
                         categoria = verificaCategoria.nome,
                         certificado = verificaCertificado.numero,
@@ -245,13 +245,16 @@ namespace ControleEPI.BLL.EPIProdutos
                         }); 
                     }
 
+                    var localizaCertificado = await _certificado.getCertificado(produto.idCertificadoAprovacao);
+
                     produtos.Add(new ProdutosTamanhosDTO
                     {
                         id = produto.id,
                         nome = produto.nome,
                         idCategoria = produto.idCategoria,
                         preco = produto.preco,
-                        idCertificadoAprovacao = produto.idCertificadoAprovacao,
+                        idCertificadoAprovacao = localizaCertificado.id,
+                        numeroCertificado = localizaCertificado.numero,
                         validadeEmUso = produto.validadeEmUso,
                         ativo = produto.ativo,
                         foto = produto.foto,
@@ -372,20 +375,31 @@ namespace ControleEPI.BLL.EPIProdutos
             }
         }
 
-        public async Task<IList<EPIProdutosDTO>> verificaCategorias(int idCategoria)
+        public async Task<IList<ProdutosTamanhosDTO>> verificaCategorias(int idCategoria)
         {
             try
             {
                 var verificaVinculoProduto = await _produto.verificaCategorias(idCategoria);
 
-                if (verificaVinculoProduto != null)
+                List<ProdutosTamanhosDTO> produtosCategoria = new List<ProdutosTamanhosDTO>();
+
+                foreach (var item in verificaVinculoProduto)
                 {
-                    return verificaVinculoProduto;
+                    var localizaCertificado = await _certificado.getCertificado(item.idCertificadoAprovacao);
+
+                    produtosCategoria.Add(new ProdutosTamanhosDTO
+                    {
+                        id = item.id,
+                        idCertificadoAprovacao = localizaCertificado.id,
+                        numeroCertificado = localizaCertificado.numero,
+                        maximo = item.maximo,
+                        nome = item.nome,
+                        preco = item.preco,
+                        validadeEmUso = item.validadeEmUso
+                    });
                 }
-                else
-                {
-                    return null;
-                }
+
+                return produtosCategoria;
             }
             catch (Exception ex)
             {

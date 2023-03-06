@@ -96,7 +96,6 @@ namespace ControleEPI.BLL.EPITamanhos
                                         adicionaEstoque.idProduto = item.id;
                                         adicionaEstoque.quantidade = 0;
                                         adicionaEstoque.idTamanho = insereTamanho.id;
-                                        adicionaEstoque.ativo = "S";
 
                                         await _estoque.Insert(adicionaEstoque);
                                     }

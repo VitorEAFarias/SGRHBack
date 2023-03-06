@@ -14,6 +14,8 @@ using ControleEPI.DAL.EPIMotivos;
 using ControleEPI.DAL.EPIProdutosEstoque;
 using ControleEPI.DAL.EPIProdutos;
 using ControleEPI.DAL.EPIVinculos;
+using ControleEPI.BLL.EPICertificados;
+using ControleEPI.DAL.EPICertificados;
 
 namespace ControleEPI.BLL.EPIPedidos
 {
@@ -31,9 +33,11 @@ namespace ControleEPI.BLL.EPIPedidos
         private readonly IEPIProdutosEstoqueDAL _estoque;
         private readonly IEPIProdutosDAL _produtos;
         private readonly IEPIVinculoDAL _vinculo;
+        private readonly IEPICertificadoAprovacaoDAL _certificado;
 
         public EPIPedidosBLL(IEPIPedidosDAL pedidos, IRHConUserDAL usuario, IRHEmpContratosDAL contrato, IRHDepartamentosDAL departamento, IEPIStatusDAL status, IEPITamanhosDAL tamanho,
-            IMailService mail, IEPIPedidosAprovadosDAL pedidosAprovados, IEPIMotivosDAL motivos, IEPIProdutosEstoqueDAL estoque, IEPIProdutosDAL produtos, IEPIVinculoDAL vinculo)
+            IMailService mail, IEPIPedidosAprovadosDAL pedidosAprovados, IEPIMotivosDAL motivos, IEPIProdutosEstoqueDAL estoque, IEPIProdutosDAL produtos, IEPIVinculoDAL vinculo,
+            IEPICertificadoAprovacaoDAL certificado)
         {
             _pedidos = pedidos;
             _usuario = usuario;
@@ -47,6 +51,7 @@ namespace ControleEPI.BLL.EPIPedidos
             _estoque = estoque;
             _produtos = produtos;
             _vinculo = vinculo;
+            _certificado = certificado;
         }
 
         public async Task<PedidosDTO> getPedidoProduto(int Id)
@@ -73,6 +78,7 @@ namespace ControleEPI.BLL.EPIPedidos
                             var localizaProduto = await _produtos.localizaProduto(query.idProduto);                            
                             var nomeStatus = await _status.getStatus(produto.status);
                             var localizaTamanho = await _tamanho.localizaTamanho(produto.tamanho);
+                            var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
 
                             if (localizaTamanho != null)
                             {
@@ -85,7 +91,9 @@ namespace ControleEPI.BLL.EPIPedidos
                                     tamanho = localizaTamanho.tamanho,
                                     idStatus = produto.status,
                                     nomeStatus = nomeStatus.nome,
-                                    estoque = query.quantidade
+                                    estoque = query.quantidade,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }
                             else
@@ -99,7 +107,9 @@ namespace ControleEPI.BLL.EPIPedidos
                                     tamanho = "Tamanho Único",
                                     idStatus = produto.status,
                                     nomeStatus = nomeStatus.nome,
-                                    estoque = query.quantidade
+                                    estoque = query.quantidade,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
                                 });
                             }                            
                         }
@@ -474,7 +484,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                             foreach (var item in produtos)
                             {
-                                if (item.status == 3 || item.status == 13)
+                                if (item.status == 3 || item.status == 13 || item.status == 15)
                                 {
                                     contador++;
                                 }
@@ -551,7 +561,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                             foreach (var produto in pedido.produtos)
                             {
-                                if (produto.id == idProduto && produto.tamanho == idTamanho)
+                                if (produto.id == idProduto && produto.tamanho == idTamanho && produto.status == 2)
                                 {
                                     EPIPedidosAprovadosDTO aprovados = new EPIPedidosAprovadosDTO();
 
@@ -639,7 +649,7 @@ namespace ControleEPI.BLL.EPIPedidos
 
                             foreach (var item in produtos)
                             {
-                                if (item.status == 3 || item.status == 13)
+                                if (item.status == 3 || item.status == 13 || item.status == 15)
                                 {
                                     contador++;
                                 }

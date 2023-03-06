@@ -31,12 +31,12 @@ namespace ControleEPI.DAL.EPIProdutosEstoque
 
         public async Task<IList<EPIProdutosEstoqueDTO>> getProdutosExistentes(int idProdutos)
         {
-            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProdutos + "' AND ativo = 'S'").OrderBy(x => x.id).ToListAsync();
+            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProdutos + "'").OrderBy(x => x.id).ToListAsync();
         }
 
         public async Task<EPIProdutosEstoqueDTO> getProdutoExistente(int idProduto)
         {
-            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProduto + "' AND ativo = 'S'").OrderBy(x => x.id).FirstOrDefaultAsync();
+            return await _context.EPIProdutosEstoque.FromSqlRaw("SELECT * FROM EPIProdutosEstoque WHERE idProduto = '" + idProduto + "'").OrderBy(x => x.id).FirstOrDefaultAsync();
         }
 
         public async Task<EPIProdutosEstoqueDTO> getProdutoEstoqueTamanho(int id, int idTamanho)

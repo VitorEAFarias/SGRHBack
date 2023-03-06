@@ -73,7 +73,7 @@ namespace Utilitarios.Utilitários.PDF
                                             <th>Quantidade</th>
                                             <th>Data de Recebimento</th>
                                             <th>Data de Devolução</th>
-                                            <th>Item Usado</th>
+                                            <th>Data Validade</th>
                                             <th>Item recebido por: </th>
                                         </tr>");
             foreach (var item in dadosPDF.produtos)

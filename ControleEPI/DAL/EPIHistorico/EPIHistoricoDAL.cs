@@ -16,7 +16,7 @@ namespace ControleEPI.DAL.EPIHistorico
         }
         public async Task<IList<EPIVinculoDTO>> dadosPDF(int idUsuario)
         {
-            return await _context.EPIVinculo.FromSqlRaw("SELECT * FROM EPIVinculo WHERE idUsuario = '" + idUsuario + "' AND status = 13").ToListAsync();
+            return await _context.EPIVinculo.FromSqlRaw("SELECT * FROM EPIVinculo WHERE idUsuario = '" + idUsuario + "'").ToListAsync();
         }
     }
 }

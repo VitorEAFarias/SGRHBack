@@ -1,5 +1,4 @@
 ﻿using ControleEPI.DAL.EPICompras;
-using ControleEPI.DAL.EPIFornecedores;
 using ControleEPI.DAL.EPIPedidos;
 using ControleEPI.DAL.EPIPedidosAprovados;
 using ControleEPI.DAL.EPIProdutos;
@@ -16,6 +15,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
 using RH.DTO;
+using ControleEPI.DAL.EPICertificados;
 
 namespace ControleEPI.BLL.EPICompras
 {
@@ -27,17 +27,17 @@ namespace ControleEPI.BLL.EPICompras
         private readonly IEPITamanhosDAL _tamanhos;
         private readonly IEPIStatusDAL _status;
         private readonly IRHConUserDAL _usuario;
-        private readonly IEPIFornecedoresDAL _fornecedor;
         private readonly IRHEmpContratosDAL _contrato;
         private readonly IRHDepartamentosDAL _departamento;
         private readonly IEPIProdutosEstoqueDAL _produtosEstoque;
         private readonly IEPIPedidosDAL _pedidos;
         private readonly IEPIVinculoDAL _vinculo;
         private readonly IMailService _mail;
+        private readonly IEPICertificadoAprovacaoDAL _certificado;
 
         public EPIComprasBLL(IEPIComprasDAL compras, IEPIPedidosAprovadosDAL pedidoAprovado, IEPIProdutosDAL produtos, IEPITamanhosDAL tamanhos, IEPIStatusDAL status, IRHConUserDAL usuario,
-            IEPIFornecedoresDAL fornecedor, IRHEmpContratosDAL contrato, IRHDepartamentosDAL departamento, IEPIProdutosEstoqueDAL produtosEstoque, IEPIPedidosDAL pedidos,
-            IEPIVinculoDAL vinculo, IMailService mail)
+            IRHEmpContratosDAL contrato, IRHDepartamentosDAL departamento, IEPIProdutosEstoqueDAL produtosEstoque, IEPIPedidosDAL pedidos,
+            IEPIVinculoDAL vinculo, IMailService mail, IEPICertificadoAprovacaoDAL certificado)
         {
             _compras = compras;
             _pedidoAprovado = pedidoAprovado;
@@ -45,13 +45,13 @@ namespace ControleEPI.BLL.EPICompras
             _tamanhos = tamanhos;
             _status = status;
             _usuario = usuario;
-            _fornecedor = fornecedor;
             _contrato = contrato;
             _departamento = departamento;
             _produtosEstoque = produtosEstoque;
             _pedidos = pedidos;
             _vinculo = vinculo;
             _mail = mail;
+            _certificado = certificado;
         }
 
         public async Task<ComprasDTO> getCompra(int Id)
@@ -68,42 +68,50 @@ namespace ControleEPI.BLL.EPICompras
                     foreach (var item in localizaCompra.idPedidosAprovados)
                     {
                         var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(item.idPedidosAprovados, "S");
-                        var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
-                        var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
-                        if (tamanho != null)
+                        if (localizaProdutoAprovado != null)
                         {
-                            compraProdutos.Add(new ComprasProdutosDTO
+                            var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                            var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
+                            var localizaCertificado = await _certificado.getCertificado(localizaProduto.idCertificadoAprovacao);
+
+                            if (tamanho != null)
                             {
-                                idPedido = localizaProdutoAprovado.idPedido,
-                                idProduto = localizaProdutoAprovado.idProduto,
-                                nomeProduto = localizaProduto.nome,
-                                idProdutoAprovado = localizaProdutoAprovado.id,
-                                quantidade = localizaProdutoAprovado.quantidade,
-                                preco = localizaProduto.preco,
-                                idTamanho = tamanho.id,
-                                tamanho = tamanho.tamanho
-                            });
-                        }
-                        else 
-                        {
-                            compraProdutos.Add(new ComprasProdutosDTO
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = tamanho.id,
+                                    tamanho = tamanho.tamanho,
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
+                                });
+                            }
+                            else
                             {
-                                idPedido = localizaProdutoAprovado.idPedido,
-                                idProduto = localizaProdutoAprovado.idProduto,
-                                nomeProduto = localizaProduto.nome,
-                                idProdutoAprovado = localizaProdutoAprovado.id,
-                                quantidade = localizaProdutoAprovado.quantidade,
-                                preco = localizaProduto.preco,
-                                idTamanho = 0,
-                                tamanho = "Tamanho Único"
-                            });
-                        }                        
+                                compraProdutos.Add(new ComprasProdutosDTO
+                                {
+                                    idPedido = localizaProdutoAprovado.idPedido,
+                                    idProduto = localizaProdutoAprovado.idProduto,
+                                    nomeProduto = localizaProduto.nome,
+                                    idProdutoAprovado = localizaProdutoAprovado.id,
+                                    quantidade = localizaProdutoAprovado.quantidade,
+                                    preco = localizaProduto.preco,
+                                    idTamanho = 0,
+                                    tamanho = "Tamanho Único",
+                                    idCertificado = localizaCertificado.id,
+                                    numeroCertificado = localizaCertificado.numero
+                                });
+                            }
+                        }                    
                     }
 
                     var nomeStatus = await _status.getStatus(localizaCompra.status);
                     var nomeEmp = await _usuario.GetEmp(localizaCompra.idUsuario);
-                    var localizaFornecedor = await _fornecedor.getFornecedor(localizaCompra.idFornecedor);
 
                     compra = new ComprasDTO
                     {
@@ -115,9 +123,7 @@ namespace ControleEPI.BLL.EPICompras
                         idStatus = nomeStatus.id,
                         status = nomeStatus.nome,
                         idUsuario = nomeEmp.id,
-                        usuario = nomeEmp.nome,
-                        idFornecedor = localizaFornecedor.id,
-                        fornecedor = localizaFornecedor.razaoSocial
+                        usuario = nomeEmp.nome
                     };
 
                     return compra;
@@ -150,8 +156,33 @@ namespace ControleEPI.BLL.EPICompras
 
                         foreach (var pedidosAprovados in item.idPedidosAprovados)
                         {
-                            var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
-                            var localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                            var localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "A");
+
+                            EPIProdutosDTO localizaProduto = new EPIProdutosDTO();
+
+                            if (localizaProdutoAprovado == null)
+                            {
+                                localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "R");
+
+                                if (localizaProdutoAprovado == null)
+                                {
+                                    localizaProdutoAprovado = await _pedidoAprovado.getProdutoAprovado(pedidosAprovados.idPedidosAprovados, "S");
+
+                                    if (localizaProdutoAprovado != null)
+                                    {
+                                        localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                                    }
+                                }
+                                else
+                                {
+                                    localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);
+                                }
+                            }
+                            else
+                            {
+                                localizaProduto = await _produtos.localizaProduto(localizaProdutoAprovado.idProduto);                                
+                            }
+                            
                             var tamanho = await _tamanhos.localizaTamanho(localizaProdutoAprovado.idTamanho);
 
                             if (tamanho != null)
@@ -186,7 +217,6 @@ namespace ControleEPI.BLL.EPICompras
 
                         nomeStatus = await _status.getStatus(item.status);
                         var nomeEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaFornecedor = await _fornecedor.getFornecedor(item.idFornecedor);
 
                         compra.Add(new ComprasDTO
                         {
@@ -198,9 +228,7 @@ namespace ControleEPI.BLL.EPICompras
                             idStatus = nomeStatus.id,
                             status = nomeStatus.nome,
                             idUsuario = nomeEmp.id,
-                            usuario = nomeEmp.nome,
-                            idFornecedor = localizaFornecedor.id,
-                            fornecedor = localizaFornecedor.razaoSocial
+                            usuario = nomeEmp.nome
                         });
                     }
 
@@ -270,7 +298,6 @@ namespace ControleEPI.BLL.EPICompras
 
                         nomeStatus = await _status.getStatus(item.status);
                         var nomeEmp = await _usuario.GetEmp(item.idUsuario);
-                        var localizaFornecedor = await _fornecedor.getFornecedor(item.idFornecedor);
 
                         compra.Add(new ComprasDTO
                         {
@@ -282,9 +309,7 @@ namespace ControleEPI.BLL.EPICompras
                             idStatus = nomeStatus.id,
                             status = nomeStatus.nome,
                             idUsuario = nomeEmp.id,
-                            usuario = nomeEmp.nome,
-                            idFornecedor = localizaFornecedor.id,
-                            fornecedor = localizaFornecedor.razaoSocial
+                            usuario = nomeEmp.nome
                         });
                     }
 
@@ -366,7 +391,7 @@ namespace ControleEPI.BLL.EPICompras
                                                 id = item.id,
                                                 nome = item.nome,
                                                 quantidade = item.quantidade,
-                                                status = 7,
+                                                status = 15,
                                                 tamanho = item.tamanho,
                                             });
 
@@ -400,7 +425,7 @@ namespace ControleEPI.BLL.EPICompras
 
                                     foreach (var item in atualizarStatusProdutos)
                                     {
-                                        if (item.status == 3 || item.status == 10)
+                                        if (item.status == 3 || item.status == 10 || item.status == 15 || item.status == 13 || item.status == 7)
                                         {
                                             contador++;
                                         }

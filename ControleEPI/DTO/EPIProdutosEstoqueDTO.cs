@@ -8,13 +8,6 @@ namespace ControleEPI.DTO
         public int idProduto { get; set; }
         public int quantidade { get; set; }
         public int idTamanho { get; set; }
-                
-        public string ativo { get; set; }
-
-        public EPIProdutosEstoqueDTO(string ativo = "S")
-        {
-            this.ativo = ativo;
-        }
     }
 
     public class TodosProdutosEstoqueDTO

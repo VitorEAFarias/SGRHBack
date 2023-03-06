@@ -152,7 +152,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                 if (vestimenta != null)
                 {
-                    return Ok(new { message = "lista encontrada", result = true, lista = vestimenta });
+                    return Ok(new { message = "lista encontrada", result = true, data = vestimenta });
                 }
                 else
                 {
