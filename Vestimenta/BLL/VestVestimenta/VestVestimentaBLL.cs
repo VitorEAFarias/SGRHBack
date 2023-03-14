@@ -115,13 +115,13 @@ namespace Vestimenta.BLL.VestVestimenta
             }
         }
 
-        public async Task<IList<TamanhoTotalDTO>> getVestimentas()
+        public async Task<IList<TamanhosRam>> getVestimentas()
         {
             try
             {
                 var vestimenta = await _vestimenta.getVestimentas();
 
-                List<TamanhoTotalDTO> tamanhoTotal = new List<TamanhoTotalDTO>();
+                List<TamanhosRam> tamanhosRam = new List<TamanhosRam>();
 
                 if (vestimenta != null)
                 {
@@ -129,27 +129,21 @@ namespace Vestimenta.BLL.VestVestimenta
                     {
                         var quantidadeEstoque = await _estoque.getItensExistentes(item.id);
 
-                        List<TamanhosRam> tamanhosRam = new List<TamanhosRam>
-                        {
-                            new TamanhosRam
-                            {
-                                nome = item.nome,
-                                idVestimenta = item.id,
-                                tamanho = item.tamanho,
-                                quantidade = quantidadeEstoque,
-                                preco = item.preco,
-                                foto = item.foto,
-                                maximo = item.maximo,
-                                ativo = item.ativo
-                            }
-                        };
-
-                        tamanhoTotal.Add(new TamanhoTotalDTO { 
-                            tRam = tamanhosRam
+                        tamanhosRam.Add(new TamanhosRam
+                        {   
+                            nome = item.nome,
+                            idVestimenta = item.id,
+                            tamanho = item.tamanho,
+                            quantidade = quantidadeEstoque,
+                            preco = item.preco,
+                            foto = item.foto,
+                            maximo = item.maximo,
+                            ativo = item.ativo
+                            
                         });
                     }
 
-                    return tamanhoTotal;
+                    return tamanhosRam;
                 }
                 else
                 {

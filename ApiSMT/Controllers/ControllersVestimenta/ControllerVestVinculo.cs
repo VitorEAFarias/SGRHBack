@@ -75,11 +75,11 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                 if (atualizarVinculo != null)
                 {
-                    return Ok(new { message = "Vinculo atualizado com sucesso!!!", result = true, data = atualizarVinculo });
+                    return Ok(new { message = "Vínculo atualizado com sucesso!!!", result = true, data = atualizarVinculo });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao atualizar vinculo", result = false });
+                    return BadRequest(new { message = "Erro ao atualizar vínculo", result = false });
                 }
                 
             }
@@ -103,11 +103,11 @@ namespace ApiSMT.Controllers.ControllersVestimenta
 
                 if (retirarItemVinculo != null)
                 {
-                    return Ok(new { message = "Vinculo retirado com sucesso!!!", result = true, data = retirarItemVinculo });
+                    return Ok(new { message = "Vínculo retirado com sucesso!!!", result = true, data = retirarItemVinculo });
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao retirar item do vinculo", result = false });
+                    return BadRequest(new { message = "Erro ao retirar item do vínculo", result = false });
                 }
             }
             catch (Exception ex)

@@ -89,7 +89,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         /// <returns></returns>
         [Authorize]
         [HttpGet("usuario/{idUsuario}")]
-        public async Task<ActionResult> getPedidosUsuario(int idUsuario)
+        public async Task<IActionResult> getPedidosUsuario(int idUsuario)
         {
             try
             {

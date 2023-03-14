@@ -25,7 +25,8 @@ namespace ApiSMT.Controllers.ControllersVestimenta
         }
 
         /// <summary>
-        /// Lista historico de itens com colaborador e monta PDF
+        /// Lista 
+        /// de itens com colaborador e monta PDF
         /// </summary>
         /// <returns></returns>
         [Authorize]
@@ -42,7 +43,7 @@ namespace ApiSMT.Controllers.ControllersVestimenta
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao gerar historico de itens", result = false });
+                    return BadRequest(new { message = "Erro ao gerar histórico de itens", result = false });
                 }
             }
             catch (Exception ex)

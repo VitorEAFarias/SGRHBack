@@ -42,7 +42,7 @@ namespace ApiSMT.Controllers.ControllersEPI
                 }
                 else
                 {
-                    return BadRequest(new { message = "Erro ao gerar historico de itens", result = false });
+                    return BadRequest(new { message = "Erro ao gerar histórico de itens", result = false });
                 }
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using RH.DAL.RHUsuarios;
 using RH.DTO;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Utilitarios.Utilitários.email;
 using Vestimenta.DAL.VestCompras;

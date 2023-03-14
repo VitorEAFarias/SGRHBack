@@ -9,7 +9,7 @@ namespace Vestimenta.BLL.VestVestimenta
         Task<TamanhosRam> getVestimenta(int Id);
         Task<VestVestimentaDTO> desativaVestimenta(int id, int status);
         Task<VestVestimentaDTO> getNomeVestimenta(VestVestimentaDTO vestimenta);
-        Task<IList<TamanhoTotalDTO>> getVestimentas();
+        Task<IList<TamanhosRam>> getVestimentas();
         Task<VestVestimentaDTO> Update(VestVestimentaDTO vestimenta);
     }
 }

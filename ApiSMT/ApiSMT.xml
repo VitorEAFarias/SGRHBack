@@ -670,7 +670,8 @@
         </member>
         <member name="M:ApiSMT.Controllers.ControllersVestimenta.ControllerPDFVinculo.getTodosStatus(System.Int32)">
             <summary>
-            Lista historico de itens com colaborador e monta PDF
+            Lista 
+            de itens com colaborador e monta PDF
             </summary>
             <returns></returns>
         </member>

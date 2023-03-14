@@ -106,32 +106,37 @@ namespace Vestimenta.BLL.VestPedidos
                     {
                         string enviadoCompra = string.Empty;
                         var checkEstoque = await _estoque.getItemExistente(item.id, item.tamanho);
-                        var checkStatus = await _status.getStatus(item.status);
-                        var checkRepositorio = await _repositorio.getRepositorioItensPedidos(item.id, compra.id);
+                        
 
-                        if (checkRepositorio != null)
+                        if (checkEstoque != null)
                         {
-                            enviadoCompra = checkRepositorio.enviadoCompra;
-                        }
-                        else
-                        {
-                            enviadoCompra = "S";
-                        }
+                            var checkStatus = await _status.getStatus(item.status);
+                            var checkRepositorio = await _repositorio.getRepositorioItensPedidos(item.id, compra.id);
 
-                        listaItens.Add(new ItensCompraDTO
-                        {
-                            id = item.id,
-                            dataAlteracao = item.dataAlteracao,
-                            nome = item.nome,
-                            quantidade = item.quantidade,
-                            status = item.status,
-                            tamanho = item.tamanho,
-                            usado = item.usado,
-                            enviadoCompra = enviadoCompra,
-                            statusNome = checkStatus.nome,
-                            estoque = checkEstoque.quantidade,
-                            estoqueUsado = checkEstoque.quantidadeUsado
-                        });
+                            if (checkRepositorio != null)
+                            {
+                                enviadoCompra = checkRepositorio.enviadoCompra;
+                            }
+                            else
+                            {
+                                enviadoCompra = "S";
+                            }
+
+                            listaItens.Add(new ItensCompraDTO
+                            {
+                                id = item.id,
+                                dataAlteracao = item.dataAlteracao,
+                                nome = item.nome,
+                                quantidade = item.quantidade,
+                                status = item.status,
+                                tamanho = item.tamanho,
+                                usado = item.usado,
+                                enviadoCompra = enviadoCompra,
+                                statusNome = checkStatus.nome,
+                                estoque = checkEstoque.quantidade,
+                                estoqueUsado = checkEstoque.quantidadeUsado
+                            });
+                        }
                     }
 
                     var emp = await _usuario.GetEmp(compra.idUsuario);
